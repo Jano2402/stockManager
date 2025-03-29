@@ -12,3 +12,22 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// CREATE TABLE clientes (
+//    id SERIAL PRIMARY KEY,         -- Identificador único del cliente
+//    nombre VARCHAR(100) NOT NULL,  -- Nombre del cliente
+//    telefono VARCHAR(20) NOT NULL, -- Teléfono del cliente
+//    deuda DECIMAL(10,2) DEFAULT 0, -- Deuda acumulada del cliente
+//    cant_envases INT DEFAULT 0     -- Cantidad de envases retornables
+// );
+
+// CREATE TABLE compras (
+//    id SERIAL PRIMARY KEY,            -- Identificador único de la compra
+//    cliente_id INT REFERENCES clientes(id) ON DELETE CASCADE,  -- Relación con el cliente
+//    fecha DATE NOT NULL DEFAULT CURRENT_DATE,  -- Fecha de la compra
+//    sifones INT DEFAULT 0,             -- Cantidad de sifones comprados
+//    bidones_12l INT DEFAULT 0,         -- Cantidad de bidones de 12L comprados
+//    bidones_6l INT DEFAULT 0,          -- Cantidad de bidones de 6L comprados
+//    pago DECIMAL(10,2) DEFAULT 0,      -- Pago realizado en la compra
+//    deuda DECIMAL(10,2) DEFAULT 0      -- Deuda restante después de la compra
+// );
