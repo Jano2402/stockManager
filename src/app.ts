@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import authRoutes from "./routes/authRoutes";
+import appRoutes from "./routes/appRoutes";
 
 const app = express();
 
@@ -8,8 +10,8 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use("/auth", () => {});
-app.use("/app", () => {});
+app.use("/auth", authRoutes);
+app.use("/app", appRoutes);
 
 console.log("funca");
 
