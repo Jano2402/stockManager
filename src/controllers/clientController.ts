@@ -1,8 +1,31 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/prisma";
 
+const getProductPrices = async (): Promise<Record<string, number>> => {
+  const productos = await prisma.productos.findMany({
+    where: {
+      nombre: {
+        in: ["Sifones", "Bidones6l", "Bidones12l"],
+      },
+    },
+    select: {
+      nombre: true,
+      precio: true,
+    },
+  });
+
+  // Convertir productos en un objeto para acceso más fácil
+  return productos.reduce(
+    (map, p) => {
+      map[p.nombre] = p.precio;
+      return map;
+    },
+    {} as Record<string, number>
+  );
+};
+
 export const initUser = async (req: Request, res: Response): Promise<void> => {
-  const { nombre, telefono, deuda, cant_envases } = req.body;
+  const { nombre, telefono, deuda, cant_envases, cant_bidones } = req.body;
   try {
     if (!nombre) {
       res.status(400).json({ message: "name is required" });
@@ -14,6 +37,7 @@ export const initUser = async (req: Request, res: Response): Promise<void> => {
         telefono,
         deuda,
         cant_envases,
+        cant_bidones,
       },
     });
     res.status(201).json({ message: "Client created", nuevoCliente });
@@ -50,9 +74,11 @@ export const addPurchase = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  const { sifones, bidones_6l, bidones_12l, pago, deuda } = req.body;
+  const { sifones, bidones_6l, bidones_12l, pago, devuelveBid, devuelveSif } =
+    req.body;
+
   try {
-    // Verificamos si existe el cliente
+    // Buscar si el cliente existe
     const client = await prisma.clientes.findUnique({
       where: { id: Number(id) },
     });
@@ -60,7 +86,21 @@ export const addPurchase = async (
       res.status(404).json({ message: "Client not found" });
       return;
     }
-    // Creamos la compra
+
+    // Obtener los precios de los productos desde la base de datos
+    // Convertir productos en un mapa para acceso más fácil
+    const precios = await getProductPrices();
+
+    // Calcular el total de la compra
+    const totalCompra =
+      sifones * (precios["Sifones"] || 0) +
+      bidones_6l * (precios["Bidones6l"] || 0) +
+      bidones_12l * (precios["Bidones12l"] || 0);
+
+    // Calcular la nueva deuda correctamente
+    const nuevaDeuda = client.deuda + totalCompra - pago;
+
+    // Crear la compra con la deuda calculada
     const newPurchase = await prisma.compras.create({
       data: {
         cliente_id: Number(id),
@@ -68,20 +108,23 @@ export const addPurchase = async (
         bidones_6l,
         bidones_12l,
         pago,
-        deuda,
+        deuda: nuevaDeuda,
       },
     });
 
-    // Actualizar la deuda total del cliente
+    // Actualizar la deuda del cliente
     await prisma.clientes.update({
       where: { id: Number(id) },
       data: {
-        // Añadir una base de datos con productos, y una parte en la compra que guarde el precio de compra a la fecha para flexibilidad
-        deuda: client.deuda + deuda - pago,
+        deuda: nuevaDeuda,
+        cant_envases: client.cant_envases + sifones - devuelveSif,
+        cant_bidones: client.cant_bidones + bidones_12l - devuelveBid,
       },
     });
+
     res.status(201).json({ newPurchase });
   } catch (error: any) {
+    console.error(error);
     res.status(500).json({ error: "There was an error creating the purchase" });
   }
 };
@@ -111,7 +154,7 @@ export const updateClient = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  const { nombre, telefono, deuda, cant_envases } = req.body;
+  const { nombre, telefono, deuda, cant_envases, cant_bidones } = req.body;
   try {
     const updatedClient = await prisma.clientes.update({
       where: { id: Number(id) },
@@ -120,6 +163,7 @@ export const updateClient = async (
         telefono,
         deuda,
         cant_envases,
+        cant_bidones,
       },
     });
     res.status(200).json({ updatedClient });
@@ -133,54 +177,121 @@ export const modifyPurchase = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { id } = req.params; // ID de la compra a modificar
-  const { sifones, bidones_12l, bidones_6l, pago } = req.body;
+  const { id } = req.params;
+  const { sifones, bidones_12l, bidones_6l, pago, devuelveSif, devuelveBid } =
+    req.body;
 
   try {
-    // Buscar la compra por ID
     const compra = await prisma.compras.findUnique({
       where: { id: Number(id) },
     });
-
     if (!compra) {
       res.status(404).json({ error: "Purchase not found" });
       return;
     }
 
-    // Buscar el cliente asociado a la compra
     const client = await prisma.clientes.findUnique({
       where: { id: compra.cliente_id },
     });
-
     if (!client) {
       throw new Error("Client not found");
     }
 
-    // Calcular el monto total de la compra original y la nueva compra
+    const precios = await getProductPrices();
+
     const total_original =
-      compra.sifones * 10 + compra.bidones_12l * 20 + compra.bidones_6l * 15;
-    const total_nuevo = sifones * 10 + bidones_12l * 20 + bidones_6l * 15;
+      compra.sifones * (precios["Sifones"] || 0) +
+      compra.bidones_12l * (precios["Bidones12l"] || 0) +
+      compra.bidones_6l * (precios["Bidones6l"] || 0);
 
-    // Calcular la nueva deuda para el cliente
-    const nueva_deuda = client.deuda - total_original + total_nuevo - pago;
+    const total_nuevo =
+      sifones * (precios["Sifones"] || 0) +
+      bidones_12l * (precios["Bidones12l"] || 0) +
+      bidones_6l * (precios["Bidones6l"] || 0);
 
-    // Actualizar la compra
+    const nueva_deuda =
+      client.deuda - total_original + total_nuevo - (pago - compra.pago);
+
+    // 🛠 Ajustar correctamente la cantidad de envases y bidones
+    const nueva_cant_envases =
+      client.cant_envases -
+      compra.sifones +
+      sifones -
+      devuelveSif +
+      compra.devuelveSif;
+
+    const nueva_cant_bidones =
+      client.cant_bidones -
+      compra.bidones_12l +
+      bidones_12l -
+      devuelveBid +
+      compra.devuelveBid;
+
     const updatedCompra = await prisma.compras.update({
       where: { id: Number(id) },
-      data: { sifones, bidones_12l, bidones_6l, pago, deuda: nueva_deuda },
+      data: {
+        sifones,
+        bidones_12l,
+        bidones_6l,
+        pago,
+        deuda: nueva_deuda,
+        devuelveBid,
+        devuelveSif,
+      },
     });
 
-    // Actualizar la deuda del cliente
     await prisma.clientes.update({
       where: { id: client.id },
-      data: { deuda: nueva_deuda },
+      data: {
+        deuda: nueva_deuda,
+        cant_envases: nueva_cant_envases,
+        cant_bidones: nueva_cant_bidones,
+      },
     });
 
-    // Responder con la compra actualizada
     res.json(updatedCompra);
   } catch (error: any) {
+    console.error(error);
     res
       .status(500)
       .json({ error: "There was an error modifying the purchase" });
+  }
+};
+
+// Esta función debe ir en los routings de billings
+
+export const getPurchasesByDates = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { fechaInicio, fechaFin } = req.query;
+
+  try {
+    if (!fechaInicio || !fechaFin) {
+      res
+        .status(400)
+        .json({ error: "Debe proporcionar fechaInicio y fechaFin" });
+      return;
+    }
+
+    const compras = await prisma.compras.findMany({
+      where: {
+        fecha: {
+          gte: new Date(`${fechaInicio}T00:00:00.000Z`), // Inicio del día
+          lte: new Date(`${fechaFin}T23:59:59.999Z`), // Fin del día
+        },
+      },
+      include: {
+        cliente: true, // Incluye datos del cliente si la relación existe
+      },
+      orderBy: {
+        fecha: "asc", // Ordena por fecha ascendente
+      },
+    });
+
+    res.json(compras);
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: "Hubo un error al obtener las compras" });
   }
 };

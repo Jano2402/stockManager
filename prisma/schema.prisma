@@ -32,6 +32,7 @@ model Clientes {
   telefono     String?
   deuda        Int       @default(0)
   cant_envases Int       @default(0)
+  cant_bidones Int       @default(0)
   Compras      Compras[]
 }
 
@@ -43,8 +44,17 @@ model Compras {
   sifones     Int      @default(0)
   bidones_12l Int      @default(0)
   bidones_6l  Int      @default(0)
+  devuelveSif Int      @default(0)
+  devuelveBid Int      @default(0)
   pago        Int      @default(0)
   deuda       Int      @default(0)
+}
+
+model Productos {
+  id       Int    @id @default(autoincrement())
+  nombre   String @unique
+  precio   Int
+  cantidad Int    @default(0)
 }
 
 // Estructura deseada de la bd
