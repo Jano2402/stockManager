@@ -46,6 +46,7 @@ model Compras {
   bidones_6l  Int      @default(0)
   devuelveSif Int      @default(0)
   devuelveBid Int      @default(0)
+  totalCompra Int      @default(0)
   pago        Int      @default(0)
   deuda       Int      @default(0)
 }
