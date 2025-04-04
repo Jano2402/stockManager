@@ -15,7 +15,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     const hashedPassword = await hashPassword(password);
-    console.log(hashedPassword); // Eliminar, solo para prueba
 
     const user = await prisma.user.create({
       data: {

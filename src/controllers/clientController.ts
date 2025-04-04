@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/prisma";
 
+// Función auxiliar para obtener el precio de los productos
 const getProductPrices = async (): Promise<Record<string, number>> => {
   const productos = await prisma.productos.findMany({
     where: {
