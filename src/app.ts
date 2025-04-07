@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import helmet from "helmet";
+import fs from "fs";
+import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/authRoutes";
 import appRoutes from "./routes/appRoutes";
@@ -32,6 +34,13 @@ app.use(limiter);
 
 // Usa todos los middlewares de seguridad que proporciona helmet
 app.use(helmet());
+
+// Logs en consola (formato 'dev' o 'combined')
+app.use(morgan("dev"));
+
+// Logs en un archivo
+const accessLogStream = fs.createWriteStream("./access.log", { flags: "a" });
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // JSON understanding
 app.use(express.json());
