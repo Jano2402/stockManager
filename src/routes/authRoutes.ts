@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import express from "express";
 import jwt from "jsonwebtoken";
-import { login, register } from "../controllers/authController";
+import {
+  login,
+  register,
+  refreshToken,
+  logout,
+} from "../controllers/authController";
 import { JwtPayload } from "jsonwebtoken";
 
 const router = express.Router();
@@ -90,5 +95,7 @@ export const authenticateAdminOrModerator = (
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/refresh-token", refreshToken);
+router.post("/logout", logout);
 
 export default router;
