@@ -3,47 +3,71 @@ import prisma from "../prisma/prisma";
 
 // Función auxiliar para obtener el precio de los productos
 const getProductPrices = async (): Promise<Record<string, number>> => {
-  const productos = await prisma.productos.findMany({
-    where: {
-      nombre: {
-        in: ["Sifones", "Bidones6l", "Bidones12l"],
+  try {
+    const productos = await prisma.productos.findMany({
+      where: {
+        nombre: {
+          in: ["Sifones", "Bidones6l", "Bidones12l"],
+        },
       },
-    },
-    select: {
-      nombre: true,
-      precio: true,
-    },
-  });
+      select: {
+        nombre: true,
+        precio: true,
+      },
+    });
 
-  // Convertir productos en un objeto para acceso más fácil
-  return productos.reduce(
-    (map, p) => {
-      map[p.nombre] = p.precio;
-      return map;
-    },
-    {} as Record<string, number>
-  );
+    if (productos.length === 0) {
+      throw new Error("No se encontraron productos en la base de datos");
+    }
+
+    return productos.reduce(
+      (map, p) => {
+        map[p.nombre] = p.precio;
+        return map;
+      },
+      {} as Record<string, number>
+    );
+  } catch (error) {
+    console.error("Error en getProductPrices:", error);
+    throw error; // Propaga el error para manejarlo en las funciones que llaman a esta
+  }
 };
 
 export const initUser = async (req: Request, res: Response): Promise<void> => {
-  const { nombre, telefono, deuda, cant_envases, cant_bidones } = req.body;
+  const {
+    nombre,
+    telefono,
+    deuda = 0,
+    cant_envases = 0,
+    cant_bidones = 0,
+  } = req.body;
+
+  // Validaciones
+  if (!nombre || typeof nombre !== "string") {
+    res.status(400).json({ error: "Nombre es requerido y debe ser texto" });
+    return;
+  }
+  if (telefono && !/^\d+$/.test(telefono)) {
+    res.status(400).json({ error: "Teléfono debe contener solo números" });
+    return;
+  }
+  if (isNaN(deuda) || isNaN(cant_envases) || isNaN(cant_bidones)) {
+    res.status(400).json({ error: "Campos numéricos inválidos" });
+    return;
+  }
+
   try {
-    if (!nombre) {
-      res.status(400).json({ message: "name is required" });
-      return;
-    }
     const nuevoCliente = await prisma.clientes.create({
-      data: {
-        nombre,
-        telefono,
-        deuda,
-        cant_envases,
-        cant_bidones,
-      },
+      data: { nombre, telefono, deuda, cant_envases, cant_bidones },
     });
-    res.status(201).json({ message: "Client created", nuevoCliente });
+    res.status(201).json(nuevoCliente);
   } catch (error: any) {
-    res.status(500).json({ error: "There was an error creating the client" });
+    console.error("Error en initUser:", error);
+    if (error.code === "P2002") {
+      res.status(400).json({ error: "El cliente ya existe" }); // Si hay unique constraint
+    } else {
+      res.status(500).json({ error: "Error al crear cliente" });
+    }
   }
 };
 
@@ -52,21 +76,22 @@ export const searchUser = async (
   res: Response
 ): Promise<void> => {
   const { nombre } = req.query;
+
+  if (typeof nombre !== "string") {
+    res.status(400).json({ error: "Parámetro 'nombre' inválido" });
+    return;
+  }
+
   try {
     const clientes = await prisma.clientes.findMany({
       where: {
-        nombre: {
-          contains: String(nombre),
-          mode: "insensitive",
-        },
+        nombre: { contains: nombre, mode: "insensitive" },
       },
     });
-
     res.json(clientes);
-  } catch (error: any) {
-    res
-      .status(500)
-      .json({ error: "There was an error looking for the client" });
+  } catch (error) {
+    console.error("Error en searchUser:", error);
+    res.status(500).json({ error: "Error al buscar clientes" });
   }
 };
 
@@ -75,33 +100,47 @@ export const addPurchase = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  const { sifones, bidones_6l, bidones_12l, pago, devuelveBid, devuelveSif } =
-    req.body;
+  const {
+    sifones = 0,
+    bidones_6l = 0,
+    bidones_12l = 0,
+    pago = 0,
+    devuelveBid = 0,
+    devuelveSif = 0,
+  } = req.body;
+
+  // Validaciones
+  if (isNaN(Number(id))) {
+    res.status(400).json({ error: "ID de cliente inválido" });
+    return;
+  }
+  if (
+    [sifones, bidones_6l, bidones_12l, pago, devuelveBid, devuelveSif].some(
+      isNaN
+    )
+  ) {
+    res.status(400).json({ error: "Todos los valores deben ser números" });
+    return;
+  }
 
   try {
-    // Buscar si el cliente existe
     const client = await prisma.clientes.findUnique({
       where: { id: Number(id) },
     });
     if (!client) {
-      res.status(404).json({ message: "Client not found" });
+      res.status(404).json({ error: "Cliente no encontrado" });
       return;
     }
 
-    // Obtener los precios de los productos desde la base de datos
-    // Convertir productos en un mapa para acceso más fácil
-    const precios = await getProductPrices();
+    const precios = await getProductPrices(); // Ahora propaga errores
 
-    // Calcular el total de la compra
     const totalCompra =
       sifones * (precios["Sifones"] || 0) +
       bidones_6l * (precios["Bidones6l"] || 0) +
       bidones_12l * (precios["Bidones12l"] || 0);
 
-    // Calcular la nueva deuda correctamente
     const nuevaDeuda = client.deuda + totalCompra - pago;
 
-    // Crear la compra con la deuda calculada
     const newPurchase = await prisma.compras.create({
       data: {
         cliente_id: Number(id),
@@ -116,7 +155,6 @@ export const addPurchase = async (
       },
     });
 
-    // Actualizar la deuda del cliente
     await prisma.clientes.update({
       where: { id: Number(id) },
       data: {
@@ -126,10 +164,14 @@ export const addPurchase = async (
       },
     });
 
-    res.status(201).json({ newPurchase });
+    res.status(201).json(newPurchase);
   } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: "There was an error creating the purchase" });
+    console.error("Error en addPurchase:", error);
+    if (error.message.includes("No se encontraron productos")) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Error al registrar compra" });
+    }
   }
 };
 
@@ -139,17 +181,23 @@ export const deleteClient = async (
 ): Promise<void> => {
   const { id } = req.params;
 
+  if (isNaN(Number(id))) {
+    res.status(400).json({ error: "ID inválido" });
+    return;
+  }
+
   try {
     const deletedClient = await prisma.clientes.delete({
       where: { id: Number(id) },
     });
-    if (deletedClient) {
-      res.json({ message: "Client deleted successfully" });
-    } else {
-      res.status(404).json({ error: "Client not found" });
-    }
+    res.json({ message: "Cliente eliminado", deletedClient });
   } catch (error: any) {
-    res.status(500).json({ error: "There was an error deleting the client" });
+    console.error("Error en deleteClient:", error);
+    if (error.code === "P2025") {
+      res.status(404).json({ error: "Cliente no encontrado" });
+    } else {
+      res.status(500).json({ error: "Error al eliminar cliente" });
+    }
   }
 };
 
@@ -159,20 +207,29 @@ export const updateClient = async (
 ): Promise<void> => {
   const { id } = req.params;
   const { nombre, telefono, deuda, cant_envases, cant_bidones } = req.body;
+
+  if (isNaN(Number(id))) {
+    res.status(400).json({ error: "ID inválido" });
+    return;
+  }
+  if (nombre && typeof nombre !== "string") {
+    res.status(400).json({ error: "Nombre debe ser texto" });
+    return;
+  }
+
   try {
     const updatedClient = await prisma.clientes.update({
       where: { id: Number(id) },
-      data: {
-        nombre,
-        telefono,
-        deuda,
-        cant_envases,
-        cant_bidones,
-      },
+      data: { nombre, telefono, deuda, cant_envases, cant_bidones },
     });
-    res.status(200).json({ updatedClient });
+    res.json(updatedClient);
   } catch (error: any) {
-    res.status(500).json({ error: "There was an error updating the client" });
+    console.error("Error en updateClient:", error);
+    if (error.code === "P2025") {
+      res.status(404).json({ error: "Cliente no encontrado" });
+    } else {
+      res.status(500).json({ error: "Error al actualizar cliente" });
+    }
   }
 };
 
@@ -185,12 +242,26 @@ export const modifyPurchase = async (
   const { sifones, bidones_12l, bidones_6l, pago, devuelveSif, devuelveBid } =
     req.body;
 
+  // Validaciones
+  if (isNaN(Number(id))) {
+    res.status(400).json({ error: "ID de compra inválido" });
+    return;
+  }
+  if (
+    [sifones, bidones_12l, bidones_6l, pago, devuelveSif, devuelveBid].some(
+      isNaN
+    )
+  ) {
+    res.status(400).json({ error: "Todos los valores deben ser números" });
+    return;
+  }
+
   try {
     const compra = await prisma.compras.findUnique({
       where: { id: Number(id) },
     });
     if (!compra) {
-      res.status(404).json({ error: "Purchase not found" });
+      res.status(404).json({ error: "Compra no encontrada" });
       return;
     }
 
@@ -198,7 +269,8 @@ export const modifyPurchase = async (
       where: { id: compra.cliente_id },
     });
     if (!client) {
-      throw new Error("Client not found");
+      res.status(404).json({ error: "Cliente no encontrado" });
+      return;
     }
 
     const precios = await getProductPrices();
