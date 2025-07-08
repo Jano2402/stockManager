@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  username      String         @unique
+  password      String
+  role          Role           @default(USER)
+  refreshTokens RefreshToken[]
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) // Corregido: "wuid()" -> "uuid()"
+  token     String
+  userId    Int // Debe ser Int para coincidir con User.id
+  user      User     @relation(fields: [userId], references: [id]) // Relación correcta
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Clientes {
+  id           Int       @id @default(autoincrement()) // Identificador único de cliente
+  nombre       String
+  telefono     String?
+  deuda        Int       @default(0)
+  cant_envases Int       @default(0)
+  cant_bidones Int       @default(0)
+  Compras      Compras[]
+}
+
+model Compras {
+  id          Int      @id @default(autoincrement()) // Identificador único de compra 
+  cliente_id  Int
+  cliente     Clientes @relation(fields: [cliente_id], references: [id], onDelete: Cascade) // Relaciona la id del cliente con la id de la compra
+  fecha       DateTime @default(now())
+  sifones     Int      @default(0)
+  bidones_12l Int      @default(0)
+  bidones_6l  Int      @default(0)
+  devuelveSif Int      @default(0)
+  devuelveBid Int      @default(0)
+  totalCompra Int      @default(0)
+  pago        Int      @default(0)
+  deuda       Int      @default(0)
+}
+
+model Productos {
+  id       Int    @id @default(autoincrement())
+  nombre   String @unique
+  precio   Int
+  cantidad Int    @default(0)
+}
+
+// Estructura deseada de la bd
+
+// CREATE TABLE clientes (
+//    id SERIAL PRIMARY KEY,         -- Identificador único del cliente
+//    nombre VARCHAR(100) NOT NULL,  -- Nombre del cliente
+//    telefono VARCHAR(20) NOT NULL, -- Teléfono del cliente
+//    deuda DECIMAL(10,2) DEFAULT 0, -- Deuda acumulada del cliente
+//    cant_envases INT DEFAULT 0     -- Cantidad de envases retornables
+// );
+
+// CREATE TABLE compras (
+//    id SERIAL PRIMARY KEY,            -- Identificador único de la compra
+//    cliente_id INT REFERENCES clientes(id) ON DELETE CASCADE,  -- Relación con el cliente
+//    fecha DATE NOT NULL DEFAULT CURRENT_DATE,  -- Fecha de la compra
+//    sifones INT DEFAULT 0,             -- Cantidad de sifones comprados
+//    bidones_12l INT DEFAULT 0,         -- Cantidad de bidones de 12L comprados
+//    bidones_6l INT DEFAULT 0,          -- Cantidad de bidones de 6L comprados
+//    pago DECIMAL(10,2) DEFAULT 0,      -- Pago realizado en la compra
+//    deuda DECIMAL(10,2) DEFAULT 0      -- Deuda restante después de la compra
+// );
