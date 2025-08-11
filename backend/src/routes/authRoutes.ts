@@ -13,12 +13,17 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 
 // Función auxiliar para verificar y decodificar el token
-const verifyToken = (token: string, res: Response): JwtPayload | null => {
+const verifyCookieToken = (req: Request, res: Response): JwtPayload | null => {
+  const token = req.cookies?.accessToken; // 👈 Buscar en cookies
+  if (!token) {
+    res.status(401).json({ error: "Not authorized" });
+    return null;
+  }
+
   try {
-    return jwt.verify(token, JWT_SECRET) as JwtPayload;
-  } catch (err) {
-    console.error("Authentication error: ", err);
-    res.status(403).json({ error: "You don't have access to this resource" });
+    return jwt.verify(token, JWT_SECRET as string) as JwtPayload;
+  } catch {
+    res.status(403).json({ error: "Invalid token" });
     return null;
   }
 };
@@ -29,17 +34,20 @@ export const authenticateToken = (
   res: Response,
   next: NextFunction
 ): any => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies?.accessToken; // 👈 Leer token de cookies
 
   if (!token) {
-    return res.status(401).json({ error: "Not authorized" });
+    res.status(401).json({ error: "Not authorized" });
+    return;
   }
 
-  const decodedToken = verifyToken(token, res);
-  if (decodedToken) {
-    console.log(decodedToken);
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    // Si querés guardar el payload para usarlo en otros controladores:
+    (req as any).user = decoded;
     next();
+  } catch (err) {
+    return res.status(403).json({ error: "Invalid token" });
   }
 };
 
@@ -48,24 +56,17 @@ export const authenticateAdmin = (
   req: Request,
   res: Response,
   next: NextFunction
-): any => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+) => {
+  const decodedToken = verifyCookieToken(req, res);
+  if (!decodedToken) return;
 
-  if (!token) {
-    return res.status(401).json({ error: "Not authorized" });
+  if (decodedToken.role !== "ADMIN") {
+    res.status(403).json({ error: "You are not authorized as an admin" });
+    return;
   }
 
-  const decodedToken = verifyToken(token, res);
-  if (decodedToken) {
-    if (decodedToken.role !== "ADMIN") {
-      return res
-        .status(403)
-        .json({ error: "You are not authorized as an admin" });
-    }
-    console.log(decodedToken);
-    next();
-  }
+  (req as any).user = decodedToken; // Guardar info para siguientes middlewares
+  next();
 };
 
 // Middleware para autenticar si el usuario es admin o moderador
@@ -73,29 +74,22 @@ export const authenticateAdminOrModerator = (
   req: Request,
   res: Response,
   next: NextFunction
-): any => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+) => {
+  const decodedToken = verifyCookieToken(req, res);
+  if (!decodedToken) return;
 
-  if (!token) {
-    return res.status(401).json({ error: "Not authorized" });
+  if (!["ADMIN", "MODERATOR"].includes(decodedToken.role)) {
+    res.status(403).json({ error: "You don't have access to this resource" });
+    return;
   }
 
-  const decodedToken = verifyToken(token, res);
-  if (decodedToken) {
-    if (decodedToken.role !== "ADMIN" && decodedToken.role !== "MODERATOR") {
-      return res
-        .status(403)
-        .json({ error: "You don't have access to this resource" });
-    }
-    console.log(decodedToken);
-    next();
-  }
+  (req as any).user = decodedToken;
+  next();
 };
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/refresh-token", refreshToken);
+router.post("/refresh", refreshToken);
 router.post("/logout", logout);
 
 export default router;

@@ -1,12 +1,12 @@
-import {
-  generateToken,
-  generateRefreshToken,
-  hashRefreshToken,
-  compareRefreshTokens,
-} from "../services/auth.service";
+import { generateToken, generateRefreshToken } from "../services/auth.service";
 import { hashPassword, comparePasswords } from "../services/password.service";
 import prisma from "../prisma/prisma";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
+const isProduction = process.env.NODE_ENV === "production";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
@@ -31,13 +31,28 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // Generar tokens
     const accessToken = generateToken(user);
-    const refreshToken = generateRefreshToken();
+    const refreshToken = generateRefreshToken(user);
+
     await prisma.refreshToken.create({
       data: {
-        token: await hashRefreshToken(refreshToken),
+        token: refreshToken,
         userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: isProduction, // httpOnly solo en producción
+      secure: isProduction, // solo se envía en HTTPS en producción
+      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      maxAge: 15 * 60 * 1000, // 15 minutos
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: isProduction, // httpOnly solo en producción
+      secure: isProduction, // solo se envía en HTTPS en producción
+      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
     res.status(201).json({ accessToken, refreshToken });
@@ -68,16 +83,31 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // Generar tokens
     const accessToken = generateToken(user);
-    const refreshToken = generateRefreshToken();
+    const refreshToken = generateRefreshToken(user);
+
     await prisma.refreshToken.create({
       data: {
-        token: await hashRefreshToken(refreshToken),
+        token: refreshToken,
         userId: user.id,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
 
-    res.json({ accessToken, refreshToken });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: isProduction, // httpOnly solo en producción
+      secure: isProduction, // solo se envía en HTTPS en producción
+      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      maxAge: 15 * 60 * 1000, // 15 minutos
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: isProduction, // httpOnly solo en producción
+      secure: isProduction, // solo se envía en HTTPS en producción
+      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+    });
+
+    res.json({ message: "Login exitoso" });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Error en el servidor" });
@@ -88,7 +118,7 @@ export const refreshToken = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
     res.status(401).json({ error: "Refresh token requerido" });
@@ -96,42 +126,41 @@ export const refreshToken = async (
   }
 
   try {
-    // Buscar tokens válidos
-    const tokens = await prisma.refreshToken.findMany({
-      where: { expiresAt: { gt: new Date() } },
-      include: { user: true },
+    // 1. Buscar el refresh token en la tabla RefreshToken
+    const storedToken = await prisma.refreshToken.findFirst({
+      where: { token: refreshToken },
+      include: { user: true }, // traemos el usuario asociado
     });
 
-    // Comparar tokens
-    let validToken = null;
-    for (const tokenRecord of tokens) {
-      if (await compareRefreshTokens(refreshToken, tokenRecord.token)) {
-        validToken = tokenRecord;
-        break;
-      }
-    }
-
-    if (!validToken) {
-      res.status(403).json({ error: "Token inválido o expirado" });
+    if (!storedToken) {
+      res.status(403).json({ error: "Token inválido" });
       return;
     }
+    // 2. Verificar la firma del JWT
+    jwt.verify(
+      refreshToken,
+      JWT_SECRET,
+      (
+        err: jwt.VerifyErrors | null,
+        decoded: JwtPayload | string | undefined
+      ) => {
+        if (err)
+          return res.status(403).json({ error: "Token expirado o inválido" });
 
-    // Generar nuevos tokens y rotar
-    const newAccessToken = generateToken(validToken.user);
-    const newRefreshToken = generateRefreshToken();
+        // 3. Generar nuevo access token
+        const accessToken = generateToken(storedToken.user);
 
-    await prisma.$transaction([
-      prisma.refreshToken.delete({ where: { id: validToken.id } }),
-      prisma.refreshToken.create({
-        data: {
-          token: await hashRefreshToken(newRefreshToken),
-          userId: validToken.userId,
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        },
-      }),
-    ]);
+        // 4. Enviar nuevo access token en cookie
+        res.cookie("accessToken", accessToken, {
+          httpOnly: isProduction, // httpOnly solo en producción
+          secure: isProduction, // solo se envía en HTTPS en producción
+          sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+          maxAge: 15 * 60 * 1000, // 15 minutos
+        });
 
-    res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+        res.json({ message: "Access token renovado" });
+      }
+    );
   } catch (error) {
     console.error("Refresh error:", error);
     res.status(500).json({ error: "Error al renovar token" });
@@ -139,7 +168,7 @@ export const refreshToken = async (
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
     res.status(400).json({ error: "Refresh token requerido" });
@@ -147,19 +176,18 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const tokens = await prisma.refreshToken.findMany({
-      where: { expiresAt: { gt: new Date() } },
+    const deleted = await prisma.refreshToken.deleteMany({
+      where: { token: refreshToken },
     });
 
-    for (const tokenRecord of tokens) {
-      if (await compareRefreshTokens(refreshToken, tokenRecord.token)) {
-        await prisma.refreshToken.delete({ where: { id: tokenRecord.id } });
-        res.status(204).end(); // 204 No Content
-        return;
-      }
+    if (deleted.count === 0) {
+      res.status(404).json({ error: "Token no encontrado" });
+      return;
     }
 
-    res.status(404).json({ error: "Token no encontrado" });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.json({ message: "Sesión cerrada" });
   } catch (error) {
     console.error("Logout error:", error);
     res.status(500).json({ error: "Error al cerrar sesión" });

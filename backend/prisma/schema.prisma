@@ -32,6 +32,7 @@ model RefreshToken {
   token     String
   userId    Int // Debe ser Int para coincidir con User.id
   user      User     @relation(fields: [userId], references: [id]) // Relación correcta
+  revoked   Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
 }

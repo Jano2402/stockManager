@@ -6,6 +6,8 @@ import helmet from "helmet";
 import fs from "fs";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+
 import authRoutes from "./routes/authRoutes";
 import appRoutes from "./routes/appRoutes";
 import { authenticateToken } from "./routes/authRoutes";
@@ -48,6 +50,9 @@ app.use(morgan("combined", { stream: accessLogStream }));
 
 // JSON understanding
 app.use(express.json());
+
+// Simplifies woking with cookies
+app.use(cookieParser());
 
 // Routes
 app.use("/auth", authRoutes);
