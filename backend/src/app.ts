@@ -22,7 +22,8 @@ const corsOptions = {
     "https://mi-app.com",
   ], // Lista de dominios permitidos
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-  allowedHeaders: ["Content-Type"], // Encabezados permitidos
+  // allowedHeaders: ["Content-Type"], // Encabezados permitidos
+  credentials: true,
 };
 
 // Usar CORS con la configuración
