@@ -9,6 +9,33 @@ interface stockItem {
   cantidad: number;
 }
 
+const modificarProducto = async (
+  idProducto: number,
+  datosActualizados: stockItem,
+) => {
+  await axiosClient
+    .put(
+      `http://localhost:3000/app/stock/products/${idProducto}`,
+      { datosActualizados },
+      {
+        withCredentials: true,
+      },
+    )
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+      if (error.response?.status === 404) {
+        console.error("Producto no encontrado");
+      } else if (error.response?.status === 400) {
+        console.error("Datos inválidos");
+      } else {
+        console.error("Error inesperado");
+      }
+    });
+};
+
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +55,19 @@ function Stock() {
         console.log(error);
       })
       .finally(function () {});
+  }, []);
+
+  // La función anda, falta implementarla
+  // Siguiente paso hacer que al editar el producto se mande la request y actualizar
+  // la página
+
+  useEffect(() => {
+    modificarProducto(1, {
+      id: 1,
+      nombre: "Sifones",
+      precio: 30,
+      cantidad: 0,
+    });
   }, []);
 
   if (loading) return <div>Cargando ...</div>;
