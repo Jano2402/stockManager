@@ -16,7 +16,7 @@ const modificarProducto = async (
   await axiosClient
     .put(
       `http://localhost:3000/app/stock/products/${idProducto}`,
-      { datosActualizados },
+      datosActualizados,
       {
         withCredentials: true,
       },
@@ -40,6 +40,18 @@ function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const handleEditing = (id?: number) => {
+    if (id !== undefined) {
+      setEditing(true);
+      setEditingId(id);
+    } else {
+      setEditing(false);
+      setEditingId(null);
+    }
+  };
 
   useEffect(() => {
     axiosClient
@@ -73,7 +85,19 @@ function Stock() {
   if (loading) return <div>Cargando ...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  return (
+  const editingItem = data.find((item) => item.id === editingId);
+
+  return editing && editingItem ? (
+    <>
+      <h1>Editando</h1>
+      <div>
+        <h3>{editingItem.nombre}</h3>
+        <p>Precio: {editingItem.precio}</p>
+        <p>Cantidad: {editingItem.cantidad}</p>
+      </div>
+      <button onClick={() => handleEditing()}>Cancelar</button>
+    </>
+  ) : (
     <>
       <h1>Stock</h1>
       <div>
@@ -82,7 +106,7 @@ function Stock() {
             <h3>{item.nombre}</h3>
             <p>Precio: {item.precio}</p>
             <p>Cantidad: {item.cantidad}</p>
-            <button>Editar</button>
+            <button onClick={() => handleEditing(item.id)}>Editar</button>
           </div>
         ))}
       </div>
