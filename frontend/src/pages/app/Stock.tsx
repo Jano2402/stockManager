@@ -92,9 +92,18 @@ function Stock() {
       <h1>Editando</h1>
       <div>
         <h3>{editingItem.nombre}</h3>
-        <p>Precio: {editingItem.precio}</p>
+        <p>Precio actual: {editingItem.precio}</p>
+        <div>
+          <form onSubmit={() => {}}>
+            <div>
+              <label htmlFor="">Nuevo precio</label>
+              <input type="number" onChange={() => {}} />
+            </div>
+          </form>
+        </div>
         <p>Cantidad: {editingItem.cantidad}</p>
       </div>
+      <button>Aceptar</button>
       <button onClick={() => handleEditing()}>Cancelar</button>
     </>
   ) : (
