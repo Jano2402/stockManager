@@ -16,7 +16,7 @@ axiosClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await axios.post("/auth/refresh", {}, { withCredentials: true });
+        await axiosClient.post("/auth/refresh");
         return axiosClient(originalRequest); // reintentar con nuevo access token
       } catch {
         window.location.href = "/auth/login"; // refresh falló → logout

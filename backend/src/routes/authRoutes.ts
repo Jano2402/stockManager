@@ -23,7 +23,7 @@ const verifyCookieToken = (req: Request, res: Response): JwtPayload | null => {
   try {
     return jwt.verify(token, JWT_SECRET as string) as JwtPayload;
   } catch {
-    res.status(403).json({ error: "Invalid token" });
+    return res.status(401).json({ error: "Invalid or expiered token" });
     return null;
   }
 };
@@ -47,7 +47,7 @@ export const authenticateToken = (
     (req as any).user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ error: "Invalid token" });
+    return res.status(401).json({ error: "Invalid or expiered token" }); // Ponemos 401 también para que lo handlee el refresh
   }
 };
 

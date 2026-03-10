@@ -1,4 +1,3 @@
-// import axios from "axios";
 import React, { useState, useEffect } from "react";
 import axiosClient from "../../api/axiosClient";
 
@@ -13,112 +12,114 @@ const modificarProducto = async (
   idProducto: number,
   datosActualizados: stockItem,
 ) => {
-  await axiosClient
-    .put(
-      `http://localhost:3000/app/stock/products/${idProducto}`,
-      datosActualizados,
-      {
-        withCredentials: true,
-      },
-    )
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-      if (error.response?.status === 404) {
-        console.error("Producto no encontrado");
-      } else if (error.response?.status === 400) {
-        console.error("Datos inválidos");
-      } else {
-        console.error("Error inesperado");
-      }
-    });
+  const response = await axiosClient.put(
+    `http://localhost:3000/app/stock/products/${idProducto}`,
+    datosActualizados,
+    { withCredentials: true },
+  );
+  return response.data;
 };
 
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editing, setEditing] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleEditing = (id?: number) => {
-    if (id !== undefined) {
-      setEditing(true);
-      setEditingId(id);
-    } else {
-      setEditing(false);
-      setEditingId(null);
-    }
-  };
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState<stockItem | null>(null);
 
   useEffect(() => {
     axiosClient
       .get<stockItem[]>("http://localhost:3000/app/stock/products")
-      .then(function (response) {
-        setData(response.data);
+      .then((res) => {
+        setData(res.data);
         setLoading(false);
-        console.log(response);
       })
-      .catch(function (error) {
-        setError(error.message);
+      .catch((err) => {
+        setError(err.message);
         setLoading(false);
-        console.log(error);
-      })
-      .finally(function () {});
+      });
   }, []);
 
-  // La función anda, falta implementarla
-  // Siguiente paso hacer que al editar el producto se mande la request y actualizar
-  // la página
+  const handleEditing = (item?: stockItem) => {
+    if (item) {
+      setEditing(true);
+      setFormData({ ...item });
+    } else {
+      setEditing(false);
+      setFormData(null);
+    }
+  };
 
-  useEffect(() => {
-    modificarProducto(1, {
-      id: 1,
-      nombre: "Sifones",
-      precio: 30,
-      cantidad: 0,
-    });
-  }, []);
+  const handleSave = async () => {
+    if (!formData) return;
 
-  if (loading) return <div>Cargando ...</div>;
+    try {
+      await modificarProducto(formData.id, formData);
+
+      setData((prev) =>
+        prev.map((item) => (item.id === formData.id ? formData : item)),
+      );
+
+      handleEditing();
+    } catch (err) {
+      console.error(err);
+      alert("Error al modificar producto");
+    }
+  };
+
+  if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const editingItem = data.find((item) => item.id === editingId);
-
-  return editing && editingItem ? (
+  return editing && formData ? (
     <>
-      <h1>Editando</h1>
+      <h1>Editando producto</h1>
+
+      <h3>{formData.nombre}</h3>
+
       <div>
-        <h3>{editingItem.nombre}</h3>
-        <p>Precio actual: {editingItem.precio}</p>
-        <div>
-          <form onSubmit={() => {}}>
-            <div>
-              <label htmlFor="">Nuevo precio</label>
-              <input type="number" onChange={() => {}} />
-            </div>
-          </form>
-        </div>
-        <p>Cantidad: {editingItem.cantidad}</p>
+        <label>Precio</label>
+        <input
+          type="number"
+          value={formData.precio}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              precio: Number(e.target.value),
+            })
+          }
+        />
       </div>
-      <button>Aceptar</button>
+
+      <div>
+        <label>Cantidad</label>
+        <input
+          type="number"
+          value={formData.cantidad}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              cantidad: Number(e.target.value),
+            })
+          }
+        />
+      </div>
+
+      <button onClick={handleSave}>Aceptar</button>
       <button onClick={() => handleEditing()}>Cancelar</button>
     </>
   ) : (
     <>
       <h1>Stock</h1>
-      <div>
-        {data.map((item) => (
-          <div key={item.id}>
-            <h3>{item.nombre}</h3>
-            <p>Precio: {item.precio}</p>
-            <p>Cantidad: {item.cantidad}</p>
-            <button onClick={() => handleEditing(item.id)}>Editar</button>
-          </div>
-        ))}
-      </div>
+
+      {data.map((item) => (
+        <div key={item.id}>
+          <h3>{item.nombre}</h3>
+          <p>Precio: {item.precio}</p>
+          <p>Cantidad: {item.cantidad}</p>
+          <button onClick={() => handleEditing(item)}>Editar</button>
+        </div>
+      ))}
     </>
   );
 }

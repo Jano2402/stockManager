@@ -6,6 +6,8 @@ import crypto from "crypto"; // Para generar refresh tokens únicos
 import bcrypt from "bcrypt";
 
 const JWT_SECRET: string = process.env.JWT_SECRET || "default-secret";
+const REFRESH_JWT_SECRET: string =
+  process.env.REFRESH_JWT_SECRET || "default-refresh-secret";
 
 // Genera el access token (válido por 1h como en tu código)
 export const generateToken = (user: User): string => {
@@ -18,9 +20,5 @@ export const generateToken = (user: User): string => {
 
 // Genera un refresh token (único, válido por 7 días)
 export const generateRefreshToken = (user: User): string => {
-  return jwt.sign(
-    { id: user.id, username: user.username, role: user.role },
-    JWT_SECRET,
-    { expiresIn: "15m" }
-  );
+  return jwt.sign({ id: user.id }, REFRESH_JWT_SECRET, { expiresIn: "7d" });
 };

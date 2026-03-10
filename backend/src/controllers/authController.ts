@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
+const REFRESH_JWT_SECRET =
+  process.env.REFRESH_JWT_SECRET || "default-refresh-secret";
 const isProduction = process.env.NODE_ENV === "production";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -139,7 +141,7 @@ export const refreshToken = async (
     // 2. Verificar la firma del JWT
     jwt.verify(
       refreshToken,
-      JWT_SECRET,
+      REFRESH_JWT_SECRET,
       (
         err: jwt.VerifyErrors | null,
         decoded: JwtPayload | string | undefined
