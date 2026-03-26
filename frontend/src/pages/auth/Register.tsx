@@ -23,7 +23,7 @@ function Register() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value, // Pasa por segunda vez uno de los parámetros, y JS siempre que lo pasas dos veces toma el último.
     }));
   };
 
