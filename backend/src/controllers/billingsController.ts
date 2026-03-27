@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/prisma";
+import { error } from "console";
 
 interface CompraAgrupada {
   nombre: string;
@@ -13,7 +14,7 @@ interface CompraAgrupada {
 
 export const getPurchasesByDates = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { fechaInicio, fechaFin } = req.query;
 
@@ -62,7 +63,10 @@ export const getPurchasesByDates = async (
 
     // Validación 4: Comprobar si hay datos
     if (compras.length === 0) {
-      res.status(404).json({ message: "No hay compras en el rango de fechas" });
+      res.status(200).json({
+        data: [],
+        message: "No hay compras en el rango de fechas",
+      });
       return;
     }
 
@@ -98,9 +102,13 @@ export const getPurchasesByDates = async (
 
         return acc;
       },
-      {}
+      {},
     );
 
+    res.status(200).json({
+      data: Object.values(comprasAgrupadas),
+      message: "Compras obtenidas correctamente",
+    });
     res.json(Object.values(comprasAgrupadas)); // Convertir a array
   } catch (error: any) {
     console.error("Error en getPurchasesByDates:", error);

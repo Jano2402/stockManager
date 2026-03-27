@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Stock from "./pages/app/Stock";
+import Billings from "./pages/app/Billings";
 import Logout from "./pages/auth/Logout";
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
             </Route>
           </Route>
           {/* Billings routes */}
-          <Route path="billings" element={<Stock />}>
+          <Route path="billings" element={<Billings />}>
             <Route path="purchases" element={<></>} />
           </Route>
           {/* Clients routes */}
