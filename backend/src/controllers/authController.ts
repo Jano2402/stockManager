@@ -87,6 +87,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const accessToken = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    await prisma.refreshToken.deleteMany({
+      where: { userId: user.id },
+    });
+
     await prisma.refreshToken.create({
       data: {
         token: refreshToken,
@@ -118,7 +122,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const refreshToken = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const refreshToken = req.cookies.refreshToken;
 
@@ -138,30 +142,48 @@ export const refreshToken = async (
       res.status(403).json({ error: "Token inválido" });
       return;
     }
+
+    if (storedToken.expiresAt < new Date()) {
+      await prisma.refreshToken.deleteMany({
+        where: { token: refreshToken },
+      });
+
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+
+      res.status(403).json({ error: "Refresh token expirado" });
+      return;
+    }
     // 2. Verificar la firma del JWT
     jwt.verify(
       refreshToken,
       REFRESH_JWT_SECRET,
-      (
+      async (
         err: jwt.VerifyErrors | null,
-        decoded: JwtPayload | string | undefined
+        decoded: JwtPayload | string | undefined,
       ) => {
-        if (err)
-          return res.status(403).json({ error: "Token expirado o inválido" });
+        if (err) {
+          await prisma.refreshToken.deleteMany({
+            where: { token: refreshToken },
+          });
 
-        // 3. Generar nuevo access token
+          res.clearCookie("accessToken");
+          res.clearCookie("refreshToken");
+
+          return res.status(403).json({ error: "Token expirado o inválido" });
+        }
+
         const accessToken = generateToken(storedToken.user);
 
-        // 4. Enviar nuevo access token en cookie
         res.cookie("accessToken", accessToken, {
-          httpOnly: isProduction, // httpOnly solo en producción
-          secure: isProduction, // solo se envía en HTTPS en producción
-          sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
-          maxAge: 15 * 60 * 1000, // 15 minutos
+          httpOnly: isProduction,
+          secure: isProduction,
+          sameSite: isProduction ? "strict" : "lax",
+          maxAge: 15 * 60 * 1000,
         });
 
         res.json({ message: "Access token renovado" });
-      }
+      },
     );
   } catch (error) {
     console.error("Refresh error:", error);

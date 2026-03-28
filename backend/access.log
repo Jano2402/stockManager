@@ -1556,3 +1556,7 @@
 ::1 - - [27/Mar/2026:23:40:07 +0000] "GET /app/billings/purchases?fechaInicio=&fechaFin= HTTP/1.1" 400 52 "http://localhost:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
 ::1 - - [27/Mar/2026:23:40:18 +0000] "GET /app/billings/purchases?fechaInicio=2026-03-24&fechaFin=2026-03-26 HTTP/1.1" 200 60 "http://localhost:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
 ::1 - - [27/Mar/2026:23:40:22 +0000] "GET /app/billings/purchases?fechaInicio=2026-03-24&fechaFin=2026-03-27 HTTP/1.1" 500 166 "http://localhost:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+::1 - - [28/Mar/2026:00:00:26 +0000] "POST /auth/login HTTP/1.1" 200 27 "-" "PostmanRuntime/7.51.1"
+::1 - - [28/Mar/2026:00:03:06 +0000] "POST /auth/login HTTP/1.1" 200 27 "-" "PostmanRuntime/7.51.1"
+::1 - - [28/Mar/2026:00:05:02 +0000] "POST /auth/login HTTP/1.1" 200 27 "-" "PostmanRuntime/7.51.1"
+::1 - - [28/Mar/2026:00:05:48 +0000] "POST /auth/login HTTP/1.1" 200 27 "-" "PostmanRuntime/7.51.1"
