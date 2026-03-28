@@ -25,11 +25,20 @@ const getProductPrices = async (): Promise<Record<string, number>> => {
         map[p.nombre] = p.precio;
         return map;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   } catch (error) {
     console.error("Error en getProductPrices:", error);
     throw error; // Propaga el error para manejarlo en las funciones que llaman a esta
+  }
+};
+
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clients = await prisma.clientes.findMany();
+    res.status(200).json(clients);
+  } catch (error: any) {
+    res.status(500).json({ error: "Hubo un error al obtener los clientes" });
   }
 };
 
@@ -73,7 +82,7 @@ export const initUser = async (req: Request, res: Response): Promise<void> => {
 
 export const searchUser = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { nombre } = req.query;
 
@@ -97,7 +106,7 @@ export const searchUser = async (
 
 export const addPurchase = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = req.params;
   const {
@@ -116,7 +125,7 @@ export const addPurchase = async (
   }
   if (
     [sifones, bidones_6l, bidones_12l, pago, devuelveBid, devuelveSif].some(
-      isNaN
+      isNaN,
     )
   ) {
     res.status(400).json({ error: "Todos los valores deben ser números" });
@@ -177,7 +186,7 @@ export const addPurchase = async (
 
 export const deleteClient = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = req.params;
 
@@ -203,7 +212,7 @@ export const deleteClient = async (
 
 export const updateClient = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = req.params;
   const { nombre, telefono, deuda, cant_envases, cant_bidones } = req.body;
@@ -236,7 +245,7 @@ export const updateClient = async (
 // Modificar una compra específica
 export const modifyPurchase = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = req.params;
   const { sifones, bidones_12l, bidones_6l, pago, devuelveSif, devuelveBid } =
@@ -249,7 +258,7 @@ export const modifyPurchase = async (
   }
   if (
     [sifones, bidones_12l, bidones_6l, pago, devuelveSif, devuelveBid].some(
-      isNaN
+      isNaN,
     )
   ) {
     res.status(400).json({ error: "Todos los valores deben ser números" });

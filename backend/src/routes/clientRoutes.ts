@@ -6,12 +6,14 @@ import {
   deleteClient,
   updateClient,
   modifyPurchase,
+  getUsers,
 } from "../controllers/clientController";
 import authenticateAdmin, { authenticateToken } from "./authRoutes";
 
 const router = express.Router();
 
 router.post("/init", authenticateToken, initUser);
+router.get("/get", authenticateToken, getUsers);
 router.get("/search", authenticateToken, searchUser);
 router.post("/:id/purchases", authenticateToken, addPurchase);
 router.put("/:id/modify", authenticateToken, updateClient);

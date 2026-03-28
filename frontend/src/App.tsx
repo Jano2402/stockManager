@@ -4,6 +4,7 @@ import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Stock from "./pages/app/Stock";
 import Billings from "./pages/app/Billings";
+import Clients from "./pages/app/Clients";
 import Logout from "./pages/auth/Logout";
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
             <Route path="purchases" element={<></>} />
           </Route>
           {/* Clients routes */}
-          <Route path="clients" element={<Stock />}>
+          <Route path="clients" element={<Clients />}>
             <Route path="init" element={<></>} />
             <Route path="search" element={<></>} />
             <Route path=":id/purchases" element={<></>} />
