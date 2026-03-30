@@ -18,6 +18,15 @@ type UpdateClientData = {
   cant_bidones?: number;
 };
 
+type Compra = {
+  sifones?: number;
+  bidones_6l?: number;
+  bidones_12l?: number;
+  pago?: number;
+  devuelveSif?: number;
+  devuelveBid?: number;
+};
+
 function Clients() {
   const [err, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,6 +41,12 @@ function Clients() {
   const [deuda, setDeuda] = useState<string>("");
   const [cant_envases, setCantEnvases] = useState<string>("");
   const [cant_bidones, setCantBidones] = useState<string>("");
+  const [sifones, setSifones] = useState<string>("");
+  const [bidones_6l, setBidones6l] = useState<string>("");
+  const [bidones_12l, setBidones12l] = useState<string>("");
+  const [pago, setPago] = useState<string>("");
+  const [devuelveBid, setDevuelveBid] = useState<string>("");
+  const [devuelveSif, setDevuelveSif] = useState<string>("");
 
   useEffect(() => {
     axiosClient
@@ -226,6 +241,140 @@ function Clients() {
       {!loading && !err && modalAbierto === "AñadirCompra" && (
         <div>
           <h3>Añadir compra</h3>
+
+          <label>Id</label>
+          <input
+            type="number"
+            placeholder="Id"
+            value={id}
+            onChange={(e) => setId(parseInt(e.target.value))}
+          />
+
+          <label>Sifones</label>
+          <input
+            type="text"
+            placeholder="sifones"
+            value={sifones}
+            onChange={(e) => setSifones(e.target.value)}
+          />
+
+          <label>Bidones 6l</label>
+          <input
+            type="text"
+            placeholder="Bidones 6l"
+            value={bidones_6l}
+            onChange={(e) => setBidones6l(e.target.value)}
+          />
+
+          <label>Bidones 12l</label>
+          <input
+            type="number"
+            placeholder="Bidones 12l"
+            value={bidones_12l}
+            onChange={(e) => setBidones12l(e.target.value)}
+          />
+
+          <label>Pago</label>
+          <input
+            type="number"
+            placeholder="Pago"
+            value={pago}
+            onChange={(e) => setPago(e.target.value)}
+          />
+
+          <label>Sifones que devuelve</label>
+          <input
+            type="number"
+            placeholder="Sifones que devuelve"
+            value={devuelveSif}
+            onChange={(e) => setDevuelveSif(e.target.value)}
+          />
+
+          <label>Bidones que devuelve</label>
+          <input
+            type="number"
+            placeholder="Bidones que devuelve"
+            value={devuelveBid}
+            onChange={(e) => setDevuelveBid(e.target.value)}
+          />
+
+          <button
+            onClick={async () => {
+              const data: Compra = {
+                ...(sifones !== "" && { sifones: Number(sifones) }),
+                ...(bidones_6l !== "" && { bidones_6l: Number(bidones_6l) }),
+                ...(bidones_12l !== "" && { bidones_12l: Number(bidones_12l) }),
+                ...(pago !== "" && { pago: Number(pago) }),
+                ...(devuelveSif !== "" && { devuelveSif: Number(devuelveSif) }),
+                ...(devuelveBid !== "" && { devuelveBid: Number(devuelveBid) }),
+              };
+
+              try {
+                await axiosClient.post(
+                  `http://localhost:3000/app/clients/${id}/purchases`,
+                  data,
+                  { withCredentials: true },
+                );
+
+                setNombre("");
+                setTelefono("");
+                setDeuda("");
+                setCantEnvases("");
+                setCantBidones("");
+
+                setActualizar((prev) => prev + 1);
+              } catch (error: any) {
+                setError(error.message);
+              }
+            }}
+          >
+            Aceptar
+          </button>
+          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
+        </div>
+      )}
+
+      {/* {!loading && !err && modalAbierto === "Modificar compra" && ()} -> Implementar como un modal que muestre
+      todas las compras y ponga opcion para editarlas */}
+
+      {!loading && !err && modalAbierto === "BorrarCliente" && (
+        <div>
+          <h3>Borrar Cliente</h3>
+
+          <label>Id</label>
+          <input
+            type="number"
+            placeholder="Id"
+            value={id}
+            onChange={(e) => setId(parseInt(e.target.value))}
+          />
+
+          {/* Añadir verificación de cliente, que pongo el id del cliente, el numero y el telefono, y que
+          el backend verifique que todo coincida para luego borrar */}
+
+          <button
+            onClick={async () => {
+              try {
+                await axiosClient.delete(
+                  `http://localhost:3000/app/clients/${id}/delete`,
+                  { withCredentials: true },
+                );
+
+                setNombre("");
+                setTelefono("");
+                setDeuda("");
+                setCantEnvases("");
+                setCantBidones("");
+
+                setActualizar((prev) => prev + 1);
+              } catch (error: any) {
+                setError(error.message);
+              }
+            }}
+          >
+            Aceptar
+          </button>
+          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
       )}
 

@@ -109,7 +109,6 @@ export const getPurchasesByDates = async (
       data: Object.values(comprasAgrupadas),
       message: "Compras obtenidas correctamente",
     });
-    res.json(Object.values(comprasAgrupadas)); // Convertir a array
   } catch (error: any) {
     console.error("Error en getPurchasesByDates:", error);
 
