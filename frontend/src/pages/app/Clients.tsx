@@ -79,13 +79,17 @@ function Clients() {
 
             <tbody>
               {clients.map((item, index) => (
-                <tr key={index}>
+                <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.nombre}</td>
                   <td>{item.telefono}</td>
                   <td>{item.deuda}</td>
                   <td>{item.cant_envases}</td>
                   <td>{item.cant_bidones}</td>
+                  {/* Botón de editar (extraer id de alguna manera) */}
+                  <button onClick={() => {}}>Editar</button>
+                  {/* Botón de Añadir compra (extraer id de alguna manera)*/}
+                  <button>Añadir compra</button>
                 </tr>
               ))}
             </tbody>

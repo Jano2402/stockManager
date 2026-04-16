@@ -6,7 +6,7 @@ import {
   Outlet,
   Link,
   Navigate,
-} from "react-router";
+} from "react-router-dom";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Stock from "./pages/app/Stock";
@@ -63,19 +63,25 @@ function App() {
           <Route index element={<p>Bienvenido a la app</p>} />
 
           {/* Clients */}
-          <Route path="clients" element={<Clients />}>
-            <Route path="*" element={<Navigate to="/app/clients" replace />} />
-          </Route>
+          <Route path="clients" element={<Clients />} />
+          <Route
+            path="clients/*"
+            element={<Navigate to="/app/clients" replace />}
+          />
 
           {/* Stock */}
-          <Route path="stock" element={<Stock />}>
-            <Route path="*" element={<Navigate to="/app/stock" replace />} />
-          </Route>
+          <Route path="stock" element={<Stock />} />
+          <Route
+            path="stock/*"
+            element={<Navigate to="/app/stock" replace />}
+          />
 
           {/* Billings */}
-          <Route path="billings" element={<Billings />}>
-            <Route path="*" element={<Navigate to="/app/billings" replace />} />
-          </Route>
+          <Route path="billings" element={<Billings />} />
+          <Route
+            path="billings/*"
+            element={<Navigate to="/app/billings" replace />}
+          />
 
           {/* 🔥 cualquier otra cosa dentro de /app */}
           <Route path="*" element={<Navigate to="/app" replace />} />
