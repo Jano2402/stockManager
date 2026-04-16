@@ -36,6 +36,7 @@ function Clients() {
   const [modalAbierto, setModalAbierto] = useState<string | null>(null);
 
   const [id, setId] = useState<number>(-1);
+  const [selectedCliente, setSelectedClient] = useState<client | null>(null);
   const [nombre, setNombre] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
   const [deuda, setDeuda] = useState<string>("");
@@ -60,6 +61,19 @@ function Clients() {
         setLoading(false);
       });
   }, [actualizar]);
+
+  useEffect(() => {
+    if (
+      selectedCliente &&
+      (modalAbierto === "ActualizarCliente" || modalAbierto === "AñadirCompra")
+    ) {
+      setNombre(selectedCliente.nombre);
+      setTelefono(selectedCliente.telefono);
+      setDeuda(String(selectedCliente.deuda));
+      setCantEnvases(String(selectedCliente.cant_envases));
+      setCantBidones(String(selectedCliente.cant_bidones));
+    }
+  }, [selectedCliente, modalAbierto]);
 
   return (
     <>
@@ -86,10 +100,22 @@ function Clients() {
                   <td>{item.deuda}</td>
                   <td>{item.cant_envases}</td>
                   <td>{item.cant_bidones}</td>
-                  {/* Botón de editar (extraer id de alguna manera) */}
-                  <button onClick={() => {}}>Editar</button>
-                  {/* Botón de Añadir compra (extraer id de alguna manera)*/}
-                  <button>Añadir compra</button>
+                  <button
+                    onClick={() => {
+                      setSelectedClient(item);
+                      setModalAbierto("ActualizarCliente");
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedClient(item);
+                      setModalAbierto("AñadirCompra");
+                    }}
+                  >
+                    Añadir compra
+                  </button>
                 </tr>
               ))}
             </tbody>
@@ -153,14 +179,6 @@ function Clients() {
         <div>
           <h3>Actualizar Cliente</h3>
 
-          <label>Id</label>
-          <input
-            type="number"
-            placeholder="Id"
-            value={id}
-            onChange={(e) => setId(parseInt(e.target.value))}
-          />
-
           <label>Nombre</label>
           <input
             type="text"
@@ -217,7 +235,7 @@ function Clients() {
 
               try {
                 await axiosClient.put(
-                  `http://localhost:3000/app/clients/${id}/modify`,
+                  `http://localhost:3000/app/clients/${selectedCliente?.id}/modify`,
                   data,
                   { withCredentials: true },
                 );
@@ -245,14 +263,6 @@ function Clients() {
       {!loading && !err && modalAbierto === "AñadirCompra" && (
         <div>
           <h3>Añadir compra</h3>
-
-          <label>Id</label>
-          <input
-            type="number"
-            placeholder="Id"
-            value={id}
-            onChange={(e) => setId(parseInt(e.target.value))}
-          />
 
           <label>Sifones</label>
           <input
@@ -315,7 +325,7 @@ function Clients() {
 
               try {
                 await axiosClient.post(
-                  `http://localhost:3000/app/clients/${id}/purchases`,
+                  `http://localhost:3000/app/clients/${selectedCliente?.id}/purchases`,
                   data,
                   { withCredentials: true },
                 );
@@ -387,14 +397,8 @@ function Clients() {
       <button onClick={() => setModalAbierto("AñadirCliente")}>
         Añadir cliente
       </button>
-      <button onClick={() => setModalAbierto("ActualizarCliente")}>
-        Actualizar Cliente
-      </button>
       <button onClick={() => setModalAbierto("BuscarCliente")}>
         Buscar cliente
-      </button>
-      <button onClick={() => setModalAbierto("AñadirCompra")}>
-        Añadir compra
       </button>
       <button onClick={() => setModalAbierto("ModificarCompra")}>
         Modificar compra
