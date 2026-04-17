@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import authClient from "../../api/authClient";
-
-interface LoginForm {
-  username: string;
-  password: string;
-}
-
-interface ErrorResponse {
-  message?: string;
-  // Otras propiedades que pueda devolver tu API en errores
-}
+import type { LoginForm, ErrorResponse } from "../../types";
 
 function Login() {
   const [form, setForm] = useState<LoginForm>({

@@ -1,31 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
-
-interface client {
-  id: number;
-  nombre: string;
-  telefono: string;
-  deuda: number;
-  cant_envases: number;
-  cant_bidones: number;
-}
-
-type UpdateClientData = {
-  nombre?: string;
-  telefono?: string;
-  deuda?: number;
-  cant_envases?: number;
-  cant_bidones?: number;
-};
-
-type Compra = {
-  sifones?: number;
-  bidones_6l?: number;
-  bidones_12l?: number;
-  pago?: number;
-  devuelveSif?: number;
-  devuelveBid?: number;
-};
+import type { client, UpdateClientData, Compra } from "../../types";
 
 function Clients() {
   const [err, setError] = useState<string | null>(null);

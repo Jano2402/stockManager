@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../../api/axiosClient";
-
-interface stockItem {
-  id: number;
-  nombre: string;
-  precio: number;
-  cantidad: number;
-}
+import type { stockItem } from "../../types";
 
 const modificarProducto = async (
   idProducto: number,

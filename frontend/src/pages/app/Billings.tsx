@@ -1,20 +1,6 @@
 import React, { useState } from "react";
 import axiosClient from "../../api/axiosClient";
-
-interface compraAgrupada {
-  nombre: string;
-  sifones: number;
-  bidon6L: number;
-  bidon12L: number;
-  totalPagado: number;
-  totalCompra: number;
-  totalDebiendo: number;
-}
-
-interface ApiResponse {
-  data: compraAgrupada[];
-  message: string;
-}
+import type { compraAgrupada, ApiResponse } from "../../types";
 
 function Billings() {
   const [data, setData] = useState<compraAgrupada[]>([]);

@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import authClient from "../../api/authClient";
-
-interface RegisterForm {
-  username: string;
-  password: string;
-}
-
-interface ErrorResponse {
-  message?: string;
-  // Puedes añadir otras propiedades que devuelva tu API en errores
-}
+import type { RegisterForm, ErrorResponse } from "../../types";
 
 function Register() {
   const [form, setForm] = useState<RegisterForm>({
