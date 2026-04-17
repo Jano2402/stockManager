@@ -94,28 +94,29 @@ function Clients() {
             <tbody>
               {clients.map((item, index) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
                   <td>{item.nombre}</td>
                   <td>{item.telefono}</td>
                   <td>{item.deuda}</td>
                   <td>{item.cant_envases}</td>
                   <td>{item.cant_bidones}</td>
-                  <button
-                    onClick={() => {
-                      setSelectedClient(item);
-                      setModalAbierto("ActualizarCliente");
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedClient(item);
-                      setModalAbierto("AñadirCompra");
-                    }}
-                  >
-                    Añadir compra
-                  </button>
+                  <td>
+                    <button
+                      onClick={() => {
+                        setSelectedClient(item);
+                        setModalAbierto("ActualizarCliente");
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedClient(item);
+                        setModalAbierto("AñadirCompra");
+                      }}
+                    >
+                      Añadir compra
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

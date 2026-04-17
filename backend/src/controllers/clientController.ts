@@ -35,7 +35,11 @@ const getProductPrices = async (): Promise<Record<string, number>> => {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const clients = await prisma.clientes.findMany();
+    const clients = await prisma.clientes.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
     res.status(200).json(clients);
   } catch (error: any) {
     res.status(500).json({ error: "Hubo un error al obtener los clientes" });
