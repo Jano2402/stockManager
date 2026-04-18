@@ -193,15 +193,26 @@ export const deleteClient = async (
   res: Response,
 ): Promise<void> => {
   const { id } = req.params;
+  const { nombre, telefono } = req.body;
 
   if (isNaN(Number(id))) {
     res.status(400).json({ error: "ID inválido" });
     return;
   }
+  if (!nombre || typeof nombre !== "string") {
+    res.status(400).json({ error: "Nombre es requerido y debe ser texto" });
+    return;
+  }
+  if (!telefono || (telefono && !/^\d+$/.test(telefono))) {
+    res
+      .status(400)
+      .json({ error: "El teléfono es requerido y debe contener solo números" });
+    return;
+  }
 
   try {
     const deletedClient = await prisma.clientes.delete({
-      where: { id: Number(id) },
+      where: { id: Number(id), nombre: nombre, telefono: telefono },
     });
     res.json({ message: "Cliente eliminado", deletedClient });
   } catch (error: any) {

@@ -58,6 +58,7 @@ function Clients() {
           <table>
             <thead>
               <tr>
+                <th>Id</th>
                 <th>Cliente</th>
                 <th>Teléfono</th>
                 <th>Deuda</th>
@@ -69,6 +70,7 @@ function Clients() {
             <tbody>
               {clients.map((item, index) => (
                 <tr key={item.id}>
+                  <td>{item.id}</td>
                   <td>{item.nombre}</td>
                   <td>{item.telefono}</td>
                   <td>{item.deuda}</td>
@@ -90,6 +92,14 @@ function Clients() {
                       }}
                     >
                       Añadir compra
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedClient(item);
+                        setModalAbierto("BorrarCliente");
+                      }}
+                    >
+                      Borrar cliente
                     </button>
                   </td>
                 </tr>
@@ -331,23 +341,34 @@ function Clients() {
         <div>
           <h3>Borrar Cliente</h3>
 
-          <label>Id</label>
+          <label>Nombre</label>
           <input
-            type="number"
-            placeholder="Id"
-            value={id}
-            onChange={(e) => setId(parseInt(e.target.value))}
+            type="text"
+            placeholder="Nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
           />
 
-          {/* Añadir verificación de cliente, que pongo el id del cliente, el numero y el telefono, y que
-          el backend verifique que todo coincida para luego borrar */}
+          <label>Telefono</label>
+          <input
+            type="text"
+            placeholder="Telefono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+          />
 
           <button
             onClick={async () => {
               try {
                 await axiosClient.delete(
-                  `http://localhost:3000/app/clients/${id}/delete`,
-                  { withCredentials: true },
+                  `http://localhost:3000/app/clients/${selectedCliente?.id}/delete`,
+                  {
+                    withCredentials: true,
+                    data: {
+                      nombre: nombre,
+                      telefono: telefono,
+                    },
+                  },
                 );
 
                 setNombre("");
@@ -357,12 +378,13 @@ function Clients() {
                 setCantBidones("");
 
                 setActualizar((prev) => prev + 1);
+                setModalAbierto(null);
               } catch (error: any) {
                 setError(error.message);
               }
             }}
           >
-            Aceptar
+            Borrar
           </button>
           <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
@@ -378,9 +400,6 @@ function Clients() {
       </button>
       <button onClick={() => setModalAbierto("ModificarCompra")}>
         Modificar compra
-      </button>
-      <button onClick={() => setModalAbierto("BorrarCliente")}>
-        Borrar Cliente
       </button>
     </>
   );
