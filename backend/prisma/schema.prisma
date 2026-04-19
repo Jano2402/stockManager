@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -39,7 +39,7 @@ model RefreshToken {
 
 model Clientes {
   id           Int       @id @default(autoincrement()) // Identificador único de cliente
-  nombre       String
+  nombre       String    @unique
   telefono     String?
   deuda        Int       @default(0)
   cant_envases Int       @default(0)
