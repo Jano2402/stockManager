@@ -10,7 +10,8 @@ function Clients() {
   const [actualizar, setActualizar] = useState<number>(0);
   const [modalAbierto, setModalAbierto] = useState<string | null>(null);
 
-  const [id, setId] = useState<number>(-1);
+  // const [id, setId] = useState<number>(-1);
+  const [buscar, setBuscar] = useState<string>("");
   const [selectedCliente, setSelectedClient] = useState<client | null>(null);
   const [nombre, setNombre] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
@@ -53,6 +54,16 @@ function Clients() {
   return (
     <>
       <h1>Clientes</h1>
+      <label>Buscar cliente</label>
+      <input
+        type="text"
+        placeholder="Nombre"
+        value={buscar}
+        onChange={(e) => setBuscar(e.target.value)}
+      />
+      {/* Al estar vacío => todos los clientes, Al escribir si input > 2 carácteres buscar, buscar
+      solo después de 300ms de que el usario deja de escribir, mostrar loading cuándo está cargando,
+      sin resultados si hay 404 y cancelar los request anteriores (ni idea como se hace) */}
       {!loading && !err && clients.length > 0 && (
         <div>
           <table>
@@ -244,8 +255,6 @@ function Clients() {
         </div>
       )}
 
-      {/* {!loading && !err && modalAbierto === "Buscar Cliente" && ()} -> Implementar como una barra de búsqueda */}
-
       {!loading && !err && modalAbierto === "AñadirCompra" && (
         <div>
           <h3>Añadir compra</h3>
@@ -394,9 +403,6 @@ function Clients() {
 
       <button onClick={() => setModalAbierto("AñadirCliente")}>
         Añadir cliente
-      </button>
-      <button onClick={() => setModalAbierto("BuscarCliente")}>
-        Buscar cliente
       </button>
       <button onClick={() => setModalAbierto("ModificarCompra")}>
         Modificar compra

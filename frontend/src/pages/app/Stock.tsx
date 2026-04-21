@@ -24,7 +24,9 @@ function Stock() {
 
   useEffect(() => {
     axiosClient
-      .get<stockItem[]>("http://localhost:3000/app/stock/products")
+      .get<stockItem[]>("http://localhost:3000/app/stock/products", {
+        withCredentials: true,
+      })
       .then((res) => {
         setData(res.data);
         setLoading(false);

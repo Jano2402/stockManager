@@ -100,6 +100,7 @@ export const searchUser = async (
       where: {
         nombre: { contains: nombre, mode: "insensitive" },
       },
+      orderBy: { nombre: "asc" },
     });
     res.json(clientes);
   } catch (error) {
