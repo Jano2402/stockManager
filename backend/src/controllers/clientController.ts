@@ -88,7 +88,7 @@ export const searchUser = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { nombre } = req.query;
+  const { nombre, limit } = req.query;
 
   if (typeof nombre !== "string") {
     res.status(400).json({ error: "Parámetro 'nombre' inválido" });
@@ -101,6 +101,7 @@ export const searchUser = async (
         nombre: { contains: nombre, mode: "insensitive" },
       },
       orderBy: { nombre: "asc" },
+      take: Number(limit) || 10,
     });
     res.json(clientes);
   } catch (error) {

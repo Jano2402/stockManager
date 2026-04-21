@@ -26,17 +26,45 @@ function Clients() {
   const [devuelveSif, setDevuelveSif] = useState<string>("");
 
   useEffect(() => {
-    axiosClient
-      .get<client[]>("http://localhost:3000/app/clients/get")
-      .then((res) => {
-        setClients(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [actualizar]);
+    const controller = new AbortController();
+
+    if (buscar === "") {
+      axiosClient
+        .get<client[]>("http://localhost:3000/app/clients/get")
+        .then((res) => {
+          setClients(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") setError(err.message);
+          setLoading(false);
+        });
+      return () => controller.abort();
+    }
+
+    if (buscar.length < 3) return;
+
+    const timeout = setTimeout(() => {
+      axiosClient
+        .get<client[]>(
+          `http://localhost:3000/app/clients/search?nombre=${buscar}&limit=10`,
+          //{ signal: controller.signal },
+        )
+        .then((res) => {
+          setClients(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") setError(err.message);
+          setLoading(false);
+        });
+    }, 300);
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [actualizar, buscar]);
 
   useEffect(() => {
     if (
@@ -61,9 +89,6 @@ function Clients() {
         value={buscar}
         onChange={(e) => setBuscar(e.target.value)}
       />
-      {/* Al estar vacío => todos los clientes, Al escribir si input > 2 carácteres buscar, buscar
-      solo después de 300ms de que el usario deja de escribir, mostrar loading cuándo está cargando,
-      sin resultados si hay 404 y cancelar los request anteriores (ni idea como se hace) */}
       {!loading && !err && clients.length > 0 && (
         <div>
           <table>
