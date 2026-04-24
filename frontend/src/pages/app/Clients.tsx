@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
-import type { client, UpdateClientData, Compra } from "../../types";
+import type { client, UpdateClientData, Compra, compras } from "../../types";
 
 function Clients() {
   const [err, setError] = useState<string | null>(null);
@@ -8,11 +8,16 @@ function Clients() {
 
   const [clients, setClients] = useState<client[]>([]);
   const [actualizar, setActualizar] = useState<number>(0);
+  const [actualizarCompra, setActualizarCompra] = useState<number>(0);
   const [modalAbierto, setModalAbierto] = useState<string | null>(null);
+  const [compras, setCompras] = useState<compras[]>([]);
 
-  // const [id, setId] = useState<number>(-1);
+  // const [id, setId] = useState<number | undefined>(-1);
   const [buscar, setBuscar] = useState<string>("");
   const [selectedCliente, setSelectedClient] = useState<client | null>(null);
+  const [compraSeleccionada, setCompraSeleccionada] = useState<compras | null>(
+    null,
+  );
   const [nombre, setNombre] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
   const [deuda, setDeuda] = useState<string>("");
@@ -48,7 +53,7 @@ function Clients() {
       axiosClient
         .get<client[]>(
           `http://localhost:3000/app/clients/search?nombre=${buscar}&limit=10`,
-          //{ signal: controller.signal },
+          //{ signal: controller.signal }, Descomentar y probar
         )
         .then((res) => {
           setClients(res.data);
@@ -78,6 +83,18 @@ function Clients() {
       setCantBidones(String(selectedCliente.cant_bidones));
     }
   }, [selectedCliente, modalAbierto]);
+
+  const fetchCompras = async (id: number) => {
+    try {
+      const res = await axiosClient.get(
+        `http://localhost:3000/app/clients/${id}/getpurchases`,
+        { withCredentials: true },
+      );
+      setCompras(res.data);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
 
   return (
     <>
@@ -137,6 +154,17 @@ function Clients() {
                     >
                       Borrar cliente
                     </button>
+                    <button
+                      onClick={async () => {
+                        setSelectedClient(item);
+                        setModalAbierto("ModificarCompra");
+                        if (typeof item.id === "number") {
+                          await fetchCompras(item.id);
+                        }
+                      }}
+                    >
+                      Ver compras
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -144,15 +172,10 @@ function Clients() {
           </table>
         </div>
       )}
-
       {!loading && !err && clients.length === 0 && <p>No hay clientes</p>}
-
       {err && <p>{err}</p>}
-
       {loading && <p>Cargando...</p>}
-
       {/* Modales */}
-
       {!loading && !err && modalAbierto === "AñadirCliente" && (
         <div>
           <h3>Añadir cliente</h3>
@@ -196,7 +219,6 @@ function Clients() {
           <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
       )}
-
       {!loading && !err && modalAbierto === "ActualizarCliente" && (
         <div>
           <h3>Actualizar Cliente</h3>
@@ -279,7 +301,6 @@ function Clients() {
           <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
       )}
-
       {!loading && !err && modalAbierto === "AñadirCompra" && (
         <div>
           <h3>Añadir compra</h3>
@@ -367,9 +388,156 @@ function Clients() {
           <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
       )}
+      {!loading &&
+        !err &&
+        modalAbierto === "ModificarCompra" &&
+        compras.length > 0 && (
+          <div>
+            <h3>Compras</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Sifones</th>
+                  <th>Bidones 6l</th>
+                  <th>Bidones 12l</th>
+                  <th>Sifones que devuelve</th>
+                  <th>Bidones que devuelve</th>
+                  <th>Pago</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compras.map((item, index) => (
+                  <tr key={item.id}>
+                    <td>{item.cliente_id}</td>
+                    <td>{item.sifones}</td>
+                    <td>{item.bidones_6l}</td>
+                    <td>{item.bidones_12l}</td>
+                    <td>{item.devuelveSif}</td>
+                    <td>{item.devuelveBid}</td>
+                    <td>{item.pago}</td>
+                    <td>{new Date(item.fecha).toLocaleDateString("es-UY")}</td>
+                    <td>
+                      <button
+                        onClick={() => {
+                          setCompraSeleccionada(item);
+                          setSifones(String(item.sifones));
+                          setBidones6l(String(item.bidones_6l));
+                          setBidones12l(String(item.bidones_12l));
+                          setDevuelveSif(String(item.devuelveSif));
+                          setDevuelveBid(String(item.devuelveBid));
+                          setPago(String(item.pago));
+                          setModalAbierto("EditarCompra");
+                        }}
+                      >
+                        Modificar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              onClick={() => {
+                setModalAbierto(null);
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
 
-      {/* {!loading && !err && modalAbierto === "Modificar compra" && ()} -> Implementar como un modal que muestre
-      todas las compras y ponga opcion para editarlas */}
+      {!loading &&
+        !err &&
+        modalAbierto === "EditarCompra" &&
+        compraSeleccionada && (
+          <div>
+            <h3>Modificando compra</h3>
+
+            <p>Id: {compraSeleccionada.id}</p>
+            <label>Sifones</label>
+            <input
+              type="number"
+              placeholder="sifones"
+              value={sifones}
+              onChange={(e) => setSifones(e.target.value)}
+            />
+            <label>Bidones 6l</label>
+            <input
+              type="number"
+              placeholder="bidones 6l"
+              value={bidones_6l}
+              onChange={(e) => setBidones6l(e.target.value)}
+            />
+            <label>Bidones 12l</label>
+            <input
+              type="number"
+              placeholder="bidones 12l"
+              value={bidones_12l}
+              onChange={(e) => setBidones12l(e.target.value)}
+            />
+            <label>Sifones que devuelve</label>
+            <input
+              type="number"
+              placeholder="Sifones que devuelve"
+              value={devuelveSif}
+              onChange={(e) => setDevuelveSif(e.target.value)}
+            />
+            <label>Bidones que devuelve</label>
+            <input
+              type="number"
+              placeholder="Bidones que devuelve"
+              value={devuelveBid}
+              onChange={(e) => setDevuelveBid(e.target.value)}
+            />
+            <label>Pago</label>
+            <input
+              type="number"
+              placeholder="pago"
+              value={pago}
+              onChange={(e) => setPago(e.target.value)}
+            />
+            <button
+              onClick={async () => {
+                try {
+                  await axiosClient.put(
+                    `http://localhost:3000/app/clients/purchases/${compraSeleccionada.id}`,
+                    {
+                      sifones: Number(sifones),
+                      bidones_6l: Number(bidones_6l),
+                      bidones_12l: Number(bidones_12l),
+                      devuelveBid: Number(devuelveBid),
+                      devuelveSif: Number(devuelveSif),
+                      pago: Number(pago),
+                    },
+                    { withCredentials: true },
+                  );
+
+                  setSifones("");
+                  setBidones6l("");
+                  setBidones12l("");
+                  setDevuelveBid("");
+                  setDevuelveSif("");
+                  setPago("");
+
+                  setCompraSeleccionada(null);
+                  setModalAbierto("ModificarCompra");
+
+                  setActualizar((prev) => prev + 1);
+                  await fetchCompras(compraSeleccionada.cliente_id);
+                } catch (error: any) {
+                  setError(error.message);
+                }
+              }}
+            >
+              Aceptar
+            </button>
+            <button onClick={() => setModalAbierto("ModificarCompra")}>
+              Cerrar
+            </button>
+          </div>
+        )}
 
       {!loading && !err && modalAbierto === "BorrarCliente" && (
         <div>
@@ -423,14 +591,9 @@ function Clients() {
           <button onClick={() => setModalAbierto(null)}>Cerrar</button>
         </div>
       )}
-
       {/* Modales Fin */}
-
       <button onClick={() => setModalAbierto("AñadirCliente")}>
         Añadir cliente
-      </button>
-      <button onClick={() => setModalAbierto("ModificarCompra")}>
-        Modificar compra
       </button>
     </>
   );

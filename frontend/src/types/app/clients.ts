@@ -23,3 +23,17 @@ export type Compra = {
   devuelveSif?: number;
   devuelveBid?: number;
 };
+
+export interface compras {
+  id: number;
+  deuda: number;
+  cliente_id: number;
+  fecha: Date;
+  sifones: number;
+  bidones_12l: number;
+  bidones_6l: number;
+  devuelveSif: number;
+  devuelveBid: number;
+  totalCompra: number;
+  pago: number;
+}

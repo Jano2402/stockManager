@@ -54,7 +54,7 @@ export const getPurchasesByDates = async (
           select: {
             id: true,
             nombre: true,
-            deuda: true, // Asegurar que este campo esté disponible
+            deuda: true,
           },
         },
       },

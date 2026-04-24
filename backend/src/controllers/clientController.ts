@@ -259,6 +259,42 @@ export const updateClient = async (
   }
 };
 
+export const getPurchasesbyClientId = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const compras = await prisma.compras.findMany({
+      where: { cliente_id: Number(id) },
+      orderBy: {
+        fecha: "desc",
+      },
+    });
+
+    if (compras.length === 0) {
+      res.status(404).json({
+        error: "Este cliente no tiene compras",
+      });
+      return;
+    }
+
+    res.status(200).json(compras);
+  } catch (error: any) {
+    console.error("Error en getPurchasesByDates:", error);
+
+    // Manejo de errores específicos de Prisma
+    if (error.code === "P2025") {
+      res.status(404).json({ error: "Datos relacionados no encontrados" });
+    } else {
+      res.status(500).json({
+        error: "Error al obtener compras",
+      });
+    }
+  }
+};
+
 // Modificar una compra específica
 export const modifyPurchase = async (
   req: Request,
