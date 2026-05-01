@@ -2,33 +2,57 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
 import type { client, UpdateClientData, Compra, compras } from "../../types";
 
+interface Cliente {
+  nombre: string;
+  telefono: string;
+  deuda: string;
+  cant_envases: string;
+  cant_bidones: string;
+  sifones: string;
+  bidones_6l: string;
+  bidones_12l: string;
+  pago: string;
+  devuelveBid: string;
+  devuelveSif: string;
+}
+
+const clienteIncial: Cliente = {
+  nombre: "",
+  telefono: "",
+  deuda: "",
+  cant_envases: "",
+  cant_bidones: "",
+  sifones: "",
+  bidones_6l: "",
+  bidones_12l: "",
+  pago: "",
+  devuelveBid: "",
+  devuelveSif: "",
+};
+
 function Clients() {
   const [err, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [clients, setClients] = useState<client[]>([]);
   const [actualizar, setActualizar] = useState<number>(0);
-  const [actualizarCompra, setActualizarCompra] = useState<number>(0);
   const [modalAbierto, setModalAbierto] = useState<string | null>(null);
   const [compras, setCompras] = useState<compras[]>([]);
 
+  // const [actualizarCompra, setActualizarCompra] = useState<number>(0);
   // const [id, setId] = useState<number | undefined>(-1);
+
   const [buscar, setBuscar] = useState<string>("");
   const [selectedCliente, setSelectedClient] = useState<client | null>(null);
   const [compraSeleccionada, setCompraSeleccionada] = useState<compras | null>(
     null,
   );
-  const [nombre, setNombre] = useState<string>("");
-  const [telefono, setTelefono] = useState<string>("");
-  const [deuda, setDeuda] = useState<string>("");
-  const [cant_envases, setCantEnvases] = useState<string>("");
-  const [cant_bidones, setCantBidones] = useState<string>("");
-  const [sifones, setSifones] = useState<string>("");
-  const [bidones_6l, setBidones6l] = useState<string>("");
-  const [bidones_12l, setBidones12l] = useState<string>("");
-  const [pago, setPago] = useState<string>("");
-  const [devuelveBid, setDevuelveBid] = useState<string>("");
-  const [devuelveSif, setDevuelveSif] = useState<string>("");
+
+  const [cliente, setCliente] = useState<Cliente>(clienteIncial);
+
+  const resetCliente = () => {
+    setCliente(clienteIncial);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -76,11 +100,26 @@ function Clients() {
       selectedCliente &&
       (modalAbierto === "ActualizarCliente" || modalAbierto === "AñadirCompra")
     ) {
-      setNombre(selectedCliente.nombre);
-      setTelefono(selectedCliente.telefono);
-      setDeuda(String(selectedCliente.deuda));
-      setCantEnvases(String(selectedCliente.cant_envases));
-      setCantBidones(String(selectedCliente.cant_bidones));
+      setCliente((prev) => ({
+        ...prev,
+        nombre: selectedCliente.nombre,
+      }));
+      setCliente((prev) => ({
+        ...prev,
+        telefono: selectedCliente.telefono,
+      }));
+      setCliente((prev) => ({
+        ...prev,
+        deuda: String(selectedCliente.deuda),
+      }));
+      setCliente((prev) => ({
+        ...prev,
+        cant_envases: String(selectedCliente.cant_envases),
+      }));
+      setCliente((prev) => ({
+        ...prev,
+        cant_bidones: String(selectedCliente.cant_bidones),
+      }));
     }
   }, [selectedCliente, modalAbierto]);
 
@@ -121,7 +160,7 @@ function Clients() {
             </thead>
 
             <tbody>
-              {clients.map((item, index) => (
+              {clients.map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.nombre}</td>
@@ -184,16 +223,26 @@ function Clients() {
           <input
             type="text"
             placeholder="Nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={cliente.nombre}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                nombre: e.target.value,
+              }))
+            }
           />
 
           <label>Telefono</label>
           <input
             type="text"
             placeholder="Telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            value={cliente.telefono}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                telefono: e.target.value,
+              }))
+            }
           />
 
           <button
@@ -201,12 +250,11 @@ function Clients() {
               try {
                 await axiosClient.post(
                   "http://localhost:3000/app/clients/init",
-                  { nombre, telefono },
+                  { nombre: cliente.nombre, telefono: cliente.telefono },
                   { withCredentials: true },
                 );
 
-                setNombre("");
-                setTelefono("");
+                resetCliente();
 
                 setActualizar((prev) => prev + 1);
               } catch (error: any) {
@@ -227,53 +275,78 @@ function Clients() {
           <input
             type="text"
             placeholder="Nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={cliente.nombre}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                nombre: e.target.value,
+              }))
+            }
           />
 
           <label>Telefono</label>
           <input
             type="text"
             placeholder="Telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            value={cliente.telefono}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                telefono: e.target.value,
+              }))
+            }
           />
 
           <label>Deuda</label>
           <input
             type="number"
             placeholder="Deuda"
-            value={deuda}
-            onChange={(e) => setDeuda(e.target.value)}
+            value={cliente.deuda}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                deuda: e.target.value,
+              }))
+            }
           />
 
           <label>Cantidad de envases</label>
           <input
             type="number"
             placeholder="Cantidad de envases"
-            value={cant_envases}
-            onChange={(e) => setCantEnvases(e.target.value)}
+            value={cliente.cant_envases}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                cant_envases: e.target.value,
+              }))
+            }
           />
 
           <label>Cantidad de bidones</label>
           <input
             type="number"
             placeholder="Cantidad de bidones"
-            value={cant_bidones}
-            onChange={(e) => setCantBidones(e.target.value)}
+            value={cliente.cant_bidones}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                cant_bidones: e.target.value,
+              }))
+            }
           />
 
           <button
             onClick={async () => {
               const data: UpdateClientData = {
-                ...(nombre !== "" && { nombre }),
-                ...(telefono !== "" && { telefono }),
-                ...(deuda !== "" && { deuda: Number(deuda) }),
-                ...(cant_envases !== "" && {
-                  cant_envases: Number(cant_envases),
+                ...(cliente.nombre !== "" && { nombre: cliente.nombre }),
+                ...(cliente.telefono !== "" && { telefono: cliente.telefono }),
+                ...(cliente.deuda !== "" && { deuda: Number(cliente.deuda) }),
+                ...(cliente.cant_envases !== "" && {
+                  cant_envases: Number(cliente.cant_envases),
                 }),
-                ...(cant_bidones !== "" && {
-                  cant_bidones: Number(cant_bidones),
+                ...(cliente.cant_bidones !== "" && {
+                  cant_bidones: Number(cliente.cant_bidones),
                 }),
               };
 
@@ -284,11 +357,7 @@ function Clients() {
                   { withCredentials: true },
                 );
 
-                setNombre("");
-                setTelefono("");
-                setDeuda("");
-                setCantEnvases("");
-                setCantBidones("");
+                resetCliente();
 
                 setActualizar((prev) => prev + 1);
               } catch (error: any) {
@@ -309,59 +378,99 @@ function Clients() {
           <input
             type="text"
             placeholder="sifones"
-            value={sifones}
-            onChange={(e) => setSifones(e.target.value)}
+            value={cliente.sifones}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                sifones: e.target.value,
+              }))
+            }
           />
 
           <label>Bidones 6l</label>
           <input
             type="text"
             placeholder="Bidones 6l"
-            value={bidones_6l}
-            onChange={(e) => setBidones6l(e.target.value)}
+            value={cliente.bidones_6l}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                bidones_6l: e.target.value,
+              }))
+            }
           />
 
           <label>Bidones 12l</label>
           <input
             type="number"
             placeholder="Bidones 12l"
-            value={bidones_12l}
-            onChange={(e) => setBidones12l(e.target.value)}
+            value={cliente.bidones_12l}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                bidones_12l: e.target.value,
+              }))
+            }
           />
 
           <label>Pago</label>
           <input
             type="number"
             placeholder="Pago"
-            value={pago}
-            onChange={(e) => setPago(e.target.value)}
+            value={cliente.pago}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                pago: e.target.value,
+              }))
+            }
           />
 
           <label>Sifones que devuelve</label>
           <input
             type="number"
             placeholder="Sifones que devuelve"
-            value={devuelveSif}
-            onChange={(e) => setDevuelveSif(e.target.value)}
+            value={cliente.devuelveSif}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                devuelveSif: e.target.value,
+              }))
+            }
           />
 
           <label>Bidones que devuelve</label>
           <input
             type="number"
             placeholder="Bidones que devuelve"
-            value={devuelveBid}
-            onChange={(e) => setDevuelveBid(e.target.value)}
+            value={cliente.devuelveBid}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                devuelveBid: e.target.value,
+              }))
+            }
           />
 
           <button
             onClick={async () => {
               const data: Compra = {
-                ...(sifones !== "" && { sifones: Number(sifones) }),
-                ...(bidones_6l !== "" && { bidones_6l: Number(bidones_6l) }),
-                ...(bidones_12l !== "" && { bidones_12l: Number(bidones_12l) }),
-                ...(pago !== "" && { pago: Number(pago) }),
-                ...(devuelveSif !== "" && { devuelveSif: Number(devuelveSif) }),
-                ...(devuelveBid !== "" && { devuelveBid: Number(devuelveBid) }),
+                ...(cliente.sifones !== "" && {
+                  sifones: Number(cliente.sifones),
+                }),
+                ...(cliente.bidones_6l !== "" && {
+                  bidones_6l: Number(cliente.bidones_6l),
+                }),
+                ...(cliente.bidones_12l !== "" && {
+                  bidones_12l: Number(cliente.bidones_12l),
+                }),
+                ...(cliente.pago !== "" && { pago: Number(cliente.pago) }),
+                ...(cliente.devuelveSif !== "" && {
+                  devuelveSif: Number(cliente.devuelveSif),
+                }),
+                ...(cliente.devuelveBid !== "" && {
+                  devuelveBid: Number(cliente.devuelveBid),
+                }),
               };
 
               try {
@@ -371,11 +480,7 @@ function Clients() {
                   { withCredentials: true },
                 );
 
-                setNombre("");
-                setTelefono("");
-                setDeuda("");
-                setCantEnvases("");
-                setCantBidones("");
+                resetCliente();
 
                 setActualizar((prev) => prev + 1);
               } catch (error: any) {
@@ -408,7 +513,7 @@ function Clients() {
                 </tr>
               </thead>
               <tbody>
-                {compras.map((item, index) => (
+                {compras.map((item) => (
                   <tr key={item.id}>
                     <td>{item.cliente_id}</td>
                     <td>{item.sifones}</td>
@@ -422,12 +527,30 @@ function Clients() {
                       <button
                         onClick={() => {
                           setCompraSeleccionada(item);
-                          setSifones(String(item.sifones));
-                          setBidones6l(String(item.bidones_6l));
-                          setBidones12l(String(item.bidones_12l));
-                          setDevuelveSif(String(item.devuelveSif));
-                          setDevuelveBid(String(item.devuelveBid));
-                          setPago(String(item.pago));
+                          setCliente((prev) => ({
+                            ...prev,
+                            sifones: String(item.sifones),
+                          }));
+                          setCliente((prev) => ({
+                            ...prev,
+                            bidones_6l: String(item.bidones_6l),
+                          }));
+                          setCliente((prev) => ({
+                            ...prev,
+                            bidones_12l: String(item.bidones_12l),
+                          }));
+                          setCliente((prev) => ({
+                            ...prev,
+                            devuelveSif: String(item.devuelveSif),
+                          }));
+                          setCliente((prev) => ({
+                            ...prev,
+                            devuelveBid: String(item.devuelveBid),
+                          }));
+                          setCliente((prev) => ({
+                            ...prev,
+                            pago: String(item.pago),
+                          }));
                           setModalAbierto("EditarCompra");
                         }}
                       >
@@ -460,43 +583,73 @@ function Clients() {
             <input
               type="number"
               placeholder="sifones"
-              value={sifones}
-              onChange={(e) => setSifones(e.target.value)}
+              value={cliente.sifones}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  sifones: e.target.value,
+                }))
+              }
             />
             <label>Bidones 6l</label>
             <input
               type="number"
               placeholder="bidones 6l"
-              value={bidones_6l}
-              onChange={(e) => setBidones6l(e.target.value)}
+              value={cliente.bidones_6l}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  bidones_6l: e.target.value,
+                }))
+              }
             />
             <label>Bidones 12l</label>
             <input
               type="number"
               placeholder="bidones 12l"
-              value={bidones_12l}
-              onChange={(e) => setBidones12l(e.target.value)}
+              value={cliente.bidones_12l}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  bidones_12l: e.target.value,
+                }))
+              }
             />
             <label>Sifones que devuelve</label>
             <input
               type="number"
               placeholder="Sifones que devuelve"
-              value={devuelveSif}
-              onChange={(e) => setDevuelveSif(e.target.value)}
+              value={cliente.devuelveSif}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  devuelveSif: e.target.value,
+                }))
+              }
             />
             <label>Bidones que devuelve</label>
             <input
               type="number"
               placeholder="Bidones que devuelve"
-              value={devuelveBid}
-              onChange={(e) => setDevuelveBid(e.target.value)}
+              value={cliente.devuelveBid}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  devuelveBid: e.target.value,
+                }))
+              }
             />
             <label>Pago</label>
             <input
               type="number"
               placeholder="pago"
-              value={pago}
-              onChange={(e) => setPago(e.target.value)}
+              value={cliente.pago}
+              onChange={(e) =>
+                setCliente((prev) => ({
+                  ...prev,
+                  pago: e.target.value,
+                }))
+              }
             />
             <button
               onClick={async () => {
@@ -504,22 +657,17 @@ function Clients() {
                   await axiosClient.put(
                     `http://localhost:3000/app/clients/purchases/${compraSeleccionada.id}`,
                     {
-                      sifones: Number(sifones),
-                      bidones_6l: Number(bidones_6l),
-                      bidones_12l: Number(bidones_12l),
-                      devuelveBid: Number(devuelveBid),
-                      devuelveSif: Number(devuelveSif),
-                      pago: Number(pago),
+                      sifones: Number(cliente.sifones),
+                      bidones_6l: Number(cliente.bidones_6l),
+                      bidones_12l: Number(cliente.bidones_12l),
+                      devuelveBid: Number(cliente.devuelveBid),
+                      devuelveSif: Number(cliente.devuelveSif),
+                      pago: Number(cliente.pago),
                     },
                     { withCredentials: true },
                   );
 
-                  setSifones("");
-                  setBidones6l("");
-                  setBidones12l("");
-                  setDevuelveBid("");
-                  setDevuelveSif("");
-                  setPago("");
+                  resetCliente();
 
                   setCompraSeleccionada(null);
                   setModalAbierto("ModificarCompra");
@@ -547,16 +695,26 @@ function Clients() {
           <input
             type="text"
             placeholder="Nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={cliente.nombre}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                nombre: e.target.value,
+              }))
+            }
           />
 
           <label>Telefono</label>
           <input
             type="text"
             placeholder="Telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            value={cliente.telefono}
+            onChange={(e) =>
+              setCliente((prev) => ({
+                ...prev,
+                telefono: e.target.value,
+              }))
+            }
           />
 
           <button
@@ -567,17 +725,13 @@ function Clients() {
                   {
                     withCredentials: true,
                     data: {
-                      nombre: nombre,
-                      telefono: telefono,
+                      nombre: cliente.nombre,
+                      telefono: cliente.telefono,
                     },
                   },
                 );
 
-                setNombre("");
-                setTelefono("");
-                setDeuda("");
-                setCantEnvases("");
-                setCantBidones("");
+                resetCliente();
 
                 setActualizar((prev) => prev + 1);
                 setModalAbierto(null);
