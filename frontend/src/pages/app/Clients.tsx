@@ -65,6 +65,48 @@ function Clients() {
     }));
   };
 
+  const postClient = async (nombre: string, telefono: string) => {
+    await axiosClient.post(
+      "http://localhost:3000/app/clients/init",
+      { nombre, telefono },
+      { withCredentials: true },
+    );
+  };
+
+  const putClient = async (id: number, data: UpdateClientData) => {
+    await axiosClient.put(
+      `http://localhost:3000/app/clients/${id}/modify`,
+      data,
+      { withCredentials: true },
+    );
+  };
+
+  const postCompra = async (id: number, data: Compra) => {
+    await axiosClient.post(
+      `http://localhost:3000/app/clients/${id}/purchases`,
+      data,
+      { withCredentials: true },
+    );
+  };
+
+  const putCompra = async (id: number, data: Compra) => {
+    await axiosClient.put(
+      `http://localhost:3000/app/clients/purchases/${id}`,
+      data,
+      { withCredentials: true },
+    );
+  };
+
+  const delClient = async (id: number, nombre: string, telefono: string) => {
+    await axiosClient.delete(`http://localhost:3000/app/clients/${id}/delete`, {
+      withCredentials: true,
+      data: {
+        nombre,
+        telefono,
+      },
+    });
+  };
+
   const fetchCompras = async (id: number) => {
     try {
       const res = await axiosClient.get(
@@ -245,11 +287,7 @@ function Clients() {
           <button
             onClick={async () => {
               try {
-                await axiosClient.post(
-                  "http://localhost:3000/app/clients/init",
-                  { nombre: cliente.nombre, telefono: cliente.telefono },
-                  { withCredentials: true },
-                );
+                await postClient(cliente.nombre, cliente.telefono);
 
                 resetCliente();
 
@@ -325,14 +363,11 @@ function Clients() {
               };
 
               try {
-                await axiosClient.put(
-                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/modify`,
-                  data,
-                  { withCredentials: true },
-                );
+                await putClient(modalAbierto.client.id, data);
 
                 resetCliente();
 
+                setModalAbierto({ type: "NONE" });
                 setActualizar((prev) => prev + 1);
               } catch (error: any) {
                 setError(error.message);
@@ -420,11 +455,7 @@ function Clients() {
               };
 
               try {
-                await axiosClient.post(
-                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/purchases`,
-                  data,
-                  { withCredentials: true },
-                );
+                await postCompra(modalAbierto.client.id, data);
 
                 resetCliente();
 
@@ -556,19 +587,16 @@ function Clients() {
           />
           <button
             onClick={async () => {
+              const data: Compra = {
+                sifones: Number(cliente.sifones),
+                bidones_6l: Number(cliente.bidones_6l),
+                bidones_12l: Number(cliente.bidones_12l),
+                devuelveBid: Number(cliente.devuelveBid),
+                devuelveSif: Number(cliente.devuelveSif),
+                pago: Number(cliente.pago),
+              };
               try {
-                await axiosClient.put(
-                  `http://localhost:3000/app/clients/purchases/${modalAbierto.compra.id}`,
-                  {
-                    sifones: Number(cliente.sifones),
-                    bidones_6l: Number(cliente.bidones_6l),
-                    bidones_12l: Number(cliente.bidones_12l),
-                    devuelveBid: Number(cliente.devuelveBid),
-                    devuelveSif: Number(cliente.devuelveSif),
-                    pago: Number(cliente.pago),
-                  },
-                  { withCredentials: true },
-                );
+                await putCompra(modalAbierto.compra.id, data);
 
                 resetCliente();
 
@@ -622,15 +650,10 @@ function Clients() {
           <button
             onClick={async () => {
               try {
-                await axiosClient.delete(
-                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/delete`,
-                  {
-                    withCredentials: true,
-                    data: {
-                      nombre: cliente.nombre,
-                      telefono: cliente.telefono,
-                    },
-                  },
+                await delClient(
+                  modalAbierto.client.id,
+                  cliente.nombre,
+                  cliente.telefono,
                 );
 
                 resetCliente();
