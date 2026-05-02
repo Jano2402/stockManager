@@ -30,28 +30,51 @@ const clienteIncial: Cliente = {
   devuelveSif: "",
 };
 
+type ModalState =
+  | { type: "NONE" }
+  | { type: "AñadirCliente" }
+  | { type: "ActualizarCliente"; client: client }
+  | { type: "AñadirCompra"; client: client }
+  | { type: "ModificarCompra"; client: client }
+  | { type: "EditarCompra"; compra: compras; client: client }
+  | { type: "BorrarCliente"; client: client };
+
 function Clients() {
   const [err, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [clients, setClients] = useState<client[]>([]);
   const [actualizar, setActualizar] = useState<number>(0);
-  const [modalAbierto, setModalAbierto] = useState<string | null>(null);
   const [compras, setCompras] = useState<compras[]>([]);
 
-  // const [actualizarCompra, setActualizarCompra] = useState<number>(0);
-  // const [id, setId] = useState<number | undefined>(-1);
-
   const [buscar, setBuscar] = useState<string>("");
-  const [selectedCliente, setSelectedClient] = useState<client | null>(null);
-  const [compraSeleccionada, setCompraSeleccionada] = useState<compras | null>(
-    null,
-  );
 
+  const [modalAbierto, setModalAbierto] = useState<ModalState>({
+    type: "NONE",
+  });
   const [cliente, setCliente] = useState<Cliente>(clienteIncial);
 
   const resetCliente = () => {
     setCliente(clienteIncial);
+  };
+
+  const handleChange = (field: keyof Cliente, value: string) => {
+    setCliente((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const fetchCompras = async (id: number) => {
+    try {
+      const res = await axiosClient.get(
+        `http://localhost:3000/app/clients/${id}/getpurchases`,
+        { withCredentials: true },
+      );
+      setCompras(res.data);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   useEffect(() => {
@@ -97,43 +120,25 @@ function Clients() {
 
   useEffect(() => {
     if (
-      selectedCliente &&
-      (modalAbierto === "ActualizarCliente" || modalAbierto === "AñadirCompra")
+      modalAbierto.type === "ActualizarCliente" ||
+      modalAbierto.type === "AñadirCompra"
     ) {
-      setCliente((prev) => ({
-        ...prev,
-        nombre: selectedCliente.nombre,
-      }));
-      setCliente((prev) => ({
-        ...prev,
-        telefono: selectedCliente.telefono,
-      }));
-      setCliente((prev) => ({
-        ...prev,
-        deuda: String(selectedCliente.deuda),
-      }));
-      setCliente((prev) => ({
-        ...prev,
-        cant_envases: String(selectedCliente.cant_envases),
-      }));
-      setCliente((prev) => ({
-        ...prev,
-        cant_bidones: String(selectedCliente.cant_bidones),
-      }));
+      setCliente({
+        ...clienteIncial,
+        nombre: modalAbierto.client.nombre,
+        telefono: modalAbierto.client.telefono,
+        deuda: String(modalAbierto.client.deuda),
+        cant_envases: String(modalAbierto.client.cant_envases),
+        cant_bidones: String(modalAbierto.client.cant_bidones),
+      });
     }
-  }, [selectedCliente, modalAbierto]);
+  }, [modalAbierto]);
 
-  const fetchCompras = async (id: number) => {
-    try {
-      const res = await axiosClient.get(
-        `http://localhost:3000/app/clients/${id}/getpurchases`,
-        { withCredentials: true },
-      );
-      setCompras(res.data);
-    } catch (err: any) {
-      setError(err.message);
+  useEffect(() => {
+    if (modalAbierto.type === "ModificarCompra") {
+      fetchCompras(modalAbierto.client.id);
     }
-  };
+  }, [modalAbierto]);
 
   return (
     <>
@@ -171,35 +176,37 @@ function Clients() {
                   <td>
                     <button
                       onClick={() => {
-                        setSelectedClient(item);
-                        setModalAbierto("ActualizarCliente");
+                        setModalAbierto({
+                          type: "ActualizarCliente",
+                          client: item,
+                        });
                       }}
                     >
                       Editar
                     </button>
                     <button
                       onClick={() => {
-                        setSelectedClient(item);
-                        setModalAbierto("AñadirCompra");
+                        setModalAbierto({ type: "AñadirCompra", client: item });
                       }}
                     >
                       Añadir compra
                     </button>
                     <button
                       onClick={() => {
-                        setSelectedClient(item);
-                        setModalAbierto("BorrarCliente");
+                        setModalAbierto({
+                          type: "BorrarCliente",
+                          client: item,
+                        });
                       }}
                     >
                       Borrar cliente
                     </button>
                     <button
                       onClick={async () => {
-                        setSelectedClient(item);
-                        setModalAbierto("ModificarCompra");
-                        if (typeof item.id === "number") {
-                          await fetchCompras(item.id);
-                        }
+                        setModalAbierto({
+                          type: "ModificarCompra",
+                          client: item,
+                        });
                       }}
                     >
                       Ver compras
@@ -215,7 +222,7 @@ function Clients() {
       {err && <p>{err}</p>}
       {loading && <p>Cargando...</p>}
       {/* Modales */}
-      {!loading && !err && modalAbierto === "AñadirCliente" && (
+      {!loading && !err && modalAbierto.type === "AñadirCliente" && (
         <div>
           <h3>Añadir cliente</h3>
 
@@ -224,12 +231,7 @@ function Clients() {
             type="text"
             placeholder="Nombre"
             value={cliente.nombre}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                nombre: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("nombre", e.target.value)}
           />
 
           <label>Telefono</label>
@@ -237,12 +239,7 @@ function Clients() {
             type="text"
             placeholder="Telefono"
             value={cliente.telefono}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                telefono: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("telefono", e.target.value)}
           />
 
           <button
@@ -264,10 +261,12 @@ function Clients() {
           >
             Añadir
           </button>
-          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
+          <button onClick={() => setModalAbierto({ type: "NONE" })}>
+            Cerrar
+          </button>
         </div>
       )}
-      {!loading && !err && modalAbierto === "ActualizarCliente" && (
+      {!loading && !err && modalAbierto.type === "ActualizarCliente" && (
         <div>
           <h3>Actualizar Cliente</h3>
 
@@ -276,12 +275,7 @@ function Clients() {
             type="text"
             placeholder="Nombre"
             value={cliente.nombre}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                nombre: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("nombre", e.target.value)}
           />
 
           <label>Telefono</label>
@@ -289,12 +283,7 @@ function Clients() {
             type="text"
             placeholder="Telefono"
             value={cliente.telefono}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                telefono: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("telefono", e.target.value)}
           />
 
           <label>Deuda</label>
@@ -302,12 +291,7 @@ function Clients() {
             type="number"
             placeholder="Deuda"
             value={cliente.deuda}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                deuda: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("deuda", e.target.value)}
           />
 
           <label>Cantidad de envases</label>
@@ -315,12 +299,7 @@ function Clients() {
             type="number"
             placeholder="Cantidad de envases"
             value={cliente.cant_envases}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                cant_envases: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("cant_envases", e.target.value)}
           />
 
           <label>Cantidad de bidones</label>
@@ -328,12 +307,7 @@ function Clients() {
             type="number"
             placeholder="Cantidad de bidones"
             value={cliente.cant_bidones}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                cant_bidones: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("cant_bidones", e.target.value)}
           />
 
           <button
@@ -352,7 +326,7 @@ function Clients() {
 
               try {
                 await axiosClient.put(
-                  `http://localhost:3000/app/clients/${selectedCliente?.id}/modify`,
+                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/modify`,
                   data,
                   { withCredentials: true },
                 );
@@ -367,10 +341,12 @@ function Clients() {
           >
             Aceptar
           </button>
-          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
+          <button onClick={() => setModalAbierto({ type: "NONE" })}>
+            Cerrar
+          </button>
         </div>
       )}
-      {!loading && !err && modalAbierto === "AñadirCompra" && (
+      {!loading && !err && modalAbierto.type === "AñadirCompra" && (
         <div>
           <h3>Añadir compra</h3>
 
@@ -379,12 +355,7 @@ function Clients() {
             type="text"
             placeholder="sifones"
             value={cliente.sifones}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                sifones: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("sifones", e.target.value)}
           />
 
           <label>Bidones 6l</label>
@@ -392,12 +363,7 @@ function Clients() {
             type="text"
             placeholder="Bidones 6l"
             value={cliente.bidones_6l}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                bidones_6l: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("bidones_6l", e.target.value)}
           />
 
           <label>Bidones 12l</label>
@@ -405,12 +371,7 @@ function Clients() {
             type="number"
             placeholder="Bidones 12l"
             value={cliente.bidones_12l}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                bidones_12l: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("bidones_12l", e.target.value)}
           />
 
           <label>Pago</label>
@@ -418,12 +379,7 @@ function Clients() {
             type="number"
             placeholder="Pago"
             value={cliente.pago}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                pago: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("pago", e.target.value)}
           />
 
           <label>Sifones que devuelve</label>
@@ -431,12 +387,7 @@ function Clients() {
             type="number"
             placeholder="Sifones que devuelve"
             value={cliente.devuelveSif}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                devuelveSif: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("devuelveSif", e.target.value)}
           />
 
           <label>Bidones que devuelve</label>
@@ -444,12 +395,7 @@ function Clients() {
             type="number"
             placeholder="Bidones que devuelve"
             value={cliente.devuelveBid}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                devuelveBid: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("devuelveBid", e.target.value)}
           />
 
           <button
@@ -475,7 +421,7 @@ function Clients() {
 
               try {
                 await axiosClient.post(
-                  `http://localhost:3000/app/clients/${selectedCliente?.id}/purchases`,
+                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/purchases`,
                   data,
                   { withCredentials: true },
                 );
@@ -490,12 +436,14 @@ function Clients() {
           >
             Aceptar
           </button>
-          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
+          <button onClick={() => setModalAbierto({ type: "NONE" })}>
+            Cerrar
+          </button>
         </div>
       )}
       {!loading &&
         !err &&
-        modalAbierto === "ModificarCompra" &&
+        modalAbierto.type === "ModificarCompra" &&
         compras.length > 0 && (
           <div>
             <h3>Compras</h3>
@@ -526,32 +474,20 @@ function Clients() {
                     <td>
                       <button
                         onClick={() => {
-                          setCompraSeleccionada(item);
-                          setCliente((prev) => ({
-                            ...prev,
+                          setCliente({
+                            ...clienteIncial,
                             sifones: String(item.sifones),
-                          }));
-                          setCliente((prev) => ({
-                            ...prev,
                             bidones_6l: String(item.bidones_6l),
-                          }));
-                          setCliente((prev) => ({
-                            ...prev,
                             bidones_12l: String(item.bidones_12l),
-                          }));
-                          setCliente((prev) => ({
-                            ...prev,
                             devuelveSif: String(item.devuelveSif),
-                          }));
-                          setCliente((prev) => ({
-                            ...prev,
                             devuelveBid: String(item.devuelveBid),
-                          }));
-                          setCliente((prev) => ({
-                            ...prev,
                             pago: String(item.pago),
-                          }));
-                          setModalAbierto("EditarCompra");
+                          });
+                          setModalAbierto({
+                            type: "EditarCompra",
+                            compra: item,
+                            client: modalAbierto.client,
+                          });
                         }}
                       >
                         Modificar
@@ -563,7 +499,7 @@ function Clients() {
             </table>
             <button
               onClick={() => {
-                setModalAbierto(null);
+                setModalAbierto({ type: "NONE" });
               }}
             >
               Cerrar
@@ -571,123 +507,99 @@ function Clients() {
           </div>
         )}
 
-      {!loading &&
-        !err &&
-        modalAbierto === "EditarCompra" &&
-        compraSeleccionada && (
-          <div>
-            <h3>Modificando compra</h3>
+      {!loading && !err && modalAbierto.type === "EditarCompra" && (
+        <div>
+          <h3>Modificando compra</h3>
 
-            <p>Id: {compraSeleccionada.id}</p>
-            <label>Sifones</label>
-            <input
-              type="number"
-              placeholder="sifones"
-              value={cliente.sifones}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  sifones: e.target.value,
-                }))
-              }
-            />
-            <label>Bidones 6l</label>
-            <input
-              type="number"
-              placeholder="bidones 6l"
-              value={cliente.bidones_6l}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  bidones_6l: e.target.value,
-                }))
-              }
-            />
-            <label>Bidones 12l</label>
-            <input
-              type="number"
-              placeholder="bidones 12l"
-              value={cliente.bidones_12l}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  bidones_12l: e.target.value,
-                }))
-              }
-            />
-            <label>Sifones que devuelve</label>
-            <input
-              type="number"
-              placeholder="Sifones que devuelve"
-              value={cliente.devuelveSif}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  devuelveSif: e.target.value,
-                }))
-              }
-            />
-            <label>Bidones que devuelve</label>
-            <input
-              type="number"
-              placeholder="Bidones que devuelve"
-              value={cliente.devuelveBid}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  devuelveBid: e.target.value,
-                }))
-              }
-            />
-            <label>Pago</label>
-            <input
-              type="number"
-              placeholder="pago"
-              value={cliente.pago}
-              onChange={(e) =>
-                setCliente((prev) => ({
-                  ...prev,
-                  pago: e.target.value,
-                }))
-              }
-            />
-            <button
-              onClick={async () => {
-                try {
-                  await axiosClient.put(
-                    `http://localhost:3000/app/clients/purchases/${compraSeleccionada.id}`,
-                    {
-                      sifones: Number(cliente.sifones),
-                      bidones_6l: Number(cliente.bidones_6l),
-                      bidones_12l: Number(cliente.bidones_12l),
-                      devuelveBid: Number(cliente.devuelveBid),
-                      devuelveSif: Number(cliente.devuelveSif),
-                      pago: Number(cliente.pago),
-                    },
-                    { withCredentials: true },
-                  );
+          <p>Id: {modalAbierto.compra.id}</p>
+          <label>Sifones</label>
+          <input
+            type="number"
+            placeholder="sifones"
+            value={cliente.sifones}
+            onChange={(e) => handleChange("sifones", e.target.value)}
+          />
+          <label>Bidones 6l</label>
+          <input
+            type="number"
+            placeholder="bidones 6l"
+            value={cliente.bidones_6l}
+            onChange={(e) => handleChange("bidones_6l", e.target.value)}
+          />
+          <label>Bidones 12l</label>
+          <input
+            type="number"
+            placeholder="bidones 12l"
+            value={cliente.bidones_12l}
+            onChange={(e) => handleChange("bidones_12l", e.target.value)}
+          />
+          <label>Sifones que devuelve</label>
+          <input
+            type="number"
+            placeholder="Sifones que devuelve"
+            value={cliente.devuelveSif}
+            onChange={(e) => handleChange("devuelveSif", e.target.value)}
+          />
+          <label>Bidones que devuelve</label>
+          <input
+            type="number"
+            placeholder="Bidones que devuelve"
+            value={cliente.devuelveBid}
+            onChange={(e) => handleChange("devuelveBid", e.target.value)}
+          />
+          <label>Pago</label>
+          <input
+            type="number"
+            placeholder="pago"
+            value={cliente.pago}
+            onChange={(e) => handleChange("pago", e.target.value)}
+          />
+          <button
+            onClick={async () => {
+              try {
+                await axiosClient.put(
+                  `http://localhost:3000/app/clients/purchases/${modalAbierto.compra.id}`,
+                  {
+                    sifones: Number(cliente.sifones),
+                    bidones_6l: Number(cliente.bidones_6l),
+                    bidones_12l: Number(cliente.bidones_12l),
+                    devuelveBid: Number(cliente.devuelveBid),
+                    devuelveSif: Number(cliente.devuelveSif),
+                    pago: Number(cliente.pago),
+                  },
+                  { withCredentials: true },
+                );
 
-                  resetCliente();
+                resetCliente();
 
-                  setCompraSeleccionada(null);
-                  setModalAbierto("ModificarCompra");
+                setModalAbierto({
+                  type: "ModificarCompra",
+                  client: modalAbierto.client,
+                });
 
-                  setActualizar((prev) => prev + 1);
-                  await fetchCompras(compraSeleccionada.cliente_id);
-                } catch (error: any) {
-                  setError(error.message);
-                }
-              }}
-            >
-              Aceptar
-            </button>
-            <button onClick={() => setModalAbierto("ModificarCompra")}>
-              Cerrar
-            </button>
-          </div>
-        )}
+                setActualizar((prev) => prev + 1);
+                await fetchCompras(modalAbierto.compra.cliente_id);
+              } catch (error: any) {
+                setError(error.message);
+              }
+            }}
+          >
+            Aceptar
+          </button>
+          <button
+            onClick={() =>
+              setModalAbierto({
+                type: "ModificarCompra",
+                client: modalAbierto.client,
+              })
+            }
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
 
-      {!loading && !err && modalAbierto === "BorrarCliente" && (
+      {!loading && !err && modalAbierto.type === "BorrarCliente" && (
         <div>
           <h3>Borrar Cliente</h3>
 
@@ -696,12 +608,7 @@ function Clients() {
             type="text"
             placeholder="Nombre"
             value={cliente.nombre}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                nombre: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("nombre", e.target.value)}
           />
 
           <label>Telefono</label>
@@ -709,19 +616,14 @@ function Clients() {
             type="text"
             placeholder="Telefono"
             value={cliente.telefono}
-            onChange={(e) =>
-              setCliente((prev) => ({
-                ...prev,
-                telefono: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("telefono", e.target.value)}
           />
 
           <button
             onClick={async () => {
               try {
                 await axiosClient.delete(
-                  `http://localhost:3000/app/clients/${selectedCliente?.id}/delete`,
+                  `http://localhost:3000/app/clients/${modalAbierto.client.id}/delete`,
                   {
                     withCredentials: true,
                     data: {
@@ -734,7 +636,7 @@ function Clients() {
                 resetCliente();
 
                 setActualizar((prev) => prev + 1);
-                setModalAbierto(null);
+                setModalAbierto({ type: "NONE" });
               } catch (error: any) {
                 setError(error.message);
               }
@@ -742,11 +644,13 @@ function Clients() {
           >
             Borrar
           </button>
-          <button onClick={() => setModalAbierto(null)}>Cerrar</button>
+          <button onClick={() => setModalAbierto({ type: "NONE" })}>
+            Cerrar
+          </button>
         </div>
       )}
       {/* Modales Fin */}
-      <button onClick={() => setModalAbierto("AñadirCliente")}>
+      <button onClick={() => setModalAbierto({ type: "AñadirCliente" })}>
         Añadir cliente
       </button>
     </>
