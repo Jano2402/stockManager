@@ -119,6 +119,121 @@ function Clients() {
     }
   };
 
+  const addClientPost = async (nombre: string, telefono: string) => {
+    try {
+      await postClient(nombre, telefono);
+
+      resetCliente();
+
+      setActualizar((prev) => prev + 1);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const updateClientPut = async () => {
+    if (modalAbierto.type !== "ActualizarCliente") return;
+
+    const data: UpdateClientData = {
+      ...(cliente.nombre !== "" && { nombre: cliente.nombre }),
+      ...(cliente.telefono !== "" && { telefono: cliente.telefono }),
+      ...(cliente.deuda !== "" && { deuda: Number(cliente.deuda) }),
+      ...(cliente.cant_envases !== "" && {
+        cant_envases: Number(cliente.cant_envases),
+      }),
+      ...(cliente.cant_bidones !== "" && {
+        cant_bidones: Number(cliente.cant_bidones),
+      }),
+    };
+
+    try {
+      await putClient(modalAbierto.client.id, data);
+
+      resetCliente();
+
+      setModalAbierto({ type: "NONE" });
+      setActualizar((prev) => prev + 1);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const addPurchasePost = async () => {
+    if (modalAbierto.type !== "AñadirCompra") return;
+
+    const data: Compra = {
+      ...(cliente.sifones !== "" && {
+        sifones: Number(cliente.sifones),
+      }),
+      ...(cliente.bidones_6l !== "" && {
+        bidones_6l: Number(cliente.bidones_6l),
+      }),
+      ...(cliente.bidones_12l !== "" && {
+        bidones_12l: Number(cliente.bidones_12l),
+      }),
+      ...(cliente.pago !== "" && { pago: Number(cliente.pago) }),
+      ...(cliente.devuelveSif !== "" && {
+        devuelveSif: Number(cliente.devuelveSif),
+      }),
+      ...(cliente.devuelveBid !== "" && {
+        devuelveBid: Number(cliente.devuelveBid),
+      }),
+    };
+
+    try {
+      await postCompra(modalAbierto.client.id, data);
+
+      resetCliente();
+
+      setActualizar((prev) => prev + 1);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const updatePurchasePut = async () => {
+    if (modalAbierto.type !== "EditarCompra") return;
+
+    const data: Compra = {
+      sifones: Number(cliente.sifones),
+      bidones_6l: Number(cliente.bidones_6l),
+      bidones_12l: Number(cliente.bidones_12l),
+      devuelveBid: Number(cliente.devuelveBid),
+      devuelveSif: Number(cliente.devuelveSif),
+      pago: Number(cliente.pago),
+    };
+    try {
+      await putCompra(modalAbierto.compra.id, data);
+
+      resetCliente();
+
+      setModalAbierto({
+        type: "ModificarCompra",
+        client: modalAbierto.client,
+      });
+
+      setActualizar((prev) => prev + 1);
+      await fetchCompras(modalAbierto.compra.cliente_id);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleDelUser = async () => {
+    if (modalAbierto.type !== "BorrarCliente") return;
+
+    try {
+      await delClient(modalAbierto.client.id, cliente.nombre, cliente.telefono);
+
+      resetCliente();
+
+      setActualizar((prev) => prev + 1);
+      setModalAbierto({ type: "NONE" });
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -285,17 +400,9 @@ function Clients() {
           />
 
           <button
-            onClick={async () => {
-              try {
-                await postClient(cliente.nombre, cliente.telefono);
-
-                resetCliente();
-
-                setActualizar((prev) => prev + 1);
-              } catch (error: any) {
-                setError(error.message);
-              }
-            }}
+            onClick={async () =>
+              await addClientPost(cliente.nombre, cliente.telefono)
+            }
           >
             Añadir
           </button>
@@ -348,34 +455,7 @@ function Clients() {
             onChange={(e) => handleChange("cant_bidones", e.target.value)}
           />
 
-          <button
-            onClick={async () => {
-              const data: UpdateClientData = {
-                ...(cliente.nombre !== "" && { nombre: cliente.nombre }),
-                ...(cliente.telefono !== "" && { telefono: cliente.telefono }),
-                ...(cliente.deuda !== "" && { deuda: Number(cliente.deuda) }),
-                ...(cliente.cant_envases !== "" && {
-                  cant_envases: Number(cliente.cant_envases),
-                }),
-                ...(cliente.cant_bidones !== "" && {
-                  cant_bidones: Number(cliente.cant_bidones),
-                }),
-              };
-
-              try {
-                await putClient(modalAbierto.client.id, data);
-
-                resetCliente();
-
-                setModalAbierto({ type: "NONE" });
-                setActualizar((prev) => prev + 1);
-              } catch (error: any) {
-                setError(error.message);
-              }
-            }}
-          >
-            Aceptar
-          </button>
+          <button onClick={async () => await updateClientPut()}>Aceptar</button>
           <button onClick={() => setModalAbierto({ type: "NONE" })}>
             Cerrar
           </button>
@@ -433,40 +513,7 @@ function Clients() {
             onChange={(e) => handleChange("devuelveBid", e.target.value)}
           />
 
-          <button
-            onClick={async () => {
-              const data: Compra = {
-                ...(cliente.sifones !== "" && {
-                  sifones: Number(cliente.sifones),
-                }),
-                ...(cliente.bidones_6l !== "" && {
-                  bidones_6l: Number(cliente.bidones_6l),
-                }),
-                ...(cliente.bidones_12l !== "" && {
-                  bidones_12l: Number(cliente.bidones_12l),
-                }),
-                ...(cliente.pago !== "" && { pago: Number(cliente.pago) }),
-                ...(cliente.devuelveSif !== "" && {
-                  devuelveSif: Number(cliente.devuelveSif),
-                }),
-                ...(cliente.devuelveBid !== "" && {
-                  devuelveBid: Number(cliente.devuelveBid),
-                }),
-              };
-
-              try {
-                await postCompra(modalAbierto.client.id, data);
-
-                resetCliente();
-
-                setActualizar((prev) => prev + 1);
-              } catch (error: any) {
-                setError(error.message);
-              }
-            }}
-          >
-            Aceptar
-          </button>
+          <button onClick={async () => await addPurchasePost()}>Aceptar</button>
           <button onClick={() => setModalAbierto({ type: "NONE" })}>
             Cerrar
           </button>
@@ -585,33 +632,7 @@ function Clients() {
             value={cliente.pago}
             onChange={(e) => handleChange("pago", e.target.value)}
           />
-          <button
-            onClick={async () => {
-              const data: Compra = {
-                sifones: Number(cliente.sifones),
-                bidones_6l: Number(cliente.bidones_6l),
-                bidones_12l: Number(cliente.bidones_12l),
-                devuelveBid: Number(cliente.devuelveBid),
-                devuelveSif: Number(cliente.devuelveSif),
-                pago: Number(cliente.pago),
-              };
-              try {
-                await putCompra(modalAbierto.compra.id, data);
-
-                resetCliente();
-
-                setModalAbierto({
-                  type: "ModificarCompra",
-                  client: modalAbierto.client,
-                });
-
-                setActualizar((prev) => prev + 1);
-                await fetchCompras(modalAbierto.compra.cliente_id);
-              } catch (error: any) {
-                setError(error.message);
-              }
-            }}
-          >
+          <button onClick={async () => await updatePurchasePut()}>
             Aceptar
           </button>
           <button
@@ -647,26 +668,7 @@ function Clients() {
             onChange={(e) => handleChange("telefono", e.target.value)}
           />
 
-          <button
-            onClick={async () => {
-              try {
-                await delClient(
-                  modalAbierto.client.id,
-                  cliente.nombre,
-                  cliente.telefono,
-                );
-
-                resetCliente();
-
-                setActualizar((prev) => prev + 1);
-                setModalAbierto({ type: "NONE" });
-              } catch (error: any) {
-                setError(error.message);
-              }
-            }}
-          >
-            Borrar
-          </button>
+          <button onClick={async () => await handleDelUser()}>Borrar</button>
           <button onClick={() => setModalAbierto({ type: "NONE" })}>
             Cerrar
           </button>
