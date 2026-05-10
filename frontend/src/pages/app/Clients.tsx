@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
-import type { client, UpdateClientData, Compra, compras } from "../../types";
-
-interface Cliente {
-  nombre: string;
-  telefono: string;
-  deuda: string;
-  cant_envases: string;
-  cant_bidones: string;
-  sifones: string;
-  bidones_6l: string;
-  bidones_12l: string;
-  pago: string;
-  devuelveBid: string;
-  devuelveSif: string;
-}
+import {
+  postClient,
+  putClient,
+  postCompra,
+  putCompra,
+  delClient,
+  getCompras,
+} from "../../services/app/clientsService";
+import type { client, compras, Cliente, ModalState } from "../../types";
+import {
+  buildCompraData,
+  buildCompraUpdate,
+  buildUpdateClient,
+} from "../../utils/app/clientsUtils";
 
 const clienteIncial: Cliente = {
   nombre: "",
@@ -30,15 +29,6 @@ const clienteIncial: Cliente = {
   devuelveSif: "",
 };
 
-type ModalState =
-  | { type: "NONE" }
-  | { type: "AñadirCliente" }
-  | { type: "ActualizarCliente"; client: client }
-  | { type: "AñadirCompra"; client: client }
-  | { type: "ModificarCompra"; client: client }
-  | { type: "EditarCompra"; compra: compras; client: client }
-  | { type: "BorrarCliente"; client: client };
-
 function Clients() {
   const [err, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,13 +36,12 @@ function Clients() {
   const [clients, setClients] = useState<client[]>([]);
   const [actualizar, setActualizar] = useState<number>(0);
   const [compras, setCompras] = useState<compras[]>([]);
-
   const [buscar, setBuscar] = useState<string>("");
+  const [cliente, setCliente] = useState<Cliente>(clienteIncial);
 
   const [modalAbierto, setModalAbierto] = useState<ModalState>({
     type: "NONE",
   });
-  const [cliente, setCliente] = useState<Cliente>(clienteIncial);
 
   const resetCliente = () => {
     setCliente(clienteIncial);
@@ -65,55 +54,10 @@ function Clients() {
     }));
   };
 
-  const postClient = async (nombre: string, telefono: string) => {
-    await axiosClient.post(
-      "http://localhost:3000/app/clients/init",
-      { nombre, telefono },
-      { withCredentials: true },
-    );
-  };
-
-  const putClient = async (id: number, data: UpdateClientData) => {
-    await axiosClient.put(
-      `http://localhost:3000/app/clients/${id}/modify`,
-      data,
-      { withCredentials: true },
-    );
-  };
-
-  const postCompra = async (id: number, data: Compra) => {
-    await axiosClient.post(
-      `http://localhost:3000/app/clients/${id}/purchases`,
-      data,
-      { withCredentials: true },
-    );
-  };
-
-  const putCompra = async (id: number, data: Compra) => {
-    await axiosClient.put(
-      `http://localhost:3000/app/clients/purchases/${id}`,
-      data,
-      { withCredentials: true },
-    );
-  };
-
-  const delClient = async (id: number, nombre: string, telefono: string) => {
-    await axiosClient.delete(`http://localhost:3000/app/clients/${id}/delete`, {
-      withCredentials: true,
-      data: {
-        nombre,
-        telefono,
-      },
-    });
-  };
-
   const fetchCompras = async (id: number) => {
     try {
-      const res = await axiosClient.get(
-        `http://localhost:3000/app/clients/${id}/getpurchases`,
-        { withCredentials: true },
-      );
-      setCompras(res.data);
+      const data = await getCompras(id);
+      setCompras(data);
     } catch (err: any) {
       setError(err.message);
     }
@@ -134,17 +78,7 @@ function Clients() {
   const updateClientPut = async () => {
     if (modalAbierto.type !== "ActualizarCliente") return;
 
-    const data: UpdateClientData = {
-      ...(cliente.nombre !== "" && { nombre: cliente.nombre }),
-      ...(cliente.telefono !== "" && { telefono: cliente.telefono }),
-      ...(cliente.deuda !== "" && { deuda: Number(cliente.deuda) }),
-      ...(cliente.cant_envases !== "" && {
-        cant_envases: Number(cliente.cant_envases),
-      }),
-      ...(cliente.cant_bidones !== "" && {
-        cant_bidones: Number(cliente.cant_bidones),
-      }),
-    };
+    const data = buildUpdateClient(cliente);
 
     try {
       await putClient(modalAbierto.client.id, data);
@@ -161,24 +95,7 @@ function Clients() {
   const addPurchasePost = async () => {
     if (modalAbierto.type !== "AñadirCompra") return;
 
-    const data: Compra = {
-      ...(cliente.sifones !== "" && {
-        sifones: Number(cliente.sifones),
-      }),
-      ...(cliente.bidones_6l !== "" && {
-        bidones_6l: Number(cliente.bidones_6l),
-      }),
-      ...(cliente.bidones_12l !== "" && {
-        bidones_12l: Number(cliente.bidones_12l),
-      }),
-      ...(cliente.pago !== "" && { pago: Number(cliente.pago) }),
-      ...(cliente.devuelveSif !== "" && {
-        devuelveSif: Number(cliente.devuelveSif),
-      }),
-      ...(cliente.devuelveBid !== "" && {
-        devuelveBid: Number(cliente.devuelveBid),
-      }),
-    };
+    const data = buildCompraData(cliente);
 
     try {
       await postCompra(modalAbierto.client.id, data);
@@ -194,14 +111,7 @@ function Clients() {
   const updatePurchasePut = async () => {
     if (modalAbierto.type !== "EditarCompra") return;
 
-    const data: Compra = {
-      sifones: Number(cliente.sifones),
-      bidones_6l: Number(cliente.bidones_6l),
-      bidones_12l: Number(cliente.bidones_12l),
-      devuelveBid: Number(cliente.devuelveBid),
-      devuelveSif: Number(cliente.devuelveSif),
-      pago: Number(cliente.pago),
-    };
+    const data = buildCompraUpdate(cliente);
     try {
       await putCompra(modalAbierto.compra.id, data);
 
@@ -232,6 +142,26 @@ function Clients() {
     } catch (error: any) {
       setError(error.message);
     }
+  };
+
+  const handleEditPurchase = (item: compras) => {
+    if (modalAbierto.type !== "ModificarCompra") return;
+
+    setCliente({
+      ...clienteIncial,
+      sifones: String(item.sifones),
+      bidones_6l: String(item.bidones_6l),
+      bidones_12l: String(item.bidones_12l),
+      devuelveSif: String(item.devuelveSif),
+      devuelveBid: String(item.devuelveBid),
+      pago: String(item.pago),
+    });
+
+    setModalAbierto({
+      type: "EditarCompra",
+      compra: item,
+      client: modalAbierto.client,
+    });
   };
 
   useEffect(() => {
@@ -550,24 +480,7 @@ function Clients() {
                     <td>{item.pago}</td>
                     <td>{new Date(item.fecha).toLocaleDateString("es-UY")}</td>
                     <td>
-                      <button
-                        onClick={() => {
-                          setCliente({
-                            ...clienteIncial,
-                            sifones: String(item.sifones),
-                            bidones_6l: String(item.bidones_6l),
-                            bidones_12l: String(item.bidones_12l),
-                            devuelveSif: String(item.devuelveSif),
-                            devuelveBid: String(item.devuelveBid),
-                            pago: String(item.pago),
-                          });
-                          setModalAbierto({
-                            type: "EditarCompra",
-                            compra: item,
-                            client: modalAbierto.client,
-                          });
-                        }}
-                      >
+                      <button onClick={() => handleEditPurchase(item)}>
                         Modificar
                       </button>
                     </td>

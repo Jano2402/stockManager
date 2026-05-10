@@ -37,3 +37,26 @@ export interface compras {
   totalCompra: number;
   pago: number;
 }
+
+export interface Cliente {
+  nombre: string;
+  telefono: string;
+  deuda: string;
+  cant_envases: string;
+  cant_bidones: string;
+  sifones: string;
+  bidones_6l: string;
+  bidones_12l: string;
+  pago: string;
+  devuelveBid: string;
+  devuelveSif: string;
+}
+
+export type ModalState =
+  | { type: "NONE" }
+  | { type: "AñadirCliente" }
+  | { type: "ActualizarCliente"; client: client }
+  | { type: "AñadirCompra"; client: client }
+  | { type: "ModificarCompra"; client: client }
+  | { type: "EditarCompra"; compra: compras; client: client }
+  | { type: "BorrarCliente"; client: client };
