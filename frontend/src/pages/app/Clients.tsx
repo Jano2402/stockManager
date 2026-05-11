@@ -17,6 +17,10 @@ import {
 import UpdatePurchaseTable from "../../components/app/UpdatePurchaseTable";
 import ClientsTable from "../../components/app/ClientsTable";
 import AddClientModal from "../../components/app/AddClientModal";
+import UpdateClientModal from "../../components/app/UpdateClientModal";
+import AnadirCompraModal from "../../components/app/AnadirCompraModal";
+import EditarCompraModal from "../../components/app/EditarCompraModal";
+import DelClientModal from "../../components/app/DelClientModal";
 
 const clienteIncial: Cliente = {
   nombre: "",
@@ -184,7 +188,10 @@ function Clients() {
       return () => controller.abort();
     }
 
-    if (buscar.length < 3) return;
+    if (buscar.length < 3) {
+      setLoading(false);
+      return;
+    }
 
     const timeout = setTimeout(() => {
       axiosClient
@@ -257,112 +264,20 @@ function Clients() {
         />
       )}
       {!loading && !err && modalAbierto.type === "ActualizarCliente" && (
-        <div>
-          <h3>Actualizar Cliente</h3>
-
-          <label>Nombre</label>
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={cliente.nombre}
-            onChange={(e) => handleChange("nombre", e.target.value)}
-          />
-
-          <label>Telefono</label>
-          <input
-            type="text"
-            placeholder="Telefono"
-            value={cliente.telefono}
-            onChange={(e) => handleChange("telefono", e.target.value)}
-          />
-
-          <label>Deuda</label>
-          <input
-            type="number"
-            placeholder="Deuda"
-            value={cliente.deuda}
-            onChange={(e) => handleChange("deuda", e.target.value)}
-          />
-
-          <label>Cantidad de envases</label>
-          <input
-            type="number"
-            placeholder="Cantidad de envases"
-            value={cliente.cant_envases}
-            onChange={(e) => handleChange("cant_envases", e.target.value)}
-          />
-
-          <label>Cantidad de bidones</label>
-          <input
-            type="number"
-            placeholder="Cantidad de bidones"
-            value={cliente.cant_bidones}
-            onChange={(e) => handleChange("cant_bidones", e.target.value)}
-          />
-
-          <button onClick={async () => await updateClientPut()}>Aceptar</button>
-          <button onClick={() => setModalAbierto({ type: "NONE" })}>
-            Cerrar
-          </button>
-        </div>
+        <UpdateClientModal
+          cliente={cliente}
+          handleChange={handleChange}
+          onSubmit={() => updateClientPut()}
+          onClose={() => setModalAbierto({ type: "NONE" })}
+        />
       )}
       {!loading && !err && modalAbierto.type === "AñadirCompra" && (
-        <div>
-          <h3>Añadir compra</h3>
-
-          <label>Sifones</label>
-          <input
-            type="text"
-            placeholder="sifones"
-            value={cliente.sifones}
-            onChange={(e) => handleChange("sifones", e.target.value)}
-          />
-
-          <label>Bidones 6l</label>
-          <input
-            type="text"
-            placeholder="Bidones 6l"
-            value={cliente.bidones_6l}
-            onChange={(e) => handleChange("bidones_6l", e.target.value)}
-          />
-
-          <label>Bidones 12l</label>
-          <input
-            type="number"
-            placeholder="Bidones 12l"
-            value={cliente.bidones_12l}
-            onChange={(e) => handleChange("bidones_12l", e.target.value)}
-          />
-
-          <label>Pago</label>
-          <input
-            type="number"
-            placeholder="Pago"
-            value={cliente.pago}
-            onChange={(e) => handleChange("pago", e.target.value)}
-          />
-
-          <label>Sifones que devuelve</label>
-          <input
-            type="number"
-            placeholder="Sifones que devuelve"
-            value={cliente.devuelveSif}
-            onChange={(e) => handleChange("devuelveSif", e.target.value)}
-          />
-
-          <label>Bidones que devuelve</label>
-          <input
-            type="number"
-            placeholder="Bidones que devuelve"
-            value={cliente.devuelveBid}
-            onChange={(e) => handleChange("devuelveBid", e.target.value)}
-          />
-
-          <button onClick={async () => await addPurchasePost()}>Aceptar</button>
-          <button onClick={() => setModalAbierto({ type: "NONE" })}>
-            Cerrar
-          </button>
-        </div>
+        <AnadirCompraModal
+          cliente={cliente}
+          handleChange={handleChange}
+          onSubmit={() => addPurchasePost()}
+          onClose={() => setModalAbierto({ type: "NONE" })}
+        />
       )}
       {!loading &&
         !err &&
@@ -376,93 +291,27 @@ function Clients() {
         )}
 
       {!loading && !err && modalAbierto.type === "EditarCompra" && (
-        <div>
-          <h3>Modificando compra</h3>
-
-          <p>Id: {modalAbierto.compra.id}</p>
-          <label>Sifones</label>
-          <input
-            type="number"
-            placeholder="sifones"
-            value={cliente.sifones}
-            onChange={(e) => handleChange("sifones", e.target.value)}
-          />
-          <label>Bidones 6l</label>
-          <input
-            type="number"
-            placeholder="bidones 6l"
-            value={cliente.bidones_6l}
-            onChange={(e) => handleChange("bidones_6l", e.target.value)}
-          />
-          <label>Bidones 12l</label>
-          <input
-            type="number"
-            placeholder="bidones 12l"
-            value={cliente.bidones_12l}
-            onChange={(e) => handleChange("bidones_12l", e.target.value)}
-          />
-          <label>Sifones que devuelve</label>
-          <input
-            type="number"
-            placeholder="Sifones que devuelve"
-            value={cliente.devuelveSif}
-            onChange={(e) => handleChange("devuelveSif", e.target.value)}
-          />
-          <label>Bidones que devuelve</label>
-          <input
-            type="number"
-            placeholder="Bidones que devuelve"
-            value={cliente.devuelveBid}
-            onChange={(e) => handleChange("devuelveBid", e.target.value)}
-          />
-          <label>Pago</label>
-          <input
-            type="number"
-            placeholder="pago"
-            value={cliente.pago}
-            onChange={(e) => handleChange("pago", e.target.value)}
-          />
-          <button onClick={async () => await updatePurchasePut()}>
-            Aceptar
-          </button>
-          <button
-            onClick={() =>
-              setModalAbierto({
-                type: "ModificarCompra",
-                client: modalAbierto.client,
-              })
-            }
-          >
-            Cerrar
-          </button>
-        </div>
+        <EditarCompraModal
+          compra={modalAbierto.compra}
+          cliente={cliente}
+          handleChange={handleChange}
+          onSubmit={() => updatePurchasePut()}
+          onClose={() =>
+            setModalAbierto({
+              type: "ModificarCompra",
+              client: modalAbierto.client,
+            })
+          }
+        />
       )}
 
       {!loading && !err && modalAbierto.type === "BorrarCliente" && (
-        <div>
-          <h3>Borrar Cliente</h3>
-
-          <label>Nombre</label>
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={cliente.nombre}
-            onChange={(e) => handleChange("nombre", e.target.value)}
-          />
-
-          <label>Telefono</label>
-          <input
-            type="text"
-            placeholder="Telefono"
-            value={cliente.telefono}
-            onChange={(e) => handleChange("telefono", e.target.value)}
-          />
-
-          <button onClick={async () => await handleDelUser()}>Borrar</button>
-          <button onClick={() => setModalAbierto({ type: "NONE" })}>
-            Cerrar
-          </button>
-        </div>
+        <DelClientModal
+          cliente={cliente}
+          handleChange={handleChange}
+          onSubmit={() => handleDelUser()}
+          onClose={() => setModalAbierto({ type: "NONE" })}
+        />
       )}
       {/* Modales Fin */}
       <button onClick={() => setModalAbierto({ type: "AñadirCliente" })}>
