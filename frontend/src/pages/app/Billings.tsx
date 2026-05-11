@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axiosClient from "../../api/axiosClient";
-import type { compraAgrupada, ApiResponse } from "../../types";
+import type { compraAgrupada } from "../../types";
+import BillingsTable from "../../components/app/BillingsTable";
+import { getComprasAgrupadas } from "../../services/app/billingsService";
 
 function Billings() {
   const [data, setData] = useState<compraAgrupada[]>([]);
@@ -27,13 +28,7 @@ function Billings() {
     setMessage(null);
 
     try {
-      const res = await axiosClient.get<ApiResponse>(
-        "http://localhost:3000/app/billings/purchases",
-        {
-          params: { fechaInicio, fechaFin },
-          withCredentials: true,
-        },
-      );
+      const res = await getComprasAgrupadas(fechaInicio, fechaFin);
 
       setData(res.data.data);
       setMessage(res.data.message);
@@ -68,37 +63,7 @@ function Billings() {
 
       {!loading && !err && message && data.length === 0 && <p>{message}</p>}
 
-      {!loading && !err && data.length > 0 && (
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Sifones</th>
-                <th>Bidón 6L</th>
-                <th>Bidón 12L</th>
-                <th>Total Compra</th>
-                <th>Total Pagado</th>
-                <th>Debe</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.nombre}</td>
-                  <td>{item.sifones}</td>
-                  <td>{item.bidon6L}</td>
-                  <td>{item.bidon12L}</td>
-                  <td>{item.totalCompra}</td>
-                  <td>{item.totalPagado}</td>
-                  <td>{item.totalDebiendo}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {!loading && !err && data.length > 0 && <BillingsTable data={data} />}
 
       {!loading && !err && data.length === 0 && !message && <p>No hay datos</p>}
     </>
