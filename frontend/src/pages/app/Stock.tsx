@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axiosClient from "../../api/axiosClient";
 import type { stockItem } from "../../types";
-
-const modificarProducto = async (
-  idProducto: number,
-  datosActualizados: stockItem,
-) => {
-  const response = await axiosClient.put(
-    `http://localhost:3000/app/stock/products/${idProducto}`,
-    datosActualizados,
-    { withCredentials: true },
-  );
-  return response.data;
-};
+import {
+  getProductos,
+  modificarProducto,
+} from "../../services/app/stockService";
+import ProductsTable from "../../components/app/ProductsTable";
+import ProductsListing from "../../components/app/ProductsListing";
 
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
@@ -23,18 +16,18 @@ function Stock() {
   const [formData, setFormData] = useState<stockItem | null>(null);
 
   useEffect(() => {
-    axiosClient
-      .get<stockItem[]>("http://localhost:3000/app/stock/products", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchData = async () => {
+      try {
+        const data = await getProductos();
+        setData(data);
+      } catch (err: any) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleEditing = (item?: stockItem) => {
@@ -68,55 +61,14 @@ function Stock() {
   if (error) return <div>Error: {error}</div>;
 
   return editing && formData ? (
-    <>
-      <h1>Editando producto</h1>
-
-      <h3>{formData.nombre}</h3>
-
-      <div>
-        <label>Precio</label>
-        <input
-          type="number"
-          value={formData.precio}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              precio: Number(e.target.value),
-            })
-          }
-        />
-      </div>
-
-      <div>
-        <label>Cantidad</label>
-        <input
-          type="number"
-          value={formData.cantidad}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              cantidad: Number(e.target.value),
-            })
-          }
-        />
-      </div>
-
-      <button onClick={handleSave}>Aceptar</button>
-      <button onClick={() => handleEditing()}>Cancelar</button>
-    </>
+    <ProductsListing
+      formData={formData}
+      setFormData={setFormData}
+      handleSave={handleSave}
+      handleEditing={handleEditing}
+    />
   ) : (
-    <>
-      <h1>Stock</h1>
-
-      {data.map((item) => (
-        <div key={item.id}>
-          <h3>{item.nombre}</h3>
-          <p>Precio: {item.precio}</p>
-          <p>Cantidad: {item.cantidad}</p>
-          <button onClick={() => handleEditing(item)}>Editar</button>
-        </div>
-      ))}
-    </>
+    <ProductsTable data={data} handleEditing={handleEditing} />
   );
 }
 
