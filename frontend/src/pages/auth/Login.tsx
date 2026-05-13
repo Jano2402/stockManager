@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import authClient from "../../api/authClient";
 import type { LoginForm, ErrorResponse } from "../../types";
+import { postLogin } from "../../services/app/authService";
+import LoginFormulario from "../../components/auth/LoginFormulario";
 
 function Login() {
   const [form, setForm] = useState<LoginForm>({
@@ -23,7 +24,7 @@ function Login() {
     setError("");
 
     try {
-      await authClient.post("/auth/login", form, { withCredentials: true });
+      await postLogin(form);
 
       window.location.href = "/";
     } catch (err) {
@@ -42,44 +43,14 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="username">Nombre de usuario:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            required
-            value={form.username}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+    <div>
+      <LoginFormulario
+        form={form}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
 
-        <div className="form-group">
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            value={form.password}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-
-        <button type="submit" className="submit-button">
-          Iniciar sesión
-        </button>
-      </form>
-
-      {error && (
-        <p className="error-message" style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
+      {error && <p>{error}</p>}
     </div>
   );
 }

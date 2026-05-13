@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
-import axiosClient from "../../api/axiosClient";
+import { postLogout } from "../../services/app/authService";
 
 function Logout() {
   const [error, setError] = useState<string>("");
 
   const doLogout = async (): Promise<void> => {
     try {
-      await axiosClient.post(
-        "/auth/logout",
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      await postLogout();
 
       window.location.href = "/";
     } catch (err) {
@@ -36,7 +30,7 @@ function Logout() {
     doLogout();
   }, []);
 
-  return <>{error && <p style={{ color: "red" }}>{error}</p>}</>;
+  return <>{error && <p>{error}</p>}</>;
 }
 
 export default Logout;

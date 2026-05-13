@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import authClient from "../../api/authClient";
 import type { RegisterForm, ErrorResponse } from "../../types";
+import RegisterFormulario from "../../components/auth/RegisterFormulario";
+import { postRegister } from "../../services/app/authService";
 
 function Register() {
   const [form, setForm] = useState<RegisterForm>({
@@ -23,7 +24,7 @@ function Register() {
     setError("");
 
     try {
-      await authClient.post("/auth/register", form, { withCredentials: true });
+      await postRegister(form);
 
       window.location.href = "/";
     } catch (err) {
@@ -42,46 +43,14 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit} className="register-form">
-        <div className="form-group">
-          <label htmlFor="username">Nombre de usuario:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            required
-            minLength={3}
-            value={form.username}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+    <div>
+      <RegisterFormulario
+        form={form}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
 
-        <div className="form-group">
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            minLength={6}
-            value={form.password}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-
-        <button type="submit" className="submit-button">
-          Registrarse
-        </button>
-      </form>
-
-      {error && (
-        <p className="error-message" style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
+      {error && <p>{error}</p>}
     </div>
   );
 }
