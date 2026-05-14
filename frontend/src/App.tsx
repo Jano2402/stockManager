@@ -13,21 +13,85 @@ import Stock from "./pages/app/Stock";
 import Billings from "./pages/app/Billings";
 import Clients from "./pages/app/Clients";
 import Logout from "./pages/auth/Logout";
+import Logo from "./components/app/Logo";
+
+/* 
+  Colores base:
+    [#0B1220]
+    [#132238]
+  Secundario:
+    sky-400
+  Acento:
+    red-600
+  Neutros:
+    slate-50
+    slate-400
+*/
 
 // 🔹 Layout para /app
 function AppLayout() {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h2>App</h2>
+    <div className="min-h-screen bg-[#0B1220] text-slate-50 font-space">
+      <nav className="w-full flex items-center justify-between px-12 py-4 border-b border-white/10 bg-[#132238]/80 backdrop-blur-md">
+        {/* Logo */}
+        <div className="flex items-center">
+          <Logo />
+          <h2 className="pl-2 text-2xl font-semibold uppercase tracking-wide text-slate-50">
+            Soda Baral
+          </h2>
+        </div>
 
-      <nav>
-        <Link to="stock">Stock</Link> | <Link to="billings">Billings</Link> |{" "}
-        <Link to="clients">Clients</Link>
+        {/* Nav */}
+        <div className="flex items-center gap-3 text-sm font-medium">
+          <Link
+            to="stock"
+            className="
+              px-5 py-2.5 rounded-2xl
+              bg-sky-400/10
+              border border-sky-400/20
+              text-sky-300
+              hover:bg-sky-400/20
+              hover:border-sky-400/40
+              transition-all duration-200
+            "
+          >
+            Stock
+          </Link>
+
+          <Link
+            to="billings"
+            className="
+              px-5 py-2.5 rounded-2xl
+              bg-red-600/10
+              border border-red-500/20
+              text-red-400
+              hover:bg-red-600/20
+              hover:border-red-500/40
+              transition-all duration-200
+            "
+          >
+            Facturación
+          </Link>
+
+          <Link
+            to="clients"
+            className="
+              px-5 py-2.5 rounded-2xl
+              bg-slate-800
+              border border-white/10
+              text-slate-200
+              hover:bg-slate-700
+              transition-all duration-200
+            "
+          >
+            Clientes
+          </Link>
+        </div>
       </nav>
 
-      <hr />
-
-      <Outlet />
+      <main className="p-8">
+        <Outlet />
+      </main>
     </div>
   );
 }
