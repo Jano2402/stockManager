@@ -17,7 +17,7 @@ import Logout from "./pages/auth/Logout";
 // 🔹 Layout para /app
 function AppLayout() {
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center">
       <h2>App</h2>
 
       <nav>
