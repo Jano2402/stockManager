@@ -60,15 +60,19 @@ function Stock() {
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  return editing && formData ? (
-    <ProductsListing
-      formData={formData}
-      setFormData={setFormData}
-      handleSave={handleSave}
-      handleEditing={handleEditing}
-    />
-  ) : (
-    <ProductsTable data={data} handleEditing={handleEditing} />
+  return (
+    <>
+      <ProductsTable data={data} handleEditing={handleEditing} />
+
+      {editing && formData && (
+        <ProductsListing
+          formData={formData}
+          setFormData={setFormData}
+          handleSave={handleSave}
+          handleEditing={handleEditing}
+        />
+      )}
+    </>
   );
 }
 
