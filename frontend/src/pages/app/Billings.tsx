@@ -41,31 +41,133 @@ function Billings() {
 
   return (
     <>
-      <h1>Billings</h1>
+      <div className="space-y-8">
+        <div className="flex justify-center">
+          <h1 className="text-4xl font-semibold text-slate-50">Billings</h1>
+        </div>
 
-      <input
-        type="date"
-        value={fechaInicio}
-        onChange={(e) => setFechaInicio(e.target.value)}
-      />
+        <div
+          className="
+        max-w-2xl
+        mx-auto
 
-      <input
-        type="date"
-        value={fechaFin}
-        onChange={(e) => setFechaFin(e.target.value)}
-      />
+        p-8
 
-      <button onClick={handleBuscar}>Buscar</button>
+        rounded-3xl
 
-      {loading && <p>Cargando...</p>}
+        bg-[#132238]/70
+        border border-slate-700/40
+      "
+        >
+          <div className="flex flex-col items-center gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-300">
+                  Desde
+                </label>
 
-      {err && <p>{err}</p>}
+                <input
+                  type="date"
+                  value={fechaInicio}
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                  className="
+                w-[220px]
 
-      {!loading && !err && message && data.length === 0 && <p>{message}</p>}
+                px-4 py-3
 
-      {!loading && !err && data.length > 0 && <BillingsTable data={data} />}
+                rounded-2xl
 
-      {!loading && !err && data.length === 0 && !message && <p>No hay datos</p>}
+                bg-[#0B1220]
+                border border-slate-700/50
+
+                text-slate-50
+
+                outline-none
+
+                transition-all duration-200
+
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+
+                [color-scheme:dark]
+              "
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-300">
+                  Hasta
+                </label>
+
+                <input
+                  type="date"
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                  className="
+                w-[220px]
+
+                px-4 py-3
+
+                rounded-2xl
+
+                bg-[#0B1220]
+                border border-slate-700/50
+
+                text-slate-50
+
+                outline-none
+
+                transition-all duration-200
+
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+
+                [color-scheme:dark]
+              "
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleBuscar}
+              className="
+            h-[52px]
+
+            px-8
+
+            rounded-2xl
+
+            bg-sky-400/10
+            border border-sky-400/20
+
+            text-sky-300
+            font-semibold
+
+            hover:bg-sky-400/20
+            hover:border-sky-400/40
+
+            transition-all duration-200
+          "
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
+
+        {loading && <p className="text-center text-slate-400">Cargando...</p>}
+
+        {err && <p className="text-center text-red-400">{err}</p>}
+
+        {!loading && !err && message && data.length === 0 && (
+          <p className="text-center text-slate-400">{message}</p>
+        )}
+
+        {!loading && !err && data.length > 0 && <BillingsTable data={data} />}
+
+        {!loading && !err && data.length === 0 && !message && (
+          <p className="text-center text-slate-400">No hay datos</p>
+        )}
+      </div>
     </>
   );
 }

@@ -239,14 +239,58 @@ function Clients() {
 
   return (
     <>
-      <h1>Clientes</h1>
-      <label>Buscar cliente</label>
-      <input
-        type="text"
-        placeholder="Nombre"
-        value={buscar}
-        onChange={(e) => setBuscar(e.target.value)}
-      />
+      <div className="max-w-xl mx-auto mb-10">
+        <h1 className="text-5xl font-semibold text-slate-50 mb-8">Clientes</h1>
+
+        <div className="space-y-2">
+          <label className="text-sm text-slate-300">Buscar cliente</label>
+          <div className="flex items-center gap-6">
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={buscar}
+              onChange={(e) => setBuscar(e.target.value)}
+              className="
+              w-full
+              px-5 py-3
+              rounded-2xl
+              bg-[#132238]
+              border border-slate-700/50
+              text-slate-50
+              placeholder:text-slate-500
+              outline-none
+              transition-all duration-200
+
+              focus:border-sky-400
+              focus:ring-4 focus:ring-sky-400/10
+              "
+            />
+            <button
+              onClick={() => setModalAbierto({ type: "AñadirCliente" })}
+              className="
+                shrink-0
+                h-[52px]
+
+                px-5
+                rounded-2xl
+
+                bg-sky-400
+                text-[#0B1220]
+                font-semibold
+
+                hover:bg-sky-300
+                hover:scale-[1.02]
+                active:scale-[0.98]
+
+                transition-all duration-200
+                shadow-lg shadow-sky-500/20
+              "
+            >
+              Añadir cliente
+            </button>
+          </div>
+        </div>
+      </div>
 
       {!loading && !err && clients.length > 0 && (
         <ClientsTable clients={clients} setModalAbierto={setModalAbierto} />
@@ -314,9 +358,6 @@ function Clients() {
         />
       )}
       {/* Modales Fin */}
-      <button onClick={() => setModalAbierto({ type: "AñadirCliente" })}>
-        Añadir cliente
-      </button>
     </>
   );
 }
