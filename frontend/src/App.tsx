@@ -6,6 +6,7 @@ import {
   Outlet,
   Link,
   Navigate,
+  NavLink,
 } from "react-router-dom";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
@@ -99,9 +100,93 @@ function AppLayout() {
 // 🔹 Layout para auth
 function AuthLayout() {
   return (
-    <div>
-      <h2>Auth</h2>
-      <Outlet />
+    <div className="min-h-screen bg-[#0B1220] text-slate-50 font-space">
+      {/* Navbar minimalista */}
+      <nav
+        className="
+          w-full
+
+          flex items-center justify-between
+
+          px-6 md:px-10
+          py-3
+
+          bg-[#132238]
+
+          border-b border-slate-700/40
+        "
+      >
+        <div className="flex items-center gap-3">
+          <Logo />
+
+          <h2 className="text-xl font-semibold text-slate-100">Soda Baral</h2>
+        </div>
+
+        <div className="flex items-center gap-3 text-sm font-medium">
+          <NavLink
+            to="/auth/login"
+            className={({ isActive }) =>
+              `
+                px-5 py-2.5
+                rounded-2xl
+
+                border
+
+                transition-all duration-200
+
+                ${
+                  isActive
+                    ? "bg-sky-400/20 border-sky-400/40 text-sky-300"
+                    : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
+                }
+              `
+            }
+          >
+            Login
+          </NavLink>
+
+          <NavLink
+            to="/auth/register"
+            className={({ isActive }) =>
+              `
+                px-5 py-2.5
+                rounded-2xl
+
+                border
+
+                transition-all duration-200
+
+                ${
+                  isActive
+                    ? "bg-emerald-400/20 border-emerald-400/40 text-emerald-300"
+                    : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
+                }
+              `
+            }
+          >
+            Registro
+          </NavLink>
+        </div>
+      </nav>
+
+      {/* Content */}
+      <main
+        className="
+          min-h-[calc(100vh-73px)]
+
+          flex items-center justify-center
+
+          p-4
+        "
+      >
+        <div className="w-full max-w-md">
+          <div className="flex justify-center mb-8">
+            <Logo />
+          </div>
+
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 }
@@ -119,12 +204,27 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
           <Route path="refresh" element={<p>Refreshing...</p>} />
+
+          <Route path="*" element={<Navigate to="/auth/login" replace />} />
         </Route>
 
         {/* App */}
         <Route path="app" element={<AppLayout />}>
           {/* Home */}
-          <Route index element={<p>Bienvenido a la app</p>} />
+          <Route
+            index
+            element={
+              <div className="space-y-4">
+                <h1 className="text-5xl font-semibold text-slate-50">
+                  Bienvenido
+                </h1>
+
+                <p className="text-lg text-slate-400">
+                  Gestioná clientes, stock y facturación.
+                </p>
+              </div>
+            }
+          />
 
           {/* Clients */}
           <Route path="clients" element={<Clients />} />
@@ -147,11 +247,11 @@ function App() {
             element={<Navigate to="/app/billings" replace />}
           />
 
-          {/* 🔥 cualquier otra cosa dentro de /app */}
+          {/* Catch */}
           <Route path="*" element={<Navigate to="/app" replace />} />
         </Route>
 
-        {/* 🔥 cualquier otra cosa global */}
+        {/* Global Catch */}
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>

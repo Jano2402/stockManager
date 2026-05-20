@@ -1,6 +1,5 @@
 import React from "react";
 import type { compraAgrupada } from "../../types";
-import Modal from "./Modal";
 
 type BillingsTableProps = {
   data: compraAgrupada[];
