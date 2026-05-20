@@ -32,12 +32,12 @@ function AnadirCompraModal({
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Sifones
             </label>
@@ -48,35 +48,35 @@ function AnadirCompraModal({
               value={cliente.sifones}
               onChange={(e) => handleChange("sifones", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones 6L
             </label>
@@ -87,35 +87,35 @@ function AnadirCompraModal({
               value={cliente.bidones_6l}
               onChange={(e) => handleChange("bidones_6l", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones 12L
             </label>
@@ -126,23 +126,23 @@ function AnadirCompraModal({
               value={cliente.bidones_12l}
               onChange={(e) => handleChange("bidones_12l", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
         </div>
@@ -150,12 +150,12 @@ function AnadirCompraModal({
         <div>
           <label
             className="
-          block
-          mb-2
-          text-sm
-          font-medium
-          text-slate-300
-        "
+              block
+              mb-2
+              text-sm
+              font-medium
+              text-slate-300
+            "
           >
             Pago
           </label>
@@ -166,23 +166,23 @@ function AnadirCompraModal({
             value={cliente.pago}
             onChange={(e) => handleChange("pago", e.target.value)}
             className="
-          w-full
-          px-4 py-3
-          rounded-2xl
+              w-full
+              px-4 py-3
+              rounded-2xl
 
-          bg-[#0B1220]
-          border border-slate-700/50
+              bg-[#0B1220]
+              border border-slate-700/50
 
-          text-slate-50
-          placeholder:text-slate-500
+              text-slate-50
+              placeholder:text-slate-500
 
-          outline-none
+              outline-none
 
-          transition-all duration-200
+              transition-all duration-200
 
-          focus:border-sky-400
-          focus:ring-4 focus:ring-sky-400/10
-        "
+              focus:border-sky-400
+              focus:ring-4 focus:ring-sky-400/10
+            "
           />
         </div>
 
@@ -190,12 +190,12 @@ function AnadirCompraModal({
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Sifones que devuelve
             </label>
@@ -206,35 +206,35 @@ function AnadirCompraModal({
               value={cliente.devuelveSif}
               onChange={(e) => handleChange("devuelveSif", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones que devuelve
             </label>
@@ -245,23 +245,23 @@ function AnadirCompraModal({
               value={cliente.devuelveBid}
               onChange={(e) => handleChange("devuelveBid", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
         </div>
@@ -270,21 +270,21 @@ function AnadirCompraModal({
           <button
             onClick={onSubmit}
             className="
-          px-5 py-3
+              px-5 py-3
 
-          rounded-xl
+              rounded-xl
 
-          bg-emerald-400/10
-          border border-emerald-400/20
+              bg-emerald-400/10
+              border border-emerald-400/20
 
-          text-emerald-300
-          font-semibold
+              text-emerald-300
+              font-semibold
 
-          hover:bg-emerald-400/20
-          hover:border-emerald-400/40
+              hover:bg-emerald-400/20
+              hover:border-emerald-400/40
 
-          transition-all duration-200
-        "
+              transition-all duration-200
+            "
           >
             Registrar compra
           </button>

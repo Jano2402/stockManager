@@ -31,16 +31,16 @@ function UpdatePurchaseTable({
 
         <div
           className="
-          overflow-x-auto
-          rounded-2xl
-          border border-slate-700/40
-        "
+            overflow-x-auto
+            rounded-2xl
+            border border-slate-700/40
+          "
         >
           <table
             className="
-            w-full
-            bg-[#0B1220]/40
-          "
+              w-full
+              bg-[#0B1220]/40
+            "
           >
             <thead className="bg-[#0B1220]/80">
               <tr>
@@ -87,10 +87,10 @@ function UpdatePurchaseTable({
                 <tr
                   key={item.id}
                   className="
-                  border-t border-slate-700/30
-                  hover:bg-slate-800/20
-                  transition-colors
-                "
+                    border-t border-slate-700/30
+                    hover:bg-slate-800/20
+                    transition-colors
+                  "
                 >
                   <td className="px-5 py-4 text-slate-200">
                     {item.cliente_id}
@@ -126,21 +126,21 @@ function UpdatePurchaseTable({
                     <button
                       onClick={() => handleEditPurchase(item)}
                       className="
-                      px-4 py-2
+                        px-4 py-2
 
-                      rounded-xl
+                        rounded-xl
 
-                      bg-sky-400/10
-                      border border-sky-400/20
+                        bg-sky-400/10
+                        border border-sky-400/20
 
-                      text-sky-300
-                      font-medium
+                        text-sky-300
+                        font-medium
 
-                      hover:bg-sky-400/20
-                      hover:border-sky-400/40
+                        hover:bg-sky-400/20
+                        hover:border-sky-400/40
 
-                      transition-all duration-200
-                    "
+                        transition-all duration-200
+                      "
                     >
                       Modificar
                     </button>
@@ -157,20 +157,20 @@ function UpdatePurchaseTable({
               setModalAbierto({ type: "NONE" });
             }}
             className="
-            px-5 py-3
+              px-5 py-3
 
-            rounded-xl
+              rounded-xl
 
-            bg-slate-700/40
-            border border-slate-600/40
+              bg-slate-700/40
+              border border-slate-600/40
 
-            text-slate-200
-            font-medium
+              text-slate-200
+              font-medium
 
-            hover:bg-slate-700/70
+              hover:bg-slate-700/70
 
-            transition-all duration-200
-          "
+              transition-all duration-200
+            "
           >
             Cerrar
           </button>

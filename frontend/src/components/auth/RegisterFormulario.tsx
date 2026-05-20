@@ -16,31 +16,31 @@ function RegisterFormulario({
     <form
       onSubmit={handleSubmit}
       className="
-    w-full max-w-md
+        w-full max-w-md
 
-    p-8
+        p-8
 
-    rounded-3xl
+        rounded-3xl
 
-    bg-[#132238]/80
-    border border-slate-700/40
+        bg-[#132238]/80
+        border border-slate-700/40
 
-    shadow-2xl
+        shadow-2xl
 
-    space-y-6
-  "
+        space-y-6
+      "
     >
       <div className="space-y-2">
         <label
           htmlFor="username"
           className="
-        block
+            block
 
-        text-sm
-        font-medium
+            text-sm
+            font-medium
 
-        text-slate-300
-      "
+            text-slate-300
+          "
         >
           Nombre de usuario
         </label>
@@ -54,25 +54,25 @@ function RegisterFormulario({
           value={form.username}
           onChange={handleChange}
           className="
-        w-full
+            w-full
 
-        px-4 py-3
+            px-4 py-3
 
-        rounded-2xl
+            rounded-2xl
 
-        bg-[#0B1220]
-        border border-slate-700/50
+            bg-[#0B1220]
+            border border-slate-700/50
 
-        text-slate-50
-        placeholder:text-slate-500
+            text-slate-50
+            placeholder:text-slate-500
 
-        outline-none
+            outline-none
 
-        transition-all duration-200
+            transition-all duration-200
 
-        focus:border-sky-400
-        focus:ring-4 focus:ring-sky-400/10
-      "
+            focus:border-sky-400
+            focus:ring-4 focus:ring-sky-400/10
+          "
         />
       </div>
 
@@ -80,13 +80,13 @@ function RegisterFormulario({
         <label
           htmlFor="password"
           className="
-        block
+            block
 
-        text-sm
-        font-medium
+            text-sm
+            font-medium
 
-        text-slate-300
-      "
+            text-slate-300
+          "
         >
           Contraseña
         </label>
@@ -100,50 +100,50 @@ function RegisterFormulario({
           value={form.password}
           onChange={handleChange}
           className="
-        w-full
+            w-full
 
-        px-4 py-3
+            px-4 py-3
 
-        rounded-2xl
+            rounded-2xl
 
-        bg-[#0B1220]
-        border border-slate-700/50
+            bg-[#0B1220]
+            border border-slate-700/50
 
-        text-slate-50
-        placeholder:text-slate-500
+            text-slate-50
+            placeholder:text-slate-500
 
-        outline-none
+            outline-none
 
-        transition-all duration-200
+            transition-all duration-200
 
-        focus:border-sky-400
-        focus:ring-4 focus:ring-sky-400/10
-      "
+            focus:border-sky-400
+            focus:ring-4 focus:ring-sky-400/10
+          "
         />
       </div>
 
       <button
         type="submit"
         className="
-      w-full
+          w-full
 
-      py-3
+          py-3
 
-      rounded-2xl
+          rounded-2xl
 
-      bg-emerald-400/10
-      border border-emerald-400/20
+          bg-emerald-400/10
+          border border-emerald-400/20
 
-      text-emerald-300
-      font-semibold
+          text-emerald-300
+          font-semibold
 
-      hover:bg-emerald-400/20
-      hover:border-emerald-400/40
+          hover:bg-emerald-400/20
+          hover:border-emerald-400/40
 
-      active:scale-[0.99]
+          active:scale-[0.99]
 
-      transition-all duration-200
-    "
+          transition-all duration-200
+        "
       >
         Registrarse
       </button>

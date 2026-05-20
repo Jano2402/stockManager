@@ -48,16 +48,16 @@ function Billings() {
 
         <div
           className="
-        max-w-2xl
-        mx-auto
+            max-w-2xl
+            mx-auto
 
-        p-8
+            p-8
 
-        rounded-3xl
+            rounded-3xl
 
-        bg-[#132238]/70
-        border border-slate-700/40
-      "
+            bg-[#132238]/70
+            border border-slate-700/40
+          "
         >
           <div className="flex flex-col items-center gap-6">
             <div className="flex flex-wrap justify-center gap-6">
@@ -71,26 +71,26 @@ function Billings() {
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
                   className="
-                w-[220px]
+                    w-[220px]
 
-                px-4 py-3
+                    px-4 py-3
 
-                rounded-2xl
+                    rounded-2xl
 
-                bg-[#0B1220]
-                border border-slate-700/50
+                    bg-[#0B1220]
+                    border border-slate-700/50
 
-                text-slate-50
+                    text-slate-50
 
-                outline-none
+                    outline-none
 
-                transition-all duration-200
+                    transition-all duration-200
 
-                focus:border-sky-400
-                focus:ring-4 focus:ring-sky-400/10
+                    focus:border-sky-400
+                    focus:ring-4 focus:ring-sky-400/10
 
-                [color-scheme:dark]
-              "
+                    [color-scheme:dark]
+                  "
                 />
               </div>
 
@@ -104,26 +104,26 @@ function Billings() {
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
                   className="
-                w-[220px]
+                    w-[220px]
 
-                px-4 py-3
+                    px-4 py-3
 
-                rounded-2xl
+                    rounded-2xl
 
-                bg-[#0B1220]
-                border border-slate-700/50
+                    bg-[#0B1220]
+                    border border-slate-700/50
 
-                text-slate-50
+                    text-slate-50
 
-                outline-none
+                    outline-none
 
-                transition-all duration-200
+                    transition-all duration-200
 
-                focus:border-sky-400
-                focus:ring-4 focus:ring-sky-400/10
+                    focus:border-sky-400
+                    focus:ring-4 focus:ring-sky-400/10
 
-                [color-scheme:dark]
-              "
+                    [color-scheme:dark]
+                  "
                 />
               </div>
             </div>
@@ -131,23 +131,23 @@ function Billings() {
             <button
               onClick={handleBuscar}
               className="
-            h-[52px]
+                h-[52px]
 
-            px-8
+                px-8
 
-            rounded-2xl
+                rounded-2xl
 
-            bg-sky-400/10
-            border border-sky-400/20
+                bg-sky-400/10
+                border border-sky-400/20
 
-            text-sky-300
-            font-semibold
+                text-sky-300
+                font-semibold
 
-            hover:bg-sky-400/20
-            hover:border-sky-400/40
+                hover:bg-sky-400/20
+                hover:border-sky-400/40
 
-            transition-all duration-200
-          "
+                transition-all duration-200
+              "
             >
               Buscar
             </button>

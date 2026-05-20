@@ -29,12 +29,12 @@ function DelClientModal({
         <div>
           <label
             className="
-          block
-          mb-2
-          text-sm
-          font-medium
-          text-slate-300
-        "
+              block
+              mb-2
+              text-sm
+              font-medium
+              text-slate-300
+            "
           >
             Nombre
           </label>
@@ -45,35 +45,35 @@ function DelClientModal({
             value={cliente.nombre}
             onChange={(e) => handleChange("nombre", e.target.value)}
             className="
-          w-full
-          px-4 py-3
-          rounded-2xl
+              w-full
+              px-4 py-3
+              rounded-2xl
 
-          bg-[#0B1220]
-          border border-slate-700/50
+              bg-[#0B1220]
+              border border-slate-700/50
 
-          text-slate-50
-          placeholder:text-slate-500
+              text-slate-50
+              placeholder:text-slate-500
 
-          outline-none
+              outline-none
 
-          transition-all duration-200
+              transition-all duration-200
 
-          focus:border-red-400
-          focus:ring-4 focus:ring-red-400/10
-        "
+              focus:border-red-400
+              focus:ring-4 focus:ring-red-400/10
+            "
           />
         </div>
 
         <div>
           <label
             className="
-          block
-          mb-2
-          text-sm
-          font-medium
-          text-slate-300
-        "
+              block
+              mb-2
+              text-sm
+              font-medium
+              text-slate-300
+            "
           >
             Teléfono
           </label>
@@ -84,23 +84,23 @@ function DelClientModal({
             value={cliente.telefono}
             onChange={(e) => handleChange("telefono", e.target.value)}
             className="
-          w-full
-          px-4 py-3
-          rounded-2xl
+              w-full
+              px-4 py-3
+              rounded-2xl
 
-          bg-[#0B1220]
-          border border-slate-700/50
+              bg-[#0B1220]
+              border border-slate-700/50
 
-          text-slate-50
-          placeholder:text-slate-500
+              text-slate-50
+              placeholder:text-slate-500
 
-          outline-none
+              outline-none
 
-          transition-all duration-200
+              transition-all duration-200
 
-          focus:border-red-400
-          focus:ring-4 focus:ring-red-400/10
-        "
+              focus:border-red-400
+              focus:ring-4 focus:ring-red-400/10
+            "
           />
         </div>
 
@@ -108,20 +108,20 @@ function DelClientModal({
           <button
             onClick={onClose}
             className="
-          px-5 py-3
+              px-5 py-3
 
-          rounded-xl
+              rounded-xl
 
-          bg-slate-700/40
-          border border-slate-600/40
+              bg-slate-700/40
+              border border-slate-600/40
 
-          text-slate-200
-          font-medium
+              text-slate-200
+              font-medium
 
-          hover:bg-slate-700/70
+              hover:bg-slate-700/70
 
-          transition-all duration-200
-        "
+              transition-all duration-200
+            "
           >
             Cancelar
           </button>
@@ -129,21 +129,21 @@ function DelClientModal({
           <button
             onClick={onSubmit}
             className="
-          px-5 py-3
+              px-5 py-3
 
-          rounded-xl
+              rounded-xl
 
-          bg-red-500/10
-          border border-red-500/20
+              bg-red-500/10
+              border border-red-500/20
 
-          text-red-300
-          font-semibold
+              text-red-300
+              font-semibold
 
-          hover:bg-red-500/20
-          hover:border-red-500/40
+              hover:bg-red-500/20
+              hover:border-red-500/40
 
-          transition-all duration-200
-        "
+              transition-all duration-200
+            "
           >
             Borrar cliente
           </button>

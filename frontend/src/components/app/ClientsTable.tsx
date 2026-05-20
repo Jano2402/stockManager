@@ -11,10 +11,10 @@ function ClientsTable({ clients, setModalAbierto }: ClientsTableProps) {
     <div className="overflow-x-auto rounded-2xl border border-slate-700/40">
       <table
         className="
-      w-full
-      bg-[#132238]/70
-      backdrop-blur-sm
-    "
+          w-full
+          bg-[#132238]/70
+          backdrop-blur-sm
+        "
       >
         <thead className="bg-[#0B1220]/80">
           <tr>
@@ -47,10 +47,10 @@ function ClientsTable({ clients, setModalAbierto }: ClientsTableProps) {
             <tr
               key={item.id}
               className="
-            border-t border-slate-700/30
-            hover:bg-slate-800/30
-            transition-colors
-          "
+                border-t border-slate-700/30
+                hover:bg-slate-800/30
+                transition-colors
+              "
             >
               <td className="px-6 py-4 text-slate-200">{item.id}</td>
               <td className="px-6 py-4 text-slate-50 font-medium">

@@ -251,18 +251,18 @@ function Clients() {
               value={buscar}
               onChange={(e) => setBuscar(e.target.value)}
               className="
-              w-full
-              px-5 py-3
-              rounded-2xl
-              bg-[#132238]
-              border border-slate-700/50
-              text-slate-50
-              placeholder:text-slate-500
-              outline-none
-              transition-all duration-200
+                w-full
+                px-5 py-3
+                rounded-2xl
+                bg-[#132238]
+                border border-slate-700/50
+                text-slate-50
+                placeholder:text-slate-500
+                outline-none
+                transition-all duration-200
 
-              focus:border-sky-400
-              focus:ring-4 focus:ring-sky-400/10
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
               "
             />
             <button

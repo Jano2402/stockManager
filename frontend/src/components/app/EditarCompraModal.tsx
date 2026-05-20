@@ -38,12 +38,12 @@ function EditarCompraModal({
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Sifones
             </label>
@@ -54,35 +54,35 @@ function EditarCompraModal({
               value={cliente.sifones}
               onChange={(e) => handleChange("sifones", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones 6L
             </label>
@@ -93,35 +93,35 @@ function EditarCompraModal({
               value={cliente.bidones_6l}
               onChange={(e) => handleChange("bidones_6l", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones 12L
             </label>
@@ -132,23 +132,23 @@ function EditarCompraModal({
               value={cliente.bidones_12l}
               onChange={(e) => handleChange("bidones_12l", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
         </div>
@@ -157,12 +157,12 @@ function EditarCompraModal({
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Sifones que devuelve
             </label>
@@ -173,35 +173,35 @@ function EditarCompraModal({
               value={cliente.devuelveSif}
               onChange={(e) => handleChange("devuelveSif", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
 
           <div>
             <label
               className="
-            block
-            mb-2
-            text-sm
-            font-medium
-            text-slate-300
-          "
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-slate-300
+              "
             >
               Bidones que devuelve
             </label>
@@ -212,23 +212,23 @@ function EditarCompraModal({
               value={cliente.devuelveBid}
               onChange={(e) => handleChange("devuelveBid", e.target.value)}
               className="
-            w-full
-            px-4 py-3
-            rounded-2xl
+                w-full
+                px-4 py-3
+                rounded-2xl
 
-            bg-[#0B1220]
-            border border-slate-700/50
+                bg-[#0B1220]
+                border border-slate-700/50
 
-            text-slate-50
-            placeholder:text-slate-500
+                text-slate-50
+                placeholder:text-slate-500
 
-            outline-none
+                outline-none
 
-            transition-all duration-200
+                transition-all duration-200
 
-            focus:border-sky-400
-            focus:ring-4 focus:ring-sky-400/10
-          "
+                focus:border-sky-400
+                focus:ring-4 focus:ring-sky-400/10
+              "
             />
           </div>
         </div>
@@ -236,12 +236,12 @@ function EditarCompraModal({
         <div>
           <label
             className="
-          block
-          mb-2
-          text-sm
-          font-medium
-          text-slate-300
-        "
+              block
+              mb-2
+              text-sm
+              font-medium
+              text-slate-300
+            "
           >
             Pago
           </label>
@@ -252,23 +252,23 @@ function EditarCompraModal({
             value={cliente.pago}
             onChange={(e) => handleChange("pago", e.target.value)}
             className="
-          w-full
-          px-4 py-3
-          rounded-2xl
+              w-full
+              px-4 py-3
+              rounded-2xl
 
-          bg-[#0B1220]
-          border border-slate-700/50
+              bg-[#0B1220]
+              border border-slate-700/50
 
-          text-slate-50
-          placeholder:text-slate-500
+              text-slate-50
+              placeholder:text-slate-500
 
-          outline-none
+              outline-none
 
-          transition-all duration-200
+              transition-all duration-200
 
-          focus:border-sky-400
-          focus:ring-4 focus:ring-sky-400/10
-        "
+              focus:border-sky-400
+              focus:ring-4 focus:ring-sky-400/10
+            "
           />
         </div>
 
@@ -276,20 +276,20 @@ function EditarCompraModal({
           <button
             onClick={onClose}
             className="
-          px-5 py-3
+              px-5 py-3
 
-          rounded-xl
+              rounded-xl
 
-          bg-slate-700/40
-          border border-slate-600/40
+              bg-slate-700/40
+              border border-slate-600/40
 
-          text-slate-200
-          font-medium
+              text-slate-200
+              font-medium
 
-          hover:bg-slate-700/70
+              hover:bg-slate-700/70
 
-          transition-all duration-200
-        "
+              transition-all duration-200
+            "
           >
             Cancelar
           </button>
@@ -297,21 +297,21 @@ function EditarCompraModal({
           <button
             onClick={onSubmit}
             className="
-          px-5 py-3
+              px-5 py-3
 
-          rounded-xl
+              rounded-xl
 
-          bg-sky-400/10
-          border border-sky-400/20
+              bg-sky-400/10
+              border border-sky-400/20
 
-          text-sky-300
-          font-semibold
+              text-sky-300
+              font-semibold
 
-          hover:bg-sky-400/20
-          hover:border-sky-400/40
+              hover:bg-sky-400/20
+              hover:border-sky-400/40
 
-          transition-all duration-200
-        "
+              transition-all duration-200
+            "
           >
             Guardar cambios
           </button>

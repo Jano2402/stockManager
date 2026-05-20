@@ -9,103 +9,103 @@ function BillingsTable({ data }: BillingsTableProps) {
   return (
     <div
       className="
-    overflow-x-auto
+        overflow-x-auto
 
-    rounded-3xl
+        rounded-3xl
 
-    border border-slate-700/40
+        border border-slate-700/40
 
-    bg-[#132238]/70
-  "
+        bg-[#132238]/70
+      "
     >
       <table className="w-full">
         <thead
           className="
-        bg-[#0B1220]/80
-        border-b border-slate-700/40
-      "
+          bg-[#0B1220]/80
+            border-b border-slate-700/40
+          "
         >
           <tr>
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Cliente
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Sifones
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Bidón 6L
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Bidón 12L
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Total Compra
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Total Pagado
             </th>
 
             <th
               className="
-            px-6 py-4
-            text-left
-            text-sm
-            font-semibold
-            text-slate-300
-          "
+                px-6 py-4
+                text-left
+                text-sm
+                font-semibold
+                text-slate-300
+              "
             >
               Debe
             </th>
@@ -117,17 +117,17 @@ function BillingsTable({ data }: BillingsTableProps) {
             <tr
               key={index}
               className="
-            hover:bg-slate-800/20
-            transition-colors duration-200
-          "
+              hover:bg-slate-800/20
+                transition-colors duration-200
+              "
             >
               <td
                 className="
-              px-6 py-4
+                  px-6 py-4
 
-              text-slate-50
-              font-medium
-            "
+                text-slate-50
+                  font-medium
+                "
               >
                 {item.nombre}
               </td>
@@ -140,33 +140,33 @@ function BillingsTable({ data }: BillingsTableProps) {
 
               <td
                 className="
-              px-6 py-4
+                  px-6 py-4
 
-              text-sky-300
-              font-medium
-            "
+                  text-sky-300
+                  font-medium
+                "
               >
                 ${item.totalCompra}
               </td>
 
               <td
                 className="
-              px-6 py-4
+                  px-6 py-4
 
-              text-emerald-300
-              font-medium
-            "
+                  text-emerald-300
+                  font-medium
+                "
               >
                 ${item.totalPagado}
               </td>
 
               <td
                 className={`
-              px-6 py-4
-              font-semibold
+                  px-6 py-4
+                  font-semibold
 
-              ${item.totalDebiendo > 0 ? "text-red-400" : "text-emerald-400"}
-            `}
+                  ${item.totalDebiendo > 0 ? "text-red-400" : "text-emerald-400"}
+                `}
               >
                 ${item.totalDebiendo}
               </td>
