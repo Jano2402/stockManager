@@ -8,6 +8,7 @@ import {
   Navigate,
   NavLink,
 } from "react-router-dom";
+import { useState } from "react";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Stock from "./pages/app/Stock";
@@ -31,9 +32,10 @@ import Logo from "./components/app/Logo";
 
 // 🔹 Layout para /app
 function AppLayout() {
+  const [open, setOpen] = useState(false);
   return (
     <div className="min-h-screen bg-[#0B1220] text-slate-50 font-space">
-      <nav className="w-full flex items-center justify-between px-12 py-4 border-b border-white/10 bg-[#132238]/80 backdrop-blur-md">
+      <nav className="w-full flex items-center justify-between px-12 py-4 border-b border-white/10 bg-[#132238]/80 backdrop-blur-md relative">
         {/* Logo */}
         <div className="flex items-center">
           <Logo />
@@ -42,8 +44,8 @@ function AppLayout() {
           </h2>
         </div>
 
-        {/* Nav */}
-        <div className="flex items-center gap-3 text-sm font-medium">
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-3 text-sm font-medium">
           <Link
             to="stock"
             className="
@@ -88,6 +90,77 @@ function AppLayout() {
             Clientes
           </Link>
         </div>
+
+        {/* Hamburger Button */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="
+            md:hidden
+            flex flex-col gap-1
+            p-2
+          "
+        >
+          <div className="w-6 h-0.5 bg-white rounded" />
+          <div className="w-6 h-0.5 bg-white rounded" />
+          <div className="w-6 h-0.5 bg-white rounded" />
+        </button>
+
+        {/* Mobile Menu */}
+        {open && (
+          <div
+            className="
+              absolute
+              top-20
+              right-6
+              md:hidden
+              flex flex-col gap-3
+              p-4
+              rounded-2xl
+              bg-[#132238]
+              border border-white/10
+              shadow-2xl
+            "
+          >
+            <Link
+              to="stock"
+              onClick={() => setOpen(false)}
+              className="
+                px-5 py-2.5 rounded-2xl
+                bg-sky-400/10
+                border border-sky-400/20
+                text-sky-300
+              "
+            >
+              Stock
+            </Link>
+
+            <Link
+              to="billings"
+              onClick={() => setOpen(false)}
+              className="
+                px-5 py-2.5 rounded-2xl
+                bg-red-600/10
+                border border-red-500/20
+                text-red-400
+              "
+            >
+              Facturación
+            </Link>
+
+            <Link
+              to="clients"
+              onClick={() => setOpen(false)}
+              className="
+                px-5 py-2.5 rounded-2xl
+                bg-slate-800
+                border border-white/10
+                text-slate-200
+              "
+            >
+              Clientes
+            </Link>
+          </div>
+        )}
       </nav>
 
       <main className="p-8">
