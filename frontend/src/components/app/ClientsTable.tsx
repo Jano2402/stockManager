@@ -8,7 +8,7 @@ type ClientsTableProps = {
 
 function ClientsTable({ clients, setModalAbierto }: ClientsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-700/40">
+    <div className="overflow-x-auto rounded-2xl border border-slate-700/40 custom-scrollbar">
       <table
         className="
           w-full
@@ -69,7 +69,7 @@ function ClientsTable({ clients, setModalAbierto }: ClientsTableProps) {
               <td className="px-6 py-4 text-slate-200">{item.cant_envases}</td>
               <td className="px-6 py-4 text-slate-200">{item.cant_bidones}</td>
               <td className="px-6 py-4">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex md:flex-wrap gap-2">
                   <button
                     onClick={() => {
                       setModalAbierto({

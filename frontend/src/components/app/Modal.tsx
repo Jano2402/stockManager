@@ -70,7 +70,7 @@ function Modal({ title, children, onClose }: ModalProps) {
           </button>
         </div>
 
-        <div className="overflow-y-auto p-8 no-scrollbar">{children}</div>
+        <div className="overflow-y-auto p-8 custom-scrollbar">{children}</div>
       </div>
     </div>
   );

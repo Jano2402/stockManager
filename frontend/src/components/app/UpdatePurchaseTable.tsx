@@ -34,6 +34,7 @@ function UpdatePurchaseTable({
             overflow-x-auto
             rounded-2xl
             border border-slate-700/40
+            custom-scrollbar
           "
         >
           <table

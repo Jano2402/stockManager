@@ -16,6 +16,7 @@ function BillingsTable({ data }: BillingsTableProps) {
         border border-slate-700/40
 
         bg-[#132238]/70
+        custom-scrollbar
       "
     >
       <table className="w-full">
