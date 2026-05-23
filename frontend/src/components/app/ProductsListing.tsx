@@ -17,22 +17,22 @@ function ProductsListing({
   return (
     <div
       className="
-    fixed inset-0
-    bg-black/60 backdrop-blur-sm
-    flex items-center justify-center
-    z-50
-    px-4
-  "
+        fixed inset-0
+        bg-black/60 backdrop-blur-sm
+        flex items-center justify-center
+        z-50
+        px-4
+      "
     >
       <div
         className="
-      w-full max-w-md
-      bg-[#132238]
-      border border-slate-700/40
-      rounded-3xl
-      p-8
-      shadow-2xl
-    "
+          w-full max-w-md
+          bg-[#132238]
+          border border-slate-700/40
+          rounded-3xl
+          p-8
+          shadow-2xl
+        "
       >
         <div className="mb-8">
           <h1 className="text-3xl font-semibold text-slate-50">
@@ -62,17 +62,17 @@ function ProductsListing({
                 })
               }
               className="
-            w-full
-            px-4 py-3
-            rounded-xl
-            bg-[#0B1220]
-            border border-slate-700
-            text-slate-50
-            outline-none
-            focus:border-sky-400
-            focus:ring-2 focus:ring-sky-400/20
-            transition-all
-          "
+                w-full
+                px-4 py-3
+                rounded-xl
+                bg-[#0B1220]
+                border border-slate-700
+                text-slate-50
+                outline-none
+                focus:border-sky-400
+                focus:ring-2 focus:ring-sky-400/20
+                transition-all
+              "
             />
           </div>
 
@@ -91,17 +91,17 @@ function ProductsListing({
                 })
               }
               className="
-            w-full
-            px-4 py-3
-            rounded-xl
-            bg-[#0B1220]
-            border border-slate-700
-            text-slate-50
-            outline-none
-            focus:border-sky-400
-            focus:ring-2 focus:ring-sky-400/20
-            transition-all
-          "
+                w-full
+                px-4 py-3
+                rounded-xl
+                bg-[#0B1220]
+                border border-slate-700
+                text-slate-50
+                outline-none
+                focus:border-sky-400
+                focus:ring-2 focus:ring-sky-400/20
+                transition-all
+              "
             />
           </div>
         </div>
@@ -110,17 +110,17 @@ function ProductsListing({
           <button
             onClick={handleSave}
             className="
-          flex-1
-          px-5 py-3
-          rounded-xl
-          bg-sky-400/10
-          border border-sky-400/20
-          text-sky-300
-          font-medium
-          hover:bg-sky-400/20
-          hover:border-sky-400/40
-          transition-all
-        "
+              flex-1
+              px-5 py-3
+              rounded-xl
+              bg-sky-400/10
+              border border-sky-400/20
+              text-sky-300
+              font-medium
+              hover:bg-sky-400/20
+              hover:border-sky-400/40
+              transition-all
+            "
           >
             Guardar
           </button>
@@ -128,17 +128,17 @@ function ProductsListing({
           <button
             onClick={() => handleEditing()}
             className="
-          flex-1
-          px-5 py-3
-          rounded-xl
-          bg-red-500/10
-          border border-red-500/20
-          text-red-300
-          font-medium
-          hover:bg-red-500/20
-          hover:border-red-500/40
-          transition-all
-        "
+              flex-1
+              px-5 py-3
+              rounded-xl
+              bg-red-500/10
+              border border-red-500/20
+              text-red-300
+              font-medium
+              hover:bg-red-500/20
+              hover:border-red-500/40
+              transition-all
+            "
           >
             Cancelar
           </button>
