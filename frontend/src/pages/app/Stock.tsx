@@ -42,7 +42,7 @@ function Stock() {
 
   const handleSave = async () => {
     if (!formData) return;
-
+    setLoading(true);
     try {
       await modificarProducto(formData.id, formData);
 
@@ -54,11 +54,32 @@ function Stock() {
     } catch (err) {
       console.error(err);
       alert("Error al modificar producto");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
+        <div
+          className="
+            w-10 h-10
+
+            rounded-full
+
+            border-4 border-slate-700
+            border-t-sky-400
+
+            animate-spin
+          "
+        />
+
+        <p className="text-slate-400 text-md">Cargando...</p>
+      </div>
+    );
+  if (error)
+    return <div className="text-center text-slate-400">Error: {error}</div>;
 
   return (
     <>

@@ -287,7 +287,7 @@ function App() {
           <Route
             index
             element={
-              <div className="space-y-4">
+              <div className="space-y-4 flex justify-center items-center flex-col">
                 <h1 className="text-5xl font-semibold text-slate-50">
                   Bienvenido
                 </h1>

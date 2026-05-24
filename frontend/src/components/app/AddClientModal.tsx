@@ -7,6 +7,7 @@ type AddClientModalProps = {
   handleChange: (field: keyof Cliente, value: string) => void;
   onSubmit: () => void;
   onClose: () => void;
+  loading: boolean;
 };
 
 function AddClientModal({
@@ -14,6 +15,7 @@ function AddClientModal({
   handleChange,
   onSubmit,
   onClose,
+  loading,
 }: AddClientModalProps) {
   return (
     <Modal title={"Añadir cliente"} onClose={onClose}>
@@ -36,6 +38,7 @@ function AddClientModal({
             placeholder="Nombre"
             value={cliente.nombre}
             onChange={(e) => handleChange("nombre", e.target.value)}
+            disabled={loading}
             className="
               w-full
 
@@ -55,6 +58,9 @@ function AddClientModal({
 
               focus:border-sky-400
               focus:ring-4 focus:ring-sky-400/10
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           />
         </div>
@@ -77,6 +83,7 @@ function AddClientModal({
             placeholder="Teléfono"
             value={cliente.telefono}
             onChange={(e) => handleChange("telefono", e.target.value)}
+            disabled={loading}
             className="
               w-full
 
@@ -96,6 +103,9 @@ function AddClientModal({
 
               focus:border-sky-400
               focus:ring-4 focus:ring-sky-400/10
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           />
         </div>
@@ -103,7 +113,12 @@ function AddClientModal({
         <div className="flex justify-end pt-4">
           <button
             onClick={onSubmit}
+            disabled={loading}
             className="
+              min-w-[160px]
+
+              flex items-center justify-center gap-2
+
               px-5 py-3
 
               rounded-xl
@@ -118,9 +133,30 @@ function AddClientModal({
               hover:border-sky-400/40
 
               transition-all duration-200
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           >
-            Añadir cliente
+            {loading ? (
+              <>
+                <div
+                  className="
+                    w-4 h-4
+
+                    rounded-full
+
+                    border-2 border-sky-300/30
+                    border-t-sky-300
+
+                    animate-spin
+                  "
+                />
+                Guardando...
+              </>
+            ) : (
+              "Añadir cliente"
+            )}
           </button>
         </div>
       </div>

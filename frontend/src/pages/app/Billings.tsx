@@ -154,7 +154,24 @@ function Billings() {
           </div>
         </div>
 
-        {loading && <p className="text-center text-slate-400">Cargando...</p>}
+        {loading && (
+          <div className="flex flex-col items-center justify-center gap-4 py-20">
+            <div
+              className="
+              w-10 h-10
+
+              rounded-full
+
+              border-4 border-slate-700
+              border-t-sky-400
+
+              animate-spin
+            "
+            />
+
+            <p className="text-slate-400 text-md">Cargando...</p>
+          </div>
+        )}
 
         {err && <p className="text-center text-red-400">{err}</p>}
 

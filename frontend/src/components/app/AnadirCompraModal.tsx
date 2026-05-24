@@ -5,6 +5,7 @@ import Modal from "./Modal";
 type AnadirCompraModalProps = {
   cliente: Cliente;
   handleChange: (field: keyof Cliente, value: string) => void;
+  loading: boolean;
   onSubmit: () => void;
   onClose: () => void;
 };
@@ -12,6 +13,7 @@ type AnadirCompraModalProps = {
 function AnadirCompraModal({
   cliente,
   handleChange,
+  loading,
   onSubmit,
   onClose,
 }: AnadirCompraModalProps) {
@@ -28,17 +30,9 @@ function AnadirCompraModal({
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-slate-300
-              "
-            >
+            <label className="block mb-2 text-sm font-medium text-slate-300">
               Sifones
             </label>
 
@@ -47,6 +41,7 @@ function AnadirCompraModal({
               placeholder="0"
               value={cliente.sifones}
               onChange={(e) => handleChange("sifones", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -62,6 +57,9 @@ function AnadirCompraModal({
 
                 transition-all duration-200
 
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
               "
@@ -69,15 +67,7 @@ function AnadirCompraModal({
           </div>
 
           <div>
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-slate-300
-              "
-            >
+            <label className="block mb-2 text-sm font-medium text-slate-300">
               Bidones 6L
             </label>
 
@@ -86,6 +76,7 @@ function AnadirCompraModal({
               placeholder="0"
               value={cliente.bidones_6l}
               onChange={(e) => handleChange("bidones_6l", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -100,6 +91,9 @@ function AnadirCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -108,15 +102,7 @@ function AnadirCompraModal({
           </div>
 
           <div>
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-slate-300
-              "
-            >
+            <label className="block mb-2 text-sm font-medium text-slate-300">
               Bidones 12L
             </label>
 
@@ -125,6 +111,7 @@ function AnadirCompraModal({
               placeholder="0"
               value={cliente.bidones_12l}
               onChange={(e) => handleChange("bidones_12l", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -139,6 +126,9 @@ function AnadirCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -148,15 +138,7 @@ function AnadirCompraModal({
         </div>
 
         <div>
-          <label
-            className="
-              block
-              mb-2
-              text-sm
-              font-medium
-              text-slate-300
-            "
-          >
+          <label className="block mb-2 text-sm font-medium text-slate-300">
             Pago
           </label>
 
@@ -165,6 +147,7 @@ function AnadirCompraModal({
             placeholder="$0"
             value={cliente.pago}
             onChange={(e) => handleChange("pago", e.target.value)}
+            disabled={loading}
             className="
               w-full
               px-4 py-3
@@ -180,23 +163,18 @@ function AnadirCompraModal({
 
               transition-all duration-200
 
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
               focus:border-sky-400
               focus:ring-4 focus:ring-sky-400/10
             "
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-slate-300
-              "
-            >
+            <label className="block mb-2 text-sm font-medium text-slate-300">
               Sifones que devuelve
             </label>
 
@@ -205,6 +183,7 @@ function AnadirCompraModal({
               placeholder="0"
               value={cliente.devuelveSif}
               onChange={(e) => handleChange("devuelveSif", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -219,6 +198,9 @@ function AnadirCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -227,15 +209,7 @@ function AnadirCompraModal({
           </div>
 
           <div>
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-slate-300
-              "
-            >
+            <label className="block mb-2 text-sm font-medium text-slate-300">
               Bidones que devuelve
             </label>
 
@@ -244,6 +218,7 @@ function AnadirCompraModal({
               placeholder="0"
               value={cliente.devuelveBid}
               onChange={(e) => handleChange("devuelveBid", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -258,6 +233,9 @@ function AnadirCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -269,7 +247,12 @@ function AnadirCompraModal({
         <div className="flex justify-end pt-4">
           <button
             onClick={onSubmit}
+            disabled={loading}
             className="
+              min-w-[180px]
+
+              flex items-center justify-center gap-2
+
               px-5 py-3
 
               rounded-xl
@@ -283,10 +266,29 @@ function AnadirCompraModal({
               hover:bg-emerald-400/20
               hover:border-emerald-400/40
 
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
               transition-all duration-200
             "
           >
-            Registrar compra
+            {loading ? (
+              <>
+                <div
+                  className="
+                    w-4 h-4
+                    rounded-full
+                    border-2 border-emerald-300/30
+                    border-t-emerald-300
+                    animate-spin
+                  "
+                />
+
+                <span>Registrando...</span>
+              </>
+            ) : (
+              "Registrar compra"
+            )}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
+
 import {
   postClient,
   putClient,
@@ -8,14 +9,18 @@ import {
   delClient,
   getCompras,
 } from "../../services/app/clientsService";
+
 import type { client, compras, Cliente, ModalState } from "../../types";
+
 import {
   buildCompraData,
   buildCompraUpdate,
   buildUpdateClient,
 } from "../../utils/app/clientsUtils";
+
 import UpdatePurchaseTable from "../../components/app/UpdatePurchaseTable";
 import ClientsTable from "../../components/app/ClientsTable";
+
 import AddClientModal from "../../components/app/AddClientModal";
 import UpdateClientModal from "../../components/app/UpdateClientModal";
 import AnadirCompraModal from "../../components/app/AnadirCompraModal";
@@ -38,12 +43,22 @@ const clienteIncial: Cliente = {
 
 function Clients() {
   const [err, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+
+  // 🔥 Loadings separados
+  const [loadingClients, setLoadingClients] = useState<boolean>(true);
+
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+
+  const [loadingCompras, setLoadingCompras] = useState<boolean>(false);
 
   const [clients, setClients] = useState<client[]>([]);
+
   const [actualizar, setActualizar] = useState<number>(0);
+
   const [compras, setCompras] = useState<compras[]>([]);
+
   const [buscar, setBuscar] = useState<string>("");
+
   const [cliente, setCliente] = useState<Cliente>(clienteIncial);
 
   const [modalAbierto, setModalAbierto] = useState<ModalState>({
@@ -61,31 +76,47 @@ function Clients() {
     }));
   };
 
+  // 🔥 Compras
   const fetchCompras = async (id: number) => {
+    setLoadingCompras(true);
+
     try {
       const data = await getCompras(id);
+
       setCompras(data);
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoadingCompras(false);
     }
   };
 
+  // 🔥 Añadir cliente
   const addClientPost = async (nombre: string, telefono: string) => {
+    setLoadingSubmit(true);
+
     try {
       await postClient(nombre, telefono);
 
       resetCliente();
 
       setActualizar((prev) => prev + 1);
+
+      setModalAbierto({ type: "NONE" });
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
+  // 🔥 Actualizar cliente
   const updateClientPut = async () => {
     if (modalAbierto.type !== "ActualizarCliente") return;
 
     const data = buildUpdateClient(cliente);
+
+    setLoadingSubmit(true);
 
     try {
       await putClient(modalAbierto.client.id, data);
@@ -93,16 +124,22 @@ function Clients() {
       resetCliente();
 
       setModalAbierto({ type: "NONE" });
+
       setActualizar((prev) => prev + 1);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
+  // 🔥 Añadir compra
   const addPurchasePost = async () => {
     if (modalAbierto.type !== "AñadirCompra") return;
 
     const data = buildCompraData(cliente);
+
+    setLoadingSubmit(true);
 
     try {
       await postCompra(modalAbierto.client.id, data);
@@ -110,15 +147,23 @@ function Clients() {
       resetCliente();
 
       setActualizar((prev) => prev + 1);
+
+      setModalAbierto({ type: "NONE" });
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
+  // 🔥 Editar compra
   const updatePurchasePut = async () => {
     if (modalAbierto.type !== "EditarCompra") return;
 
     const data = buildCompraUpdate(cliente);
+
+    setLoadingSubmit(true);
+
     try {
       await putCompra(modalAbierto.compra.id, data);
 
@@ -130,14 +175,20 @@ function Clients() {
       });
 
       setActualizar((prev) => prev + 1);
+
       await fetchCompras(modalAbierto.compra.cliente_id);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
+  // 🔥 Borrar cliente
   const handleDelUser = async () => {
     if (modalAbierto.type !== "BorrarCliente") return;
+
+    setLoadingSubmit(true);
 
     try {
       await delClient(modalAbierto.client.id, cliente.nombre, cliente.telefono);
@@ -145,9 +196,12 @@ function Clients() {
       resetCliente();
 
       setActualizar((prev) => prev + 1);
+
       setModalAbierto({ type: "NONE" });
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -171,50 +225,67 @@ function Clients() {
     });
   };
 
+  // 🔥 Fetch clientes
   useEffect(() => {
     const controller = new AbortController();
 
+    setError(null);
+
+    // Todos los clientes
     if (buscar === "") {
+      setLoadingClients(true);
+
       axiosClient
         .get<client[]>("http://localhost:3000/app/clients/get")
         .then((res) => {
           setClients(res.data);
-          setLoading(false);
         })
         .catch((err) => {
-          if (err.name !== "AbortError") setError(err.message);
-          setLoading(false);
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
+        })
+        .finally(() => {
+          setLoadingClients(false);
         });
+
       return () => controller.abort();
     }
 
+    // Menos de 3 letras
     if (buscar.length < 3) {
-      setLoading(false);
+      setLoadingClients(false);
       return;
     }
+
+    setLoadingClients(true);
 
     const timeout = setTimeout(() => {
       axiosClient
         .get<client[]>(
           `http://localhost:3000/app/clients/search?nombre=${buscar}&limit=10`,
-          //{ signal: controller.signal }, Descomentar y probar
         )
         .then((res) => {
           setClients(res.data);
-          setLoading(false);
         })
         .catch((err) => {
-          if (err.name !== "AbortError") setError(err.message);
-          setLoading(false);
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
+        })
+        .finally(() => {
+          setLoadingClients(false);
         });
     }, 300);
 
     return () => {
       clearTimeout(timeout);
+
       controller.abort();
     };
   }, [actualizar, buscar]);
 
+  // 🔥 Cargar datos cliente
   useEffect(() => {
     if (
       modalAbierto.type === "ActualizarCliente" ||
@@ -231,6 +302,7 @@ function Clients() {
     }
   }, [modalAbierto]);
 
+  // 🔥 Fetch compras
   useEffect(() => {
     if (modalAbierto.type === "ModificarCompra") {
       fetchCompras(modalAbierto.client.id);
@@ -239,11 +311,13 @@ function Clients() {
 
   return (
     <>
+      {/* Header */}
       <div className="max-w-xl mx-auto mb-10">
         <h1 className="text-5xl font-semibold text-slate-50 mb-8">Clientes</h1>
 
         <div className="space-y-2">
           <label className="text-sm text-slate-300">Buscar cliente</label>
+
           <div className="flex items-center gap-6">
             <input
               type="text"
@@ -260,28 +334,28 @@ function Clients() {
                 placeholder:text-slate-500
                 outline-none
                 transition-all duration-200
-
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
               "
             />
+
             <button
-              onClick={() => setModalAbierto({ type: "AñadirCliente" })}
+              onClick={() =>
+                setModalAbierto({
+                  type: "AñadirCliente",
+                })
+              }
               className="
                 shrink-0
                 h-[52px]
-
                 px-5
                 rounded-2xl
-
                 bg-sky-400
                 text-[#0B1220]
                 font-semibold
-
                 hover:bg-sky-300
                 hover:scale-[1.02]
                 active:scale-[0.98]
-
                 transition-all duration-200
                 shadow-lg shadow-sky-500/20
               "
@@ -289,56 +363,104 @@ function Clients() {
               Añadir cliente
             </button>
           </div>
+
+          {buscar.length > 0 && buscar.length < 3 && (
+            <p className="text-sm text-slate-500">
+              Escribí al menos 3 caracteres
+            </p>
+          )}
         </div>
       </div>
 
-      {!loading && !err && clients.length > 0 && (
+      {/* Loading clientes */}
+      {loadingClients && (
+        <div className="flex flex-col items-center justify-center gap-4 py-20">
+          <div
+            className="
+              w-10 h-10
+              rounded-full
+              border-4 border-slate-700
+              border-t-sky-400
+              animate-spin
+            "
+          />
+
+          <p className="text-slate-400 text-md">Cargando clientes...</p>
+        </div>
+      )}
+
+      {/* Error */}
+      {err && <p className="text-center text-red-400">{err}</p>}
+
+      {/* Tabla */}
+      {!loadingClients && !err && clients.length > 0 && (
         <ClientsTable clients={clients} setModalAbierto={setModalAbierto} />
       )}
-      {!loading && !err && clients.length === 0 && <p>No hay clientes</p>}
-      {err && <p>{err}</p>}
-      {loading && <p>Cargando...</p>}
+
+      {!loadingClients && !err && clients.length === 0 && (
+        <p className="text-center text-slate-400">No hay clientes</p>
+      )}
+
+      {/* Compras loading */}
+      {loadingCompras && (
+        <div className="flex justify-center py-8">
+          <div
+            className="
+              w-8 h-8
+              rounded-full
+              border-4 border-slate-700
+              border-t-sky-400
+              animate-spin
+            "
+          />
+        </div>
+      )}
+
       {/* Modales */}
-      {!loading && !err && modalAbierto.type === "AñadirCliente" && (
+      {modalAbierto.type === "AñadirCliente" && (
         <AddClientModal
           cliente={cliente}
           handleChange={handleChange}
+          loading={loadingSubmit}
           onSubmit={() => addClientPost(cliente.nombre, cliente.telefono)}
           onClose={() => setModalAbierto({ type: "NONE" })}
         />
       )}
-      {!loading && !err && modalAbierto.type === "ActualizarCliente" && (
+
+      {modalAbierto.type === "ActualizarCliente" && (
         <UpdateClientModal
           cliente={cliente}
           handleChange={handleChange}
+          loading={loadingSubmit}
           onSubmit={() => updateClientPut()}
           onClose={() => setModalAbierto({ type: "NONE" })}
         />
       )}
-      {!loading && !err && modalAbierto.type === "AñadirCompra" && (
+
+      {modalAbierto.type === "AñadirCompra" && (
         <AnadirCompraModal
           cliente={cliente}
           handleChange={handleChange}
+          loading={loadingSubmit}
           onSubmit={() => addPurchasePost()}
           onClose={() => setModalAbierto({ type: "NONE" })}
         />
       )}
-      {!loading &&
-        !err &&
-        modalAbierto.type === "ModificarCompra" &&
-        compras.length > 0 && (
-          <UpdatePurchaseTable
-            compras={compras}
-            handleEditPurchase={handleEditPurchase}
-            setModalAbierto={setModalAbierto}
-          />
-        )}
 
-      {!loading && !err && modalAbierto.type === "EditarCompra" && (
+      {modalAbierto.type === "ModificarCompra" && compras.length > 0 && (
+        <UpdatePurchaseTable
+          compras={compras}
+          handleEditPurchase={handleEditPurchase}
+          setModalAbierto={setModalAbierto}
+        />
+      )}
+
+      {modalAbierto.type === "EditarCompra" && (
         <EditarCompraModal
           compra={modalAbierto.compra}
           cliente={cliente}
           handleChange={handleChange}
+          loading={loadingSubmit}
           onSubmit={() => updatePurchasePut()}
           onClose={() =>
             setModalAbierto({
@@ -349,15 +471,15 @@ function Clients() {
         />
       )}
 
-      {!loading && !err && modalAbierto.type === "BorrarCliente" && (
+      {modalAbierto.type === "BorrarCliente" && (
         <DelClientModal
           cliente={cliente}
           handleChange={handleChange}
+          loading={loadingSubmit}
           onSubmit={() => handleDelUser()}
           onClose={() => setModalAbierto({ type: "NONE" })}
         />
       )}
-      {/* Modales Fin */}
     </>
   );
 }

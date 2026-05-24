@@ -2,10 +2,11 @@ import React from "react";
 import type { Cliente, compras } from "../../types";
 import Modal from "./Modal";
 
-type EditarCompraModal = {
+type EditarCompraModalProps = {
   compra: compras;
   cliente: Cliente;
   handleChange: (field: keyof Cliente, value: string) => void;
+  loading: boolean;
   onSubmit: () => void;
   onClose: () => void;
 };
@@ -14,9 +15,10 @@ function EditarCompraModal({
   compra,
   cliente,
   handleChange,
+  loading,
   onSubmit,
   onClose,
-}: EditarCompraModal) {
+}: EditarCompraModalProps) {
   return (
     <Modal title={"Editar Compra"} onClose={onClose}>
       <div className="space-y-6">
@@ -34,7 +36,7 @@ function EditarCompraModal({
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label
               className="
@@ -53,6 +55,7 @@ function EditarCompraModal({
               placeholder="0"
               value={cliente.sifones}
               onChange={(e) => handleChange("sifones", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -67,6 +70,9 @@ function EditarCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -92,6 +98,7 @@ function EditarCompraModal({
               placeholder="0"
               value={cliente.bidones_6l}
               onChange={(e) => handleChange("bidones_6l", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -106,6 +113,9 @@ function EditarCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -131,6 +141,7 @@ function EditarCompraModal({
               placeholder="0"
               value={cliente.bidones_12l}
               onChange={(e) => handleChange("bidones_12l", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -146,6 +157,9 @@ function EditarCompraModal({
 
                 transition-all duration-200
 
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
               "
@@ -153,7 +167,7 @@ function EditarCompraModal({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label
               className="
@@ -172,6 +186,7 @@ function EditarCompraModal({
               placeholder="0"
               value={cliente.devuelveSif}
               onChange={(e) => handleChange("devuelveSif", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -186,6 +201,9 @@ function EditarCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -211,6 +229,7 @@ function EditarCompraModal({
               placeholder="0"
               value={cliente.devuelveBid}
               onChange={(e) => handleChange("devuelveBid", e.target.value)}
+              disabled={loading}
               className="
                 w-full
                 px-4 py-3
@@ -225,6 +244,9 @@ function EditarCompraModal({
                 outline-none
 
                 transition-all duration-200
+
+                disabled:opacity-50
+                disabled:cursor-not-allowed
 
                 focus:border-sky-400
                 focus:ring-4 focus:ring-sky-400/10
@@ -251,6 +273,7 @@ function EditarCompraModal({
             placeholder="$0"
             value={cliente.pago}
             onChange={(e) => handleChange("pago", e.target.value)}
+            disabled={loading}
             className="
               w-full
               px-4 py-3
@@ -266,6 +289,9 @@ function EditarCompraModal({
 
               transition-all duration-200
 
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
               focus:border-sky-400
               focus:ring-4 focus:ring-sky-400/10
             "
@@ -275,6 +301,7 @@ function EditarCompraModal({
         <div className="flex justify-end gap-3 pt-4">
           <button
             onClick={onClose}
+            disabled={loading}
             className="
               px-5 py-3
 
@@ -288,6 +315,9 @@ function EditarCompraModal({
 
               hover:bg-slate-700/70
 
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
               transition-all duration-200
             "
           >
@@ -296,7 +326,12 @@ function EditarCompraModal({
 
           <button
             onClick={onSubmit}
+            disabled={loading}
             className="
+              min-w-[170px]
+
+              flex items-center justify-center gap-2
+
               px-5 py-3
 
               rounded-xl
@@ -310,10 +345,29 @@ function EditarCompraModal({
               hover:bg-sky-400/20
               hover:border-sky-400/40
 
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
               transition-all duration-200
             "
           >
-            Guardar cambios
+            {loading ? (
+              <>
+                <div
+                  className="
+                    w-4 h-4
+                    rounded-full
+                    border-2 border-sky-300/30
+                    border-t-sky-300
+                    animate-spin
+                  "
+                />
+
+                <span>Guardando...</span>
+              </>
+            ) : (
+              "Guardar cambios"
+            )}
           </button>
         </div>
       </div>

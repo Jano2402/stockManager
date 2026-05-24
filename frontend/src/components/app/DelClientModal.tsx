@@ -7,6 +7,7 @@ type DelClientModalProps = {
   handleChange: (field: keyof Cliente, value: string) => void;
   onSubmit: () => void;
   onClose: () => void;
+  loading?: boolean;
 };
 
 function DelClientModal({
@@ -14,6 +15,7 @@ function DelClientModal({
   handleChange,
   onSubmit,
   onClose,
+  loading = false,
 }: DelClientModalProps) {
   return (
     <Modal title={"Borrar Cliente"} onClose={onClose}>
@@ -42,6 +44,7 @@ function DelClientModal({
           <input
             type="text"
             placeholder="Nombre"
+            disabled={loading}
             value={cliente.nombre}
             onChange={(e) => handleChange("nombre", e.target.value)}
             className="
@@ -61,6 +64,9 @@ function DelClientModal({
 
               focus:border-red-400
               focus:ring-4 focus:ring-red-400/10
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           />
         </div>
@@ -81,6 +87,7 @@ function DelClientModal({
           <input
             type="text"
             placeholder="Teléfono"
+            disabled={loading}
             value={cliente.telefono}
             onChange={(e) => handleChange("telefono", e.target.value)}
             className="
@@ -100,6 +107,9 @@ function DelClientModal({
 
               focus:border-red-400
               focus:ring-4 focus:ring-red-400/10
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           />
         </div>
@@ -107,6 +117,7 @@ function DelClientModal({
         <div className="flex justify-end gap-3 pt-4">
           <button
             onClick={onClose}
+            disabled={loading}
             className="
               px-5 py-3
 
@@ -121,6 +132,9 @@ function DelClientModal({
               hover:bg-slate-700/70
 
               transition-all duration-200
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           >
             Cancelar
@@ -128,7 +142,10 @@ function DelClientModal({
 
           <button
             onClick={onSubmit}
+            disabled={loading}
             className="
+              min-w-[170px]
+
               px-5 py-3
 
               rounded-xl
@@ -143,9 +160,32 @@ function DelClientModal({
               hover:border-red-500/40
 
               transition-all duration-200
+
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+
+              flex items-center justify-center gap-2
             "
           >
-            Borrar cliente
+            {loading ? (
+              <>
+                <div
+                  className="
+                    w-4 h-4
+
+                    rounded-full
+
+                    border-2 border-red-300/30
+                    border-t-red-300
+
+                    animate-spin
+                  "
+                />
+                Borrando...
+              </>
+            ) : (
+              "Borrar cliente"
+            )}
           </button>
         </div>
       </div>
