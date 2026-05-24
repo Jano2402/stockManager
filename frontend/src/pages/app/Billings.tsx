@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { compraAgrupada } from "../../types";
 import BillingsTable from "../../components/app/BillingsTable";
 import { getComprasAgrupadas } from "../../services/app/billingsService";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 function Billings() {
   const [data, setData] = useState<compraAgrupada[]>([]);
@@ -33,7 +34,7 @@ function Billings() {
       setData(res.data.data);
       setMessage(res.data.message);
     } catch (err: any) {
-      setErr(err.message);
+      setErr(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

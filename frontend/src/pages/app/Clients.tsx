@@ -26,6 +26,7 @@ import UpdateClientModal from "../../components/app/UpdateClientModal";
 import AnadirCompraModal from "../../components/app/AnadirCompraModal";
 import EditarCompraModal from "../../components/app/EditarCompraModal";
 import DelClientModal from "../../components/app/DelClientModal";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 const clienteIncial: Cliente = {
   nombre: "",
@@ -46,21 +47,14 @@ function Clients() {
 
   // 🔥 Loadings separados
   const [loadingClients, setLoadingClients] = useState<boolean>(true);
-
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
-
   const [loadingCompras, setLoadingCompras] = useState<boolean>(false);
 
   const [clients, setClients] = useState<client[]>([]);
-
   const [actualizar, setActualizar] = useState<number>(0);
-
   const [compras, setCompras] = useState<compras[]>([]);
-
   const [buscar, setBuscar] = useState<string>("");
-
   const [cliente, setCliente] = useState<Cliente>(clienteIncial);
-
   const [modalAbierto, setModalAbierto] = useState<ModalState>({
     type: "NONE",
   });
@@ -85,7 +79,7 @@ function Clients() {
 
       setCompras(data);
     } catch (err: any) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoadingCompras(false);
     }
@@ -103,8 +97,8 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -126,8 +120,8 @@ function Clients() {
       setModalAbierto({ type: "NONE" });
 
       setActualizar((prev) => prev + 1);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -149,8 +143,8 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -177,8 +171,8 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       await fetchCompras(modalAbierto.compra.cliente_id);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -198,8 +192,8 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -242,7 +236,7 @@ function Clients() {
         })
         .catch((err) => {
           if (err.name !== "AbortError") {
-            setError(err.message);
+            setError(getErrorMessage(err));
           }
         })
         .finally(() => {
@@ -270,7 +264,7 @@ function Clients() {
         })
         .catch((err) => {
           if (err.name !== "AbortError") {
-            setError(err.message);
+            setError(getErrorMessage(err));
           }
         })
         .finally(() => {

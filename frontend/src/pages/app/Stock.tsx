@@ -6,6 +6,7 @@ import {
 } from "../../services/app/stockService";
 import ProductsTable from "../../components/app/ProductsTable";
 import ProductsListing from "../../components/app/ProductsListing";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
@@ -21,7 +22,7 @@ function Stock() {
         const data = await getProductos();
         setData(data);
       } catch (err: any) {
-        setError(err.message);
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -51,9 +52,8 @@ function Stock() {
       );
 
       handleEditing();
-    } catch (err) {
-      console.error(err);
-      alert("Error al modificar producto");
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

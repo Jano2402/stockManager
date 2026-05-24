@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import type { RegisterForm, ErrorResponse } from "../../types";
 import RegisterFormulario from "../../components/auth/RegisterFormulario";
 import { postRegister } from "../../services/app/authService";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 function Register() {
   const [form, setForm] = useState<RegisterForm>({
@@ -28,17 +29,15 @@ function Register() {
 
       window.location.href = "/";
     } catch (err) {
+      console.error("Registration error:", err);
+
       if (axios.isAxiosError(err)) {
-        const serverError = err as AxiosError<ErrorResponse>;
-        setError(
-          serverError.response?.data?.message || "Error registrando usuario",
-        );
+        setError(err.response?.data?.message || getErrorMessage(err));
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("Ocurrió un error desconocido");
       }
-      console.error("Registration error:", err);
     }
   };
 

@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import type { LoginForm, ErrorResponse } from "../../types";
 import { postLogin } from "../../services/app/authService";
 import LoginFormulario from "../../components/auth/LoginFormulario";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 function Login() {
   const [form, setForm] = useState<LoginForm>({
@@ -28,17 +29,15 @@ function Login() {
 
       window.location.href = "/";
     } catch (err) {
+      console.error("Login error:", err);
+
       if (axios.isAxiosError(err)) {
-        const serverError = err as AxiosError<ErrorResponse>;
-        setError(
-          serverError.response?.data?.message || "Error al iniciar sesión",
-        );
+        setError(err.response?.data?.message || getErrorMessage(err));
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("Ocurrió un error desconocido");
       }
-      console.error("Login error:", err);
     }
   };
 

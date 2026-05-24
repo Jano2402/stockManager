@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { postLogout } from "../../services/app/authService";
+import { getErrorMessage } from "../../utils/app/errorHandler";
 
 function Logout() {
   const [error, setError] = useState<string>("");
@@ -17,12 +18,11 @@ function Logout() {
         setError(axiosError.response?.data?.message || "No estás logueado");
       } else if (err instanceof Error) {
         // Error genérico
-        setError(err.message);
+        setError(getErrorMessage(err));
       } else {
         // Error desconocido
         setError("Ocurrió un error desconocido al cerrar sesión");
       }
-      console.error(err);
     }
   };
 
