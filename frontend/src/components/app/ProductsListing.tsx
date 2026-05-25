@@ -32,6 +32,13 @@ function ProductsListing({
           rounded-3xl
           p-8
           shadow-2xl
+
+          overflow-hidden
+
+          animate-in
+          fade-in
+          zoom-in-95
+          duration-200
         "
       >
         <div className="mb-8">

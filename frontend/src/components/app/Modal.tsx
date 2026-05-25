@@ -34,6 +34,11 @@ function Modal({ title, children, onClose }: ModalProps) {
           flex flex-col
 
           overflow-hidden
+
+          animate-in
+          fade-in
+          zoom-in-95
+          duration-200
         "
       >
         <div

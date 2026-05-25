@@ -19,7 +19,13 @@ function BillingsTable({ data }: BillingsTableProps) {
         custom-scrollbar
       "
     >
-      <table className="w-full">
+      <table
+        className="w-full 
+          animate-in
+          fade-in
+          zoom-in-95
+          duration-200"
+      >
         <thead
           className="
           bg-[#0B1220]/80
