@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
 import type { LoginForm, ErrorResponse } from "../../types";
 import { postLogin } from "../../services/app/authService";
 import LoginFormulario from "../../components/auth/LoginFormulario";
@@ -26,17 +27,20 @@ function Login() {
 
     try {
       await postLogin(form);
-
       window.location.href = "/";
+      toast.success("Logueado correctamente.");
     } catch (err) {
       console.error("Login error:", err);
 
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || getErrorMessage(err));
+        toast.error(err.response?.data?.message || getErrorMessage(err));
       } else if (err instanceof Error) {
         setError(err.message);
+        toast.error(err.message);
       } else {
-        setError("Ocurrió un error desconocido");
+        setError("Ocurrió un error desconocido.");
+        toast.error("Ocurrió un error desconocido.");
       }
     }
   };

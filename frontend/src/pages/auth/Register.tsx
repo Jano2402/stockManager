@@ -4,6 +4,7 @@ import type { RegisterForm, ErrorResponse } from "../../types";
 import RegisterFormulario from "../../components/auth/RegisterFormulario";
 import { postRegister } from "../../services/app/authService";
 import { getErrorMessage } from "../../utils/app/errorHandler";
+import toast from "react-hot-toast";
 
 function Register() {
   const [form, setForm] = useState<RegisterForm>({
@@ -26,17 +27,20 @@ function Register() {
 
     try {
       await postRegister(form);
-
+      toast.success("Registrado correctamente.");
       window.location.href = "/";
     } catch (err) {
       console.error("Registration error:", err);
 
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || getErrorMessage(err));
+        toast.error(err.response?.data?.message || getErrorMessage(err));
       } else if (err instanceof Error) {
         setError(err.message);
+        toast.error(err.message);
       } else {
-        setError("Ocurrió un error desconocido");
+        setError("Ocurrió un error desconocido.");
+        toast.error("Ocurrió un error desconocido.");
       }
     }
   };

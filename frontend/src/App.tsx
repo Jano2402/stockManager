@@ -8,6 +8,7 @@ import {
   Navigate,
   NavLink,
 } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { useState } from "react";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
@@ -266,68 +267,86 @@ function AuthLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Root */}
-        <Route path="/" element={<Navigate to="/app" replace />} />
+    <>
+      <BrowserRouter>
+        <Routes>
+          {/* Root */}
+          <Route path="/" element={<Navigate to="/app" replace />} />
 
-        {/* Auth */}
-        <Route path="auth" element={<AuthLayout />}>
-          <Route path="register" element={<Register />} />
-          <Route path="login" element={<Login />} />
-          <Route path="logout" element={<Logout />} />
-          <Route path="refresh" element={<p>Refreshing...</p>} />
+          {/* Auth */}
+          <Route path="auth" element={<AuthLayout />}>
+            <Route path="register" element={<Register />} />
+            <Route path="login" element={<Login />} />
+            <Route path="logout" element={<Logout />} />
+            <Route path="refresh" element={<p>Refreshing...</p>} />
 
-          <Route path="*" element={<Navigate to="/auth/login" replace />} />
-        </Route>
+            <Route path="*" element={<Navigate to="/auth/login" replace />} />
+          </Route>
 
-        {/* App */}
-        <Route path="app" element={<AppLayout />}>
-          {/* Home */}
-          <Route
-            index
-            element={
-              <div className="space-y-4 flex justify-center items-center flex-col">
-                <h1 className="text-5xl font-semibold text-slate-50">
-                  Bienvenido
-                </h1>
+          {/* App */}
+          <Route path="app" element={<AppLayout />}>
+            {/* Home */}
+            <Route
+              index
+              element={
+                <div className="space-y-4 flex justify-center items-center flex-col">
+                  <h1 className="text-5xl font-semibold text-slate-50">
+                    Bienvenido
+                  </h1>
 
-                <p className="text-lg text-slate-400">
-                  Gestioná clientes, stock y facturación.
-                </p>
-              </div>
-            }
-          />
+                  <p className="text-lg text-slate-400">
+                    Gestioná clientes, stock y facturación.
+                  </p>
+                </div>
+              }
+            />
 
-          {/* Clients */}
-          <Route path="clients" element={<Clients />} />
-          <Route
-            path="clients/*"
-            element={<Navigate to="/app/clients" replace />}
-          />
+            {/* Clients */}
+            <Route path="clients" element={<Clients />} />
+            <Route
+              path="clients/*"
+              element={<Navigate to="/app/clients" replace />}
+            />
 
-          {/* Stock */}
-          <Route path="stock" element={<Stock />} />
-          <Route
-            path="stock/*"
-            element={<Navigate to="/app/stock" replace />}
-          />
+            {/* Stock */}
+            <Route path="stock" element={<Stock />} />
+            <Route
+              path="stock/*"
+              element={<Navigate to="/app/stock" replace />}
+            />
 
-          {/* Billings */}
-          <Route path="billings" element={<Billings />} />
-          <Route
-            path="billings/*"
-            element={<Navigate to="/app/billings" replace />}
-          />
+            {/* Billings */}
+            <Route path="billings" element={<Billings />} />
+            <Route
+              path="billings/*"
+              element={<Navigate to="/app/billings" replace />}
+            />
 
-          {/* Catch */}
+            {/* Catch */}
+            <Route path="*" element={<Navigate to="/app" replace />} />
+          </Route>
+
+          {/* Global Catch */}
           <Route path="*" element={<Navigate to="/app" replace />} />
-        </Route>
+        </Routes>
+      </BrowserRouter>
 
-        {/* Global Catch */}
-        <Route path="*" element={<Navigate to="/app" replace />} />
-      </Routes>
-    </BrowserRouter>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: "132238",
+            color: "f8fafc",
+            border: "1px solid rgba(148,163,184,0.2)",
+          },
+        }}
+        containerStyle={{
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+    </>
   );
 }
 

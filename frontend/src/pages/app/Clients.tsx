@@ -27,6 +27,7 @@ import AnadirCompraModal from "../../components/app/AnadirCompraModal";
 import EditarCompraModal from "../../components/app/EditarCompraModal";
 import DelClientModal from "../../components/app/DelClientModal";
 import { getErrorMessage } from "../../utils/app/errorHandler";
+import toast from "react-hot-toast";
 
 const clienteIncial: Cliente = {
   nombre: "",
@@ -80,6 +81,7 @@ function Clients() {
       setCompras(data);
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingCompras(false);
     }
@@ -97,8 +99,10 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
+      toast.success("Cliente añadido correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -120,8 +124,10 @@ function Clients() {
       setModalAbierto({ type: "NONE" });
 
       setActualizar((prev) => prev + 1);
+      toast.success("Cliente actualizado correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -143,8 +149,10 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
+      toast.success("Compra añadida correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -171,8 +179,10 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       await fetchCompras(modalAbierto.compra.cliente_id);
+      toast.success("Compra editada correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -192,8 +202,10 @@ function Clients() {
       setActualizar((prev) => prev + 1);
 
       setModalAbierto({ type: "NONE" });
+      toast.success("Cliente eliminado correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
     }
@@ -237,6 +249,7 @@ function Clients() {
         .catch((err) => {
           if (err.name !== "AbortError") {
             setError(getErrorMessage(err));
+            toast.error(getErrorMessage(err));
           }
         })
         .finally(() => {
@@ -261,10 +274,14 @@ function Clients() {
         )
         .then((res) => {
           setClients(res.data);
+          if (res.data.length === 0) {
+            toast("Cliente no encontrado.");
+          }
         })
         .catch((err) => {
           if (err.name !== "AbortError") {
             setError(getErrorMessage(err));
+            toast.error(getErrorMessage(err));
           }
         })
         .finally(() => {

@@ -7,6 +7,7 @@ import {
 import ProductsTable from "../../components/app/ProductsTable";
 import ProductsListing from "../../components/app/ProductsListing";
 import { getErrorMessage } from "../../utils/app/errorHandler";
+import toast from "react-hot-toast";
 
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
@@ -23,6 +24,7 @@ function Stock() {
         setData(data);
       } catch (err: any) {
         setError(getErrorMessage(err));
+        toast.error(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -52,8 +54,10 @@ function Stock() {
       );
 
       handleEditing();
+      toast.success("Producto editado correctamente.");
     } catch (err: any) {
       setError(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

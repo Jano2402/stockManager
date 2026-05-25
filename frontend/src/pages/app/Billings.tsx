@@ -3,6 +3,7 @@ import type { compraAgrupada } from "../../types";
 import BillingsTable from "../../components/app/BillingsTable";
 import { getComprasAgrupadas } from "../../services/app/billingsService";
 import { getErrorMessage } from "../../utils/app/errorHandler";
+import toast from "react-hot-toast";
 
 function Billings() {
   const [data, setData] = useState<compraAgrupada[]>([]);
@@ -15,12 +16,14 @@ function Billings() {
 
   const handleBuscar = async () => {
     if (!fechaInicio || !fechaFin) {
-      setErr("Seleccioná ambas fechas");
+      setErr("Seleccioná ambas fechas.");
+      toast.error("Seleccioná ambas fechas.");
       return;
     }
 
     if (fechaInicio > fechaFin) {
-      setErr("La fecha inicio no puede ser mayor a la fecha fin");
+      setErr("La fecha inicio no puede ser mayor a la fecha fin.");
+      toast.error("La fecha inicio no puede ser mayor a la fecha fin.");
       return;
     }
 
@@ -33,8 +36,14 @@ function Billings() {
 
       setData(res.data.data);
       setMessage(res.data.message);
+      if (data.length === 0) {
+        toast("No hay compras en ese rango de fechas.");
+      } else {
+        toast.success("Compras obtenidas.");
+      }
     } catch (err: any) {
       setErr(getErrorMessage(err));
+      toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
