@@ -19,7 +19,6 @@ function Logout() {
         // Error genérico
         toast.error(getErrorMessage(err));
       } else {
-        // Error desconocido
         toast.error("Ocurrió un error desconocido al cerrar sesión");
       }
     }
