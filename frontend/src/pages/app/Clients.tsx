@@ -44,8 +44,6 @@ const clienteIncial: Cliente = {
 };
 
 function Clients() {
-  const [err, setError] = useState<string | null>(null);
-
   // 🔥 Loadings separados
   const [loadingClients, setLoadingClients] = useState<boolean>(true);
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
@@ -80,7 +78,6 @@ function Clients() {
 
       setCompras(data);
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingCompras(false);
@@ -101,7 +98,6 @@ function Clients() {
       setModalAbierto({ type: "NONE" });
       toast.success("Cliente añadido correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
@@ -126,7 +122,6 @@ function Clients() {
       setActualizar((prev) => prev + 1);
       toast.success("Cliente actualizado correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
@@ -151,7 +146,6 @@ function Clients() {
       setModalAbierto({ type: "NONE" });
       toast.success("Compra añadida correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
@@ -181,7 +175,6 @@ function Clients() {
       await fetchCompras(modalAbierto.compra.cliente_id);
       toast.success("Compra editada correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
@@ -204,7 +197,6 @@ function Clients() {
       setModalAbierto({ type: "NONE" });
       toast.success("Cliente eliminado correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoadingSubmit(false);
@@ -235,8 +227,6 @@ function Clients() {
   useEffect(() => {
     const controller = new AbortController();
 
-    setError(null);
-
     // Todos los clientes
     if (buscar === "") {
       setLoadingClients(true);
@@ -248,7 +238,6 @@ function Clients() {
         })
         .catch((err) => {
           if (err.name !== "AbortError") {
-            setError(getErrorMessage(err));
             toast.error(getErrorMessage(err));
           }
         })
@@ -280,7 +269,6 @@ function Clients() {
         })
         .catch((err) => {
           if (err.name !== "AbortError") {
-            setError(getErrorMessage(err));
             toast.error(getErrorMessage(err));
           }
         })
@@ -400,15 +388,12 @@ function Clients() {
         </div>
       )}
 
-      {/* Error */}
-      {err && <p className="text-center text-red-400">{err}</p>}
-
       {/* Tabla */}
-      {!loadingClients && !err && clients.length > 0 && (
+      {!loadingClients && clients.length > 0 && (
         <ClientsTable clients={clients} setModalAbierto={setModalAbierto} />
       )}
 
-      {!loadingClients && !err && clients.length === 0 && (
+      {!loadingClients && clients.length === 0 && (
         <p className="text-center text-slate-400">No hay clientes</p>
       )}
 

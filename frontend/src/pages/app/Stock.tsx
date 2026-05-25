@@ -12,7 +12,6 @@ import toast from "react-hot-toast";
 function Stock() {
   const [data, setData] = useState<stockItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<stockItem | null>(null);
@@ -23,7 +22,6 @@ function Stock() {
         const data = await getProductos();
         setData(data);
       } catch (err: any) {
-        setError(getErrorMessage(err));
         toast.error(getErrorMessage(err));
       } finally {
         setLoading(false);
@@ -56,7 +54,6 @@ function Stock() {
       handleEditing();
       toast.success("Producto editado correctamente.");
     } catch (err: any) {
-      setError(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -82,8 +79,6 @@ function Stock() {
         <p className="text-slate-400 text-md">Cargando...</p>
       </div>
     );
-  if (error)
-    return <div className="text-center text-slate-400">Error: {error}</div>;
 
   return (
     <>

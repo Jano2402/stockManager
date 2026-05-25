@@ -11,7 +11,6 @@ function Register() {
     username: "",
     password: "",
   });
-  const [error, setError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -23,7 +22,6 @@ function Register() {
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    setError("");
 
     try {
       await postRegister(form);
@@ -33,13 +31,10 @@ function Register() {
       console.error("Registration error:", err);
 
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || getErrorMessage(err));
         toast.error(err.response?.data?.message || getErrorMessage(err));
       } else if (err instanceof Error) {
-        setError(err.message);
         toast.error(err.message);
       } else {
-        setError("Ocurrió un error desconocido.");
         toast.error("Ocurrió un error desconocido.");
       }
     }
@@ -52,8 +47,6 @@ function Register() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-
-      {error && <p>{error}</p>}
     </div>
   );
 }

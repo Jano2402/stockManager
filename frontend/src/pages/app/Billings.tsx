@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 
 function Billings() {
   const [data, setData] = useState<compraAgrupada[]>([]);
-  const [err, setErr] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -16,33 +15,30 @@ function Billings() {
 
   const handleBuscar = async () => {
     if (!fechaInicio || !fechaFin) {
-      setErr("Seleccioná ambas fechas.");
       toast.error("Seleccioná ambas fechas.");
       return;
     }
 
     if (fechaInicio > fechaFin) {
-      setErr("La fecha inicio no puede ser mayor a la fecha fin.");
       toast.error("La fecha inicio no puede ser mayor a la fecha fin.");
       return;
     }
 
     setLoading(true);
-    setErr(null);
     setMessage(null);
 
     try {
       const res = await getComprasAgrupadas(fechaInicio, fechaFin);
+      const compras = res.data.data;
 
-      setData(res.data.data);
+      setData(compras);
       setMessage(res.data.message);
-      if (data.length === 0) {
+      if (compras.length === 0) {
         toast("No hay compras en ese rango de fechas.");
       } else {
         toast.success("Compras obtenidas.");
       }
     } catch (err: any) {
-      setErr(getErrorMessage(err));
       toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -183,15 +179,9 @@ function Billings() {
           </div>
         )}
 
-        {err && <p className="text-center text-red-400">{err}</p>}
+        {!loading && data.length > 0 && <BillingsTable data={data} />}
 
-        {!loading && !err && message && data.length === 0 && (
-          <p className="text-center text-slate-400">{message}</p>
-        )}
-
-        {!loading && !err && data.length > 0 && <BillingsTable data={data} />}
-
-        {!loading && !err && data.length === 0 && !message && (
+        {!loading && data.length === 0 && !message && (
           <p className="text-center text-slate-400">No hay datos</p>
         )}
       </div>
