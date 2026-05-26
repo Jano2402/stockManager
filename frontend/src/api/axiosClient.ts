@@ -7,19 +7,61 @@ const axiosClient: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Interceptor para manejar el access y refresh token
+let isRefreshing = false;
+
+let failedQueue: {
+  resolve: () => void;
+  reject: (error: any) => void;
+}[] = [];
+
+const processQueue = (error: any = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve();
+    }
+  });
+
+  failedQueue = [];
+};
+
+// Interceptor para manejar access y refresh token
 axiosClient.interceptors.response.use(
   (res) => res,
+
   async (error) => {
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Si ya se está refrescando el token,
+      // esperar a que termine
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: () => resolve(axiosClient(originalRequest)),
+            reject,
+          });
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
+
       try {
         await axiosClient.post("/auth/refresh");
-        return axiosClient(originalRequest); // reintentar con nuevo access token
-      } catch {
-        window.location.href = "/auth/login"; // refresh falló → logout
+
+        processQueue();
+
+        return axiosClient(originalRequest);
+      } catch (err) {
+        processQueue(err);
+
+        window.location.href = "/auth/login";
+
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
       }
     }
 

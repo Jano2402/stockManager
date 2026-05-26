@@ -28,6 +28,7 @@ import EditarCompraModal from "../../components/app/EditarCompraModal";
 import DelClientModal from "../../components/app/DelClientModal";
 import { getErrorMessage } from "../../utils/app/errorHandler";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const clienteIncial: Cliente = {
   nombre: "",
@@ -72,6 +73,8 @@ function Clients() {
   // 🔥 Compras
   const fetchCompras = async (id: number) => {
     setLoadingCompras(true);
+
+    setCompras([]);
 
     try {
       const data = await getCompras(id);
@@ -232,12 +235,14 @@ function Clients() {
       setLoadingClients(true);
 
       axiosClient
-        .get<client[]>("http://localhost:3000/app/clients/get")
+        .get<client[]>("http://localhost:3000/app/clients/get", {
+          signal: controller.signal,
+        })
         .then((res) => {
           setClients(res.data);
         })
         .catch((err) => {
-          if (err.name !== "AbortError") {
+          if (!axios.isCancel(err)) {
             toast.error(getErrorMessage(err));
           }
         })
@@ -260,6 +265,7 @@ function Clients() {
       axiosClient
         .get<client[]>(
           `http://localhost:3000/app/clients/search?nombre=${buscar}&limit=10`,
+          { signal: controller.signal },
         )
         .then((res) => {
           setClients(res.data);
@@ -268,7 +274,7 @@ function Clients() {
           }
         })
         .catch((err) => {
-          if (err.name !== "AbortError") {
+          if (!axios.isCancel(err)) {
             toast.error(getErrorMessage(err));
           }
         })
@@ -443,7 +449,7 @@ function Clients() {
         />
       )}
 
-      {modalAbierto.type === "ModificarCompra" && compras.length > 0 && (
+      {modalAbierto.type === "ModificarCompra" && (
         <UpdatePurchaseTable
           compras={compras}
           handleEditPurchase={handleEditPurchase}

@@ -17,6 +17,7 @@ import Billings from "./pages/app/Billings";
 import Clients from "./pages/app/Clients";
 import Logout from "./pages/auth/Logout";
 import Logo from "./components/app/Logo";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 /* 
   Colores base:
@@ -284,7 +285,14 @@ function App() {
           </Route>
 
           {/* App */}
-          <Route path="app" element={<AppLayout />}>
+          <Route
+            path="app"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             {/* Home */}
             <Route
               index

@@ -9,7 +9,11 @@ import {
   getUsers,
   getPurchasesbyClientId,
 } from "../controllers/clientController";
-import authenticateAdmin, { authenticateToken } from "./authRoutes";
+import {
+  authenticateAdmin,
+  authenticateAdminOrModerator,
+  authenticateToken,
+} from "./authRoutes";
 
 const router = express.Router();
 
@@ -18,8 +22,10 @@ router.get("/get", authenticateToken, getUsers);
 router.get("/:id/getpurchases", authenticateToken, getPurchasesbyClientId);
 router.get("/search", authenticateToken, searchUser);
 router.post("/:id/purchases", authenticateToken, addPurchase);
-router.put("/:id/modify", authenticateToken, updateClient);
+
+router.put("/:id/modify", authenticateAdminOrModerator, updateClient);
 router.delete("/:id/delete", authenticateAdmin, deleteClient);
+
 router.put("/purchases/:id", authenticateToken, modifyPurchase);
 
 export default router;

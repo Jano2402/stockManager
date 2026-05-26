@@ -3,8 +3,10 @@ import axios, { AxiosError } from "axios";
 import { postLogout } from "../../services/app/authService";
 import { getErrorMessage } from "../../utils/app/errorHandler";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 function Logout() {
+  const navigate = useNavigate();
   const doLogout = async (): Promise<void> => {
     try {
       await postLogout();
@@ -26,6 +28,7 @@ function Logout() {
 
   useEffect(() => {
     doLogout();
+    navigate("/auth/login");
   }, []);
 
   return <></>;

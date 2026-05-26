@@ -84,49 +84,56 @@ function UpdatePurchaseTable({
             </thead>
 
             <tbody>
-              {compras.map((item) => (
-                <tr
-                  key={item.id}
-                  className="
+              {compras.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-6 text-slate-400">
+                    Este cliente no tiene compras.
+                  </td>
+                </tr>
+              ) : (
+                compras.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="
                     border-t border-slate-700/30
                     hover:bg-slate-800/20
                     transition-colors
                   "
-                >
-                  <td className="px-5 py-4 text-slate-200">
-                    {item.cliente_id}
-                  </td>
+                  >
+                    <td className="px-5 py-4 text-slate-200">
+                      {item.cliente_id}
+                    </td>
 
-                  <td className="px-5 py-4 text-slate-200">{item.sifones}</td>
+                    <td className="px-5 py-4 text-slate-200">{item.sifones}</td>
 
-                  <td className="px-5 py-4 text-slate-200">
-                    {item.bidones_6l}
-                  </td>
+                    <td className="px-5 py-4 text-slate-200">
+                      {item.bidones_6l}
+                    </td>
 
-                  <td className="px-5 py-4 text-slate-200">
-                    {item.bidones_12l}
-                  </td>
+                    <td className="px-5 py-4 text-slate-200">
+                      {item.bidones_12l}
+                    </td>
 
-                  <td className="px-5 py-4 text-slate-200">
-                    {item.devuelveSif}
-                  </td>
+                    <td className="px-5 py-4 text-slate-200">
+                      {item.devuelveSif}
+                    </td>
 
-                  <td className="px-5 py-4 text-slate-200">
-                    {item.devuelveBid}
-                  </td>
+                    <td className="px-5 py-4 text-slate-200">
+                      {item.devuelveBid}
+                    </td>
 
-                  <td className="px-5 py-4 text-emerald-300 font-medium">
-                    ${item.pago}
-                  </td>
+                    <td className="px-5 py-4 text-emerald-300 font-medium">
+                      ${item.pago}
+                    </td>
 
-                  <td className="px-5 py-4 text-slate-300">
-                    {new Date(item.fecha).toLocaleDateString("es-UY")}
-                  </td>
+                    <td className="px-5 py-4 text-slate-300">
+                      {new Date(item.fecha).toLocaleDateString("es-UY")}
+                    </td>
 
-                  <td className="px-5 py-4">
-                    <button
-                      onClick={() => handleEditPurchase(item)}
-                      className="
+                    <td className="px-5 py-4">
+                      <button
+                        onClick={() => handleEditPurchase(item)}
+                        className="
                         px-4 py-2
 
                         rounded-xl
@@ -142,12 +149,13 @@ function UpdatePurchaseTable({
 
                         transition-all duration-200
                       "
-                    >
-                      Modificar
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      >
+                        Modificar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
