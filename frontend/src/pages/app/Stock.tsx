@@ -16,16 +16,6 @@ function Stock() {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<stockItem | null>(null);
 
-  console.log("RENDER STOCK");
-
-  useEffect(() => {
-    console.log("MOUNT STOCK");
-
-    return () => {
-      console.log("UNMOUNT STOCK");
-    };
-  }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
