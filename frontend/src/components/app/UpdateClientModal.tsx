@@ -63,7 +63,7 @@ function UpdateClientModal({
           </label>
 
           <input
-            type="text"
+            type="number"
             placeholder="Teléfono"
             value={cliente.telefono}
             disabled={loading}

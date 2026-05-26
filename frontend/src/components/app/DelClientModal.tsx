@@ -85,7 +85,7 @@ function DelClientModal({
           </label>
 
           <input
-            type="text"
+            type="number"
             placeholder="Teléfono"
             disabled={loading}
             value={cliente.telefono}

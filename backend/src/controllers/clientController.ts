@@ -138,6 +138,25 @@ export const addPurchase = async (
     return;
   }
 
+  // En caso de error pasar a número todos los datos de manera preventiva
+  if (
+    sifones < 0 ||
+    bidones_6l < 0 ||
+    bidones_12l < 0 ||
+    devuelveBid < 0 ||
+    devuelveSif < 0 ||
+    typeof sifones !== "number" ||
+    typeof bidones_6l !== "number" ||
+    typeof bidones_12l !== "number" ||
+    typeof devuelveBid !== "number" ||
+    typeof devuelveSif !== "number"
+  ) {
+    res
+      .status(400)
+      .json({ error: "Todos los campos deben ser números positivos." });
+    return;
+  }
+
   try {
     const client = await prisma.clientes.findUnique({
       where: { id: Number(id) },
@@ -242,6 +261,19 @@ export const updateClient = async (
     res.status(400).json({ error: "Nombre debe ser texto" });
     return;
   }
+  const bidones = Number(cant_bidones);
+  const envases = Number(cant_envases);
+  if (
+    bidones < 0 ||
+    envases < 0 ||
+    typeof bidones !== "number" ||
+    typeof envases !== "number"
+  ) {
+    res.status(400).json({
+      error: "Cantidad de envases y bidones deben ser números positivos.",
+    });
+    return;
+  }
 
   try {
     const updatedClient = await prisma.clientes.update({
@@ -271,6 +303,7 @@ export const getPurchasesbyClientId = async (
       orderBy: {
         fecha: "desc",
       },
+      take: 10,
     });
 
     if (compras.length === 0) {
@@ -315,6 +348,24 @@ export const modifyPurchase = async (
     )
   ) {
     res.status(400).json({ error: "Todos los valores deben ser números" });
+    return;
+  }
+  // En caso de error pasar a número todos los datos de manera preventiva
+  if (
+    sifones < 0 ||
+    bidones_6l < 0 ||
+    bidones_12l < 0 ||
+    devuelveBid < 0 ||
+    devuelveSif < 0 ||
+    typeof sifones !== "number" ||
+    typeof bidones_6l !== "number" ||
+    typeof bidones_12l !== "number" ||
+    typeof devuelveBid !== "number" ||
+    typeof devuelveSif !== "number"
+  ) {
+    res
+      .status(400)
+      .json({ error: "Todos los campos deben ser números positivos." });
     return;
   }
 
