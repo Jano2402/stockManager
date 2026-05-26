@@ -17,6 +17,9 @@ export function getErrorMessage(error: any): string {
     case 409:
       return "Ese elemento ya existe.";
 
+    case 429:
+      return "Alcanzaste el límite de peticiones.";
+
     case 500:
       return "Error interno del servidor.";
 
