@@ -1,4 +1,3 @@
-import React from "react";
 import type { stockItem } from "../../types";
 
 type ProductsListingProps = {

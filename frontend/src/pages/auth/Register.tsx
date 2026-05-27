@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
-import type { RegisterForm, ErrorResponse } from "../../types";
+import axios from "axios";
+import type { RegisterForm } from "../../types";
 import RegisterFormulario from "../../components/auth/RegisterFormulario";
 import { postRegister } from "../../services/app/authService";
 import { getErrorMessage } from "../../utils/app/errorHandler";

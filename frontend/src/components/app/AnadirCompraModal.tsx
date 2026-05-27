@@ -1,4 +1,3 @@
-import React from "react";
 import type { Cliente } from "../../types";
 import Modal from "./Modal";
 

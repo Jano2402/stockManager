@@ -1,4 +1,3 @@
-import React from "react";
 import axiosClient from "../../api/axiosClient";
 import type { stockItem } from "../../types";
 

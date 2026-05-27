@@ -1,4 +1,3 @@
-import React from "react";
 import type { compraAgrupada } from "../../types";
 
 type BillingsTableProps = {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { compraAgrupada } from "../../types";
 import BillingsTable from "../../components/app/BillingsTable";
 import { getComprasAgrupadas } from "../../services/app/billingsService";

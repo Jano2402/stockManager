@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import toast from "react-hot-toast";
-import type { LoginForm, ErrorResponse } from "../../types";
+import type { LoginForm } from "../../types";
 import { postLogin } from "../../services/app/authService";
 import LoginFormulario from "../../components/auth/LoginFormulario";
 import { getErrorMessage } from "../../utils/app/errorHandler";

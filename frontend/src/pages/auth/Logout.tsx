@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { postLogout } from "../../services/app/authService";
 import { getErrorMessage } from "../../utils/app/errorHandler";
