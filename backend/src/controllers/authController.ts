@@ -45,16 +45,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true, // httpOnly solo en producción
-      secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
+      secure: true, // solo se envía en HTTPS en producción
+      sameSite: "none", // sameSite más estricto en producción
       path: "/",
       maxAge: 15 * 60 * 1000, // 15 minutos
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true, // httpOnly solo en producción
-      secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
+      secure: true, // solo se envía en HTTPS en producción
+      sameSite: "none", // sameSite más estricto en producción
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
@@ -107,16 +107,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true, // httpOnly solo en producción
-      secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
+      secure: true, // solo se envía en HTTPS en producción
+      sameSite: "none", // sameSite más estricto en producción
       path: "/",
       maxAge: 15 * 60 * 1000, // 15 minutos
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true, // httpOnly solo en producción
-      secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
+      secure: true, // solo se envía en HTTPS en producción
+      sameSite: "none", // sameSite más estricto en producción
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
@@ -186,8 +186,8 @@ export const refreshToken = async (
 
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
-          secure: isProduction,
-          sameSite: isProduction ? "none" : "lax",
+          secure: true,
+          sameSite: "none",
           path: "/",
           maxAge: 15 * 60 * 1000,
         });
