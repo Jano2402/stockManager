@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+
 import cors from "cors";
 import helmet from "helmet";
 import fs from "fs";
@@ -14,41 +15,47 @@ import { authenticateToken } from "./routes/authRoutes";
 
 const app = express();
 
-// Configuración de CORS (permitir localhost y un dominio de producción)
+const isProduction = process.env.NODE_ENV === "production";
+
+// Configuración de CORS
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL || "http://localhost:5173"], // Lista de dominios permitidos
-  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-  // allowedHeaders: ["Content-Type"], // Encabezados permitidos
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 
-// Usar CORS con la configuración
 app.use(cors(corsOptions));
 
+// Rate limiter
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // Límite de 100 solicitudes por IP
+  windowMs: 15 * 60 * 1000,
+  max: isProduction ? 100 : 1000,
   message:
-    "Demasiadas solicitudes desde esta IP, por favor inténtelo de nuevo más tarde.",
+    "Demasiadas solicitudes desde esta IP, por favor inténtelo más tarde.",
 });
 
-// Usar el rate limiter para todas las solicitudes
 app.use(limiter);
 
-// Usa todos los middlewares de seguridad que proporciona helmet
-app.use(helmet());
+// Seguridad HTTP
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 
-// Logs en consola (formato 'dev' o 'combined')
-app.use(morgan("dev"));
+// Logs
+if (!isProduction) {
+  app.use(morgan("dev"));
+} else {
+  const accessLogStream = fs.createWriteStream("./access.log", {
+    flags: "a",
+  });
 
-// Logs en un archivo
-const accessLogStream = fs.createWriteStream("./access.log", { flags: "a" });
-app.use(morgan("combined", { stream: accessLogStream }));
+  app.use(morgan("combined", { stream: accessLogStream }));
+}
 
-// JSON understanding
+// Middlewares
 app.use(express.json());
-
-// Simplifies woking with cookies
 app.use(cookieParser());
 
 // Routes

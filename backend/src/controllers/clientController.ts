@@ -27,7 +27,7 @@ const getProductPrices = async (): Promise<Record<string, number>> => {
       },
       {} as Record<string, number>,
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error en getProductPrices:", error);
     throw error; // Propaga el error para manejarlo en las funciones que llaman a esta
   }
@@ -104,7 +104,7 @@ export const searchUser = async (
       take: Number(limit) || 10,
     });
     res.json(clientes);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error en searchUser:", error);
     res.status(500).json({ error: "Error al buscar clientes" });
   }

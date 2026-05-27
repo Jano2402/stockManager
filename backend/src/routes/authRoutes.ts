@@ -32,7 +32,7 @@ const verifyCookieToken = (req: Request, res: Response): JwtPayload | null => {
 export const authenticateToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): any => {
   const token = req.cookies?.accessToken; // 👈 Leer token de cookies
 
@@ -46,7 +46,7 @@ export const authenticateToken = (
     // Si querés guardar el payload para usarlo en otros controladores:
     (req as any).user = decoded;
     next();
-  } catch (err) {
+  } catch (err: any) {
     return res.status(401).json({ error: "Invalid or expiered token" }); // Ponemos 401 también para que lo handlee el refresh
   }
 };
@@ -55,7 +55,7 @@ export const authenticateToken = (
 export const authenticateAdmin = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const decodedToken = verifyCookieToken(req, res);
   if (!decodedToken) return;
@@ -73,7 +73,7 @@ export const authenticateAdmin = (
 export const authenticateAdminOrModerator = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const decodedToken = verifyCookieToken(req, res);
   if (!decodedToken) return;

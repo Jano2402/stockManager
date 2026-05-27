@@ -46,18 +46,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     res.cookie("accessToken", accessToken, {
       httpOnly: isProduction, // httpOnly solo en producción
       secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
       maxAge: 15 * 60 * 1000, // 15 minutos
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: isProduction, // httpOnly solo en producción
       secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
-    res.status(201).json({ accessToken, refreshToken });
+    //res.status(201).json({ accessToken, refreshToken });
+    res.status(201).json({ message: "Usuario registrado correctamente." });
   } catch (error: any) {
     console.error("Register error:", error);
     if (error.code === "P2002") {
@@ -71,6 +72,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
 
+  if (!username.trim() || !password.trim()) {
+    res.status(400).json({ error: "Ambos campos son requeridos." });
+  }
   if (!username || !password) {
     res.status(400).json({ error: "Username y password son requeridos" });
     return;
@@ -102,19 +106,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.cookie("accessToken", accessToken, {
       httpOnly: isProduction, // httpOnly solo en producción
       secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
       maxAge: 15 * 60 * 1000, // 15 minutos
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: isProduction, // httpOnly solo en producción
       secure: isProduction, // solo se envía en HTTPS en producción
-      sameSite: isProduction ? "strict" : "lax", // sameSite más estricto en producción
+      sameSite: isProduction ? "none" : "lax", // sameSite más estricto en producción
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
     res.json({ message: "Login exitoso" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Error en el servidor" });
   }
@@ -185,7 +189,7 @@ export const refreshToken = async (
         res.json({ message: "Access token renovado" });
       },
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Refresh error:", error);
     res.status(500).json({ error: "Error al renovar token" });
   }
@@ -212,7 +216,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.json({ message: "Sesión cerrada" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Logout error:", error);
     res.status(500).json({ error: "Error al cerrar sesión" });
   }
