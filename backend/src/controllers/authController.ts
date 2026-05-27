@@ -57,8 +57,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
-    //res.status(201).json({ accessToken, refreshToken });
-    res.status(201).json({ message: "Usuario registrado correctamente." });
+    res.status(201).json({ accessToken, refreshToken });
+    //res.status(201).json({ message: "Usuario registrado correctamente." });
   } catch (error: any) {
     console.error("Register error:", error);
     if (error.code === "P2002") {
@@ -117,6 +117,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
+    //res.status(201).json({ accessToken, refreshToken });
     res.json({ message: "Login exitoso" });
   } catch (error: any) {
     console.error("Login error:", error);
