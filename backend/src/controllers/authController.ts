@@ -182,7 +182,7 @@ export const refreshToken = async (
         res.cookie("accessToken", accessToken, {
           httpOnly: isProduction,
           secure: isProduction,
-          sameSite: isProduction ? "strict" : "lax",
+          sameSite: isProduction ? "none" : "lax",
           maxAge: 15 * 60 * 1000,
         });
 
