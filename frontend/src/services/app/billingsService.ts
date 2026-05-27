@@ -5,10 +5,7 @@ export const getComprasAgrupadas = async (
   fechaInicio: string,
   fechaFin: string,
 ) =>
-  await axiosClient.get<ApiResponse>(
-    "http://localhost:3000/app/billings/purchases",
-    {
-      params: { fechaInicio, fechaFin },
-      withCredentials: true,
-    },
-  );
+  await axiosClient.get<ApiResponse>("/app/billings/purchases", {
+    params: { fechaInicio, fechaFin },
+    withCredentials: true,
+  });

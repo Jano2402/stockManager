@@ -3,34 +3,28 @@ import type { UpdateClientData, Compra } from "../../types";
 
 export const postClient = async (nombre: string, telefono: string) => {
   await axiosClient.post(
-    "http://localhost:3000/app/clients/init",
+    "/app/clients/init",
     { nombre, telefono },
     { withCredentials: true },
   );
 };
 
 export const putClient = async (id: number, data: UpdateClientData) => {
-  await axiosClient.put(
-    `http://localhost:3000/app/clients/${id}/modify`,
-    data,
-    { withCredentials: true },
-  );
+  await axiosClient.put(`/app/clients/${id}/modify`, data, {
+    withCredentials: true,
+  });
 };
 
 export const postCompra = async (id: number, data: Compra) => {
-  await axiosClient.post(
-    `http://localhost:3000/app/clients/${id}/purchases`,
-    data,
-    { withCredentials: true },
-  );
+  await axiosClient.post(`/app/clients/${id}/purchases`, data, {
+    withCredentials: true,
+  });
 };
 
 export const putCompra = async (id: number, data: Compra) => {
-  await axiosClient.put(
-    `http://localhost:3000/app/clients/purchases/${id}`,
-    data,
-    { withCredentials: true },
-  );
+  await axiosClient.put(`/app/clients/purchases/${id}`, data, {
+    withCredentials: true,
+  });
 };
 
 export const delClient = async (
@@ -38,7 +32,7 @@ export const delClient = async (
   nombre: string,
   telefono: string,
 ) => {
-  await axiosClient.delete(`http://localhost:3000/app/clients/${id}/delete`, {
+  await axiosClient.delete(`/app/clients/${id}/delete`, {
     withCredentials: true,
     data: {
       nombre,
@@ -48,10 +42,9 @@ export const delClient = async (
 };
 
 export const getCompras = async (id: number) => {
-  const res = await axiosClient.get(
-    `http://localhost:3000/app/clients/${id}/getpurchases`,
-    { withCredentials: true },
-  );
+  const res = await axiosClient.get(`/app/clients/${id}/getpurchases`, {
+    withCredentials: true,
+  });
 
   return res.data;
 };

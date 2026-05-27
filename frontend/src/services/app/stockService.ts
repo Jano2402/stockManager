@@ -7,7 +7,7 @@ export const modificarProducto = async (
   datosActualizados: stockItem,
 ) => {
   const response = await axiosClient.put(
-    `http://localhost:3000/app/stock/products/${idProducto}`,
+    `/app/stock/products/${idProducto}`,
     datosActualizados,
     { withCredentials: true },
   );
@@ -15,12 +15,9 @@ export const modificarProducto = async (
 };
 
 export const getProductos = async () => {
-  const res = await axiosClient.get<stockItem[]>(
-    "http://localhost:3000/app/stock/products",
-    {
-      withCredentials: true,
-    },
-  );
+  const res = await axiosClient.get<stockItem[]>("/app/stock/products", {
+    withCredentials: true,
+  });
 
   return res.data;
 };

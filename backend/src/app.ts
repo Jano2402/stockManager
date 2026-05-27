@@ -16,11 +16,7 @@ const app = express();
 
 // Configuración de CORS (permitir localhost y un dominio de producción)
 const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://mi-app.com",
-  ], // Lista de dominios permitidos
+  origin: [process.env.FRONTEND_URL || "http://localhost:5173"], // Lista de dominios permitidos
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
   // allowedHeaders: ["Content-Type"], // Encabezados permitidos
   credentials: true,

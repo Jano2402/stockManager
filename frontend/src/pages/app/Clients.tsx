@@ -235,7 +235,7 @@ function Clients() {
       setLoadingClients(true);
 
       axiosClient
-        .get<client[]>("http://localhost:3000/app/clients/get", {
+        .get<client[]>("/app/clients/get", {
           signal: controller.signal,
         })
         .then((res) => {
@@ -263,10 +263,9 @@ function Clients() {
 
     const timeout = setTimeout(() => {
       axiosClient
-        .get<client[]>(
-          `http://localhost:3000/app/clients/search?nombre=${buscar}&limit=10`,
-          { signal: controller.signal },
-        )
+        .get<client[]>(`/app/clients/search?nombre=${buscar}&limit=10`, {
+          signal: controller.signal,
+        })
         .then((res) => {
           setClients(res.data);
           if (res.data.length === 0) {
