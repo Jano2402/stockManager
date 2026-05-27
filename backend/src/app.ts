@@ -19,7 +19,8 @@ const isProduction = process.env.NODE_ENV === "production";
 
 // Configuración de CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin:
+    process.env.FRONTEND_URL || "https://stock-manager-frontend-xi.vercel.app/",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
