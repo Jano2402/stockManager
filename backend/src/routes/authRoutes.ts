@@ -33,34 +33,38 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
 };
 
 // Middleware para autenticar si el usuario es admin
-export const authenticateAdmin = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const authenticateAdmin: RequestHandler = (req, res, next) => {
   const user = (req as any).user;
 
-  if (!user) return res.status(401).json({ error: "Not authenticated" });
+  if (!user) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
 
   if (user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden" });
+    res.status(403).json({ error: "Forbidden" });
+    return;
   }
 
   next();
 };
 
 // Middleware para autenticar si el usuario es admin o moderador
-export const authenticateAdminOrModerator = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+export const authenticateAdminOrModerator: RequestHandler = (
+  req,
+  res,
+  next,
 ) => {
   const user = (req as any).user;
 
-  if (!user) return res.status(401).json({ error: "Not authenticated" });
+  if (!user) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
 
   if (!["ADMIN", "MODERATOR"].includes(user.role)) {
-    return res.status(403).json({ error: "Forbidden" });
+    res.status(403).json({ error: "Forbidden" });
+    return;
   }
 
   next();
