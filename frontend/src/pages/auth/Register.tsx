@@ -5,8 +5,10 @@ import RegisterFormulario from "../../components/auth/RegisterFormulario";
 import { postRegister } from "../../services/app/authService";
 import { getErrorMessage } from "../../utils/app/errorHandler";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<RegisterForm>({
     username: "",
     password: "",
@@ -26,7 +28,7 @@ function Register() {
     try {
       await postRegister(form);
       toast.success("Registrado correctamente.");
-      window.location.href = "/";
+      navigate("/app");
     } catch (err) {
       console.error("Registration error:", err);
 

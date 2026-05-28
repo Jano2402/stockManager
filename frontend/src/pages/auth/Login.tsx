@@ -5,8 +5,10 @@ import type { LoginForm } from "../../types";
 import { postLogin } from "../../services/app/authService";
 import LoginFormulario from "../../components/auth/LoginFormulario";
 import { getErrorMessage } from "../../utils/app/errorHandler";
+import { useNavigate } from "react-router";
 
 function Login() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<LoginForm>({
     username: "",
     password: "",
@@ -25,8 +27,8 @@ function Login() {
 
     try {
       await postLogin(form);
-      window.location.href = "/";
       toast.success("Logueado correctamente.");
+      navigate("/app");
     } catch (err) {
       console.error("Login error:", err);
 
