@@ -1,6 +1,7 @@
 // src/services/axiosClient.ts
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+import authClient from "./authClient";
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -51,7 +52,7 @@ axiosClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosClient.post("/auth/refresh");
+        await authClient.post("/auth/refresh");
 
         processQueue();
 
