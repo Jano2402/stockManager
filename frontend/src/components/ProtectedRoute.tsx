@@ -16,21 +16,35 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <>
+      <div
+        className="
+        min-h-screen
+
+        flex flex-col
+        items-center
+        justify-center
+
+        gap-4
+
+        bg-[#0B1220]
+        text-slate-50
+      "
+      >
         <div
           className="
-                    w-4 h-4
+          w-8 h-8
 
-                    rounded-full
+          rounded-full
 
-                    border-2 border-sky-300/30
-                    border-t-sky-300
+          border-2 border-sky-300/30
+          border-t-sky-300
 
-                    animate-spin
-                  "
+          animate-spin
+        "
         />
-        Cargando...
-      </>
+
+        <p className="text-sm text-slate-300">Cargando...</p>
+      </div>
     );
   }
 
