@@ -8,33 +8,14 @@ import {
   logout,
 } from "../controllers/authController";
 import { JwtPayload } from "jsonwebtoken";
+import { RequestHandler } from "express";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 
-// Función auxiliar para verificar y decodificar el token
-const verifyCookieToken = (req: Request, res: Response): JwtPayload | null => {
-  const token = req.cookies?.accessToken; // 👈 Buscar en cookies
-  if (!token) {
-    res.status(401).json({ error: "Not authorized" });
-    return null;
-  }
-
-  try {
-    return jwt.verify(token, JWT_SECRET as string) as JwtPayload;
-  } catch {
-    return res.status(401).json({ error: "Invalid or expiered token" });
-    return null;
-  }
-};
-
 // Middleware para autenticar el token
-export const authenticateToken = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): any => {
-  const token = req.cookies?.accessToken; // 👈 Leer token de cookies
+export const authenticateToken: RequestHandler = (req, res, next) => {
+  const token = req.cookies?.accessToken;
 
   if (!token) {
     res.status(401).json({ error: "Not authorized" });
@@ -43,11 +24,11 @@ export const authenticateToken = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    // Si querés guardar el payload para usarlo en otros controladores:
     (req as any).user = decoded;
     next();
-  } catch (err: any) {
-    return res.status(401).json({ error: "Invalid or expiered token" }); // Ponemos 401 también para que lo handlee el refresh
+  } catch {
+    res.status(401).json({ error: "Invalid token" });
+    return;
   }
 };
 
@@ -57,15 +38,14 @@ export const authenticateAdmin = (
   res: Response,
   next: NextFunction,
 ) => {
-  const decodedToken = verifyCookieToken(req, res);
-  if (!decodedToken) return;
+  const user = (req as any).user;
 
-  if (decodedToken.role !== "ADMIN") {
-    res.status(403).json({ error: "You are not authorized as an admin" });
-    return;
+  if (!user) return res.status(401).json({ error: "Not authenticated" });
+
+  if (user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
-  (req as any).user = decodedToken; // Guardar info para siguientes middlewares
   next();
 };
 
@@ -75,18 +55,16 @@ export const authenticateAdminOrModerator = (
   res: Response,
   next: NextFunction,
 ) => {
-  const decodedToken = verifyCookieToken(req, res);
-  if (!decodedToken) return;
+  const user = (req as any).user;
 
-  if (!["ADMIN", "MODERATOR"].includes(decodedToken.role)) {
-    res.status(403).json({ error: "You don't have access to this resource" });
-    return;
+  if (!user) return res.status(401).json({ error: "Not authenticated" });
+
+  if (!["ADMIN", "MODERATOR"].includes(user.role)) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
-  (req as any).user = decodedToken;
   next();
 };
-
 router.post("/register", register);
 router.post("/login", login);
 router.post("/refresh", refreshToken);

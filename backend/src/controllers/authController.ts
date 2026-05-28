@@ -4,6 +4,7 @@ import prisma from "../prisma/prisma";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
+import { cookieOptions } from "../utils/cookies";
 
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 const REFRESH_JWT_SECRET =
@@ -13,25 +14,18 @@ const isProduction = process.env.NODE_ENV === "production";
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
 
-  // Validaciones mejoradas
-  if (!username?.trim()) {
-    res.status(400).json({ error: "Username es requerido" });
-    return;
-  }
-  if (!password?.trim() || password.length < 6) {
-    res
-      .status(400)
-      .json({ error: "Password debe tener al menos 6 caracteres" });
+  if (!username?.trim() || !password?.trim() || password.length < 6) {
+    res.status(400).json({ error: "Invalid input" });
     return;
   }
 
   try {
     const hashedPassword = await hashPassword(password);
+
     const user = await prisma.user.create({
       data: { username, password: hashedPassword },
     });
 
-    // Generar tokens
     const accessToken = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -43,53 +37,41 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
+    const options = cookieOptions(isProduction);
+
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, // httpOnly solo en producción
-      secure: true, // solo se envía en HTTPS en producción
-      sameSite: "none", // sameSite más estricto en producción
-      path: "/",
-      maxAge: 15 * 60 * 1000, // 15 minutos
+      ...options,
+      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // httpOnly solo en producción
-      secure: true, // solo se envía en HTTPS en producción
-      sameSite: "none", // sameSite más estricto en producción
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+      ...options,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(201).json({ accessToken, refreshToken });
-    //res.status(201).json({ message: "Usuario registrado correctamente." });
-  } catch (error: any) {
-    console.error("Register error:", error);
-    if (error.code === "P2002") {
-      res.status(409).json({ error: "Username ya registrado" });
-    } else {
-      res.status(500).json({ error: "Error al registrar usuario" });
-    }
+    res.status(201).json({ message: "OK" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Register error" });
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
 
-  if (!username.trim() || !password.trim()) {
-    res.status(400).json({ error: "Ambos campos son requeridos." });
-  }
-  if (!username || !password) {
-    res.status(400).json({ error: "Username y password son requeridos" });
+  if (!username?.trim() || !password?.trim()) {
+    res.status(400).json({ error: "Missing fields" });
     return;
   }
 
   try {
     const user = await prisma.user.findUnique({ where: { username } });
+
     if (!user || !(await comparePasswords(password, user.password))) {
-      res.status(401).json({ error: "Credenciales inválidas" });
+      res.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
-    // Generar tokens
     const accessToken = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -105,125 +87,74 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
+    const options = cookieOptions(isProduction);
+
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, // httpOnly solo en producción
-      secure: true, // solo se envía en HTTPS en producción
-      sameSite: "none", // sameSite más estricto en producción
-      path: "/",
-      maxAge: 15 * 60 * 1000, // 15 minutos
+      ...options,
+      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // httpOnly solo en producción
-      secure: true, // solo se envía en HTTPS en producción
-      sameSite: "none", // sameSite más estricto en producción
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+      ...options,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    //res.status(201).json({ accessToken, refreshToken });
-    res.json({ message: "Login exitoso" });
-  } catch (error: any) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Error en el servidor" });
+    res.json({ message: "OK" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Login error" });
   }
 };
 
-export const refreshToken = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  const refreshToken = req.cookies.refreshToken;
+export const refreshToken = async (req: Request, res: Response) => {
+  const token = req.cookies?.refreshToken;
 
-  if (!refreshToken) {
-    res.status(401).json({ error: "Refresh token requerido" });
+  if (!token) {
+    res.status(401).json({ error: "No refresh token" });
     return;
   }
 
   try {
-    // 1. Buscar el refresh token en la tabla RefreshToken
     const storedToken = await prisma.refreshToken.findFirst({
-      where: { token: refreshToken },
-      include: { user: true }, // traemos el usuario asociado
+      where: { token },
+      include: { user: true },
     });
 
-    if (!storedToken) {
-      res.status(403).json({ error: "Token inválido" });
-      return;
-    }
-
-    if (storedToken.expiresAt < new Date()) {
-      await prisma.refreshToken.deleteMany({
-        where: { token: refreshToken },
-      });
-
+    if (!storedToken || storedToken.expiresAt < new Date()) {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
-
-      res.status(403).json({ error: "Refresh token expirado" });
+      res.status(403).json({ error: "Invalid refresh token" });
       return;
     }
-    // 2. Verificar la firma del JWT
-    jwt.verify(
-      refreshToken,
-      REFRESH_JWT_SECRET,
-      async (
-        err: jwt.VerifyErrors | null,
-        decoded: JwtPayload | string | undefined,
-      ) => {
-        if (err) {
-          await prisma.refreshToken.deleteMany({
-            where: { token: refreshToken },
-          });
 
-          res.clearCookie("accessToken");
-          res.clearCookie("refreshToken");
+    jwt.verify(token, REFRESH_JWT_SECRET);
 
-          return res.status(403).json({ error: "Token expirado o inválido" });
-        }
+    const newAccessToken = generateToken(storedToken.user);
 
-        const accessToken = generateToken(storedToken.user);
+    const options = cookieOptions(isProduction);
 
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          path: "/",
-          maxAge: 15 * 60 * 1000,
-        });
+    res.cookie("accessToken", newAccessToken, {
+      ...options,
+      maxAge: 15 * 60 * 1000,
+    });
 
-        res.json({ message: "Access token renovado" });
-      },
-    );
-  } catch (error: any) {
-    console.error("Refresh error:", error);
-    res.status(500).json({ error: "Error al renovar token" });
+    res.json({ message: "refreshed" });
+  } catch (e) {
+    res.status(403).json({ error: "Refresh failed" });
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
-  const refreshToken = req.cookies.refreshToken;
+export const logout = async (req: Request, res: Response) => {
+  const token = req.cookies?.refreshToken;
 
-  if (!refreshToken) {
-    res.status(400).json({ error: "Refresh token requerido" });
-    return;
+  if (token) {
+    await prisma.refreshToken.deleteMany({ where: { token } });
   }
 
-  try {
-    const deleted = await prisma.refreshToken.deleteMany({
-      where: { token: refreshToken },
-    });
+  const options = cookieOptions(isProduction);
 
-    if (deleted.count === 0) {
-      res.status(404).json({ error: "Token no encontrado" });
-      return;
-    }
+  res.clearCookie("accessToken", options);
+  res.clearCookie("refreshToken", options);
 
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.json({ message: "Sesión cerrada" });
-  } catch (error: any) {
-    console.error("Logout error:", error);
-    res.status(500).json({ error: "Error al cerrar sesión" });
-  }
+  res.json({ message: "logged out" });
 };
