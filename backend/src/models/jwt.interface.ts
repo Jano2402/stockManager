@@ -1,7 +1,10 @@
-export interface JwtPayload {
+export type AuthUser = {
   id: number;
   username: string;
-  role: string;
-  iat?: number;
-  exp?: number;
-}
+  role: "USER" | "ADMIN" | "MODERATOR";
+};
+
+export type JwtPayload = AuthUser & {
+  iat: number;
+  exp: number;
+};

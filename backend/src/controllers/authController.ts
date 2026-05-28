@@ -3,7 +3,6 @@ import { hashPassword, comparePasswords } from "../services/password.service";
 import prisma from "../prisma/prisma";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "jsonwebtoken";
 import { cookieOptions } from "../utils/cookies";
 
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
@@ -157,4 +156,28 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie("refreshToken", options);
 
   res.json({ message: "logged out" });
+};
+
+export const me = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies?.accessToken;
+    if (!token) {
+      res.status(401).json({ error: "No hay credenciales válidas." });
+      return;
+    }
+    const payload = jwt.verify(token, JWT_SECRET) as {
+      id: number;
+      username: string;
+      role: "USER" | "ADMIN" | "MODERATOR";
+    };
+
+    res.json({
+      id: payload.id,
+      username: payload.username,
+      role: payload.role,
+    });
+    return;
+  } catch {
+    res.status(401).json({ message: "Credenciales inválidas." });
+  }
 };
