@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://backend.onrender.com/:path*"
+      "destination": "https://stockmanager-bakend.onrender.com/:path*"
     }
   ]
 }
