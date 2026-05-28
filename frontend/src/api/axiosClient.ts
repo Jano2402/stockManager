@@ -1,11 +1,14 @@
 // src/services/axiosClient.ts
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+import { useNavigate } from "react-router";
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
+
+const navigate = useNavigate();
 
 let isRefreshing = false;
 
@@ -57,7 +60,7 @@ axiosClient.interceptors.response.use(
       } catch (err) {
         processQueue(err);
 
-        window.location.href = "/auth/login";
+        navigate("/auth/login");
 
         return Promise.reject(err);
       } finally {
