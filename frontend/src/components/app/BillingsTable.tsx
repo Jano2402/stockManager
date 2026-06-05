@@ -5,6 +5,20 @@ type BillingsTableProps = {
 };
 
 function BillingsTable({ data }: BillingsTableProps) {
+  const totalCompra: number = data.reduce(
+    (acc, item) => acc + item.totalCompra,
+    0,
+  );
+
+  const totalPagado: number = data.reduce(
+    (acc, item) => acc + item.totalPagado,
+    0,
+  );
+
+  const totalDebiendo: number = data.reduce(
+    (acc, item) => acc + item.totalDebiendo,
+    0,
+  );
   return (
     <div
       className="
@@ -179,6 +193,37 @@ function BillingsTable({ data }: BillingsTableProps) {
             </tr>
           ))}
         </tbody>
+        <tfoot className="border-t border-slate-700/40 bg-[#0B1220]/80">
+          <tr>
+            <td
+              colSpan={4}
+              className="
+                px-6 py-4
+                text-right
+                font-semibold
+                text-slate-300
+              "
+            >
+              Totales
+            </td>
+
+            <td className="px-6 py-4 font-semibold text-sky-300">
+              ${totalCompra}
+            </td>
+
+            <td className="px-6 py-4 font-semibold text-emerald-300">
+              ${totalPagado}
+            </td>
+
+            <td
+              className={`px-6 py-4 font-semibold ${
+                totalDebiendo > 0 ? "text-red-400" : "text-emerald-400"
+              }`}
+            >
+              ${totalDebiendo}
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );
