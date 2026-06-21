@@ -166,10 +166,10 @@ To be added ...
 - Refetch data when something is modified
 - Show who performed each action
 - Add exit animations with Framer Motion
-Token rotation
-Logout with blacklist or token rotation invalidation
-Search bar on Facturación.tsx
-Locality filter
+- Token rotation
+- Logout with blacklist or token rotation invalidation
+- Search bar on Facturación.tsx
+- Locality filter
 
 ## Challenges
 
