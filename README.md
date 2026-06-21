@@ -130,17 +130,28 @@ To be added ...
 
 **Screenshots**
 
-DB Structure
+### DB Structure
+
 ![DBStructure](./frontend/src/assets/database_structure.png)
-Stock
+
+### Stock
+
 ![Stock](./frontend/src/assets/stock.png)
-Billings
+
+### Billings
+
 ![Billings](./frontend/src/assets/facturacion.png)
-Clients
+
+### Clients
+
 ![Clients](./frontend/src/assets/preview.png)
-Request Examples
+
+### Request Examples
+
 ![Request Exapmples](./frontend/src/assets/requests_examples.png)
-JWT Example
+
+### JWT Example
+
 ![JWT Example](./frontend/src/assets/jwtexample.png)
 
 **Future Improvements**
