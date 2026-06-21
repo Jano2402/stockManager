@@ -128,7 +128,7 @@ Helmet, CORS and Rate Limiting were added to mitigate common web vulnerabilities
 
 To be added ...
 
-**Screenshots**
+## Screenshots
 
 ### DB Structure
 
