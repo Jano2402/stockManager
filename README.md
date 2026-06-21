@@ -158,14 +158,14 @@ To be added ...
 
 **Future Improvements**
 
-Add tests
-Create a custom hook for Clients.tsx
-Add pagination to Clients.tsx
-Add profile page
-Add logout button
-Refetch data when something is modified
-Show who performed each action
-Add exit animations with Framer Motion
+- Add tests
+- Create a custom hook for Clients.tsx
+- Add pagination to Clients.tsx
+- Add profile page
+- Add logout button
+- Refetch data when something is modified
+- Show who performed each action
+- Add exit animations with Framer Motion
 Token rotation
 Logout with blacklist or token rotation invalidation
 Search bar on Facturación.tsx
