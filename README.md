@@ -34,6 +34,7 @@ This project is a business management tool used by staff to track sales and mana
 
 ## Architecture
 
+```text
 frontend/
 ├── src/
 ├── api
@@ -51,6 +52,7 @@ backend/
 ├── routes
 ├── services
 └── utils
+```
 
 This project follows a layered architecture to separate responsibilities and make maintenance easier.
 
