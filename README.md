@@ -37,21 +37,21 @@ This project is a business management tool used by staff to track sales and mana
 ```text
 frontend/
 ├── src/
-├── api
-├── assets
-├── components
-├── pages
-├── services
-├── types
-└── utils
+  ├── api
+  ├── assets
+  ├── components
+  ├── pages
+  ├── services
+  ├── types
+  └── utils
 backend/
 ├── src/
-├── controllers
-├── models
-├── prisma
-├── routes
-├── services
-└── utils
+  ├── controllers
+  ├── models
+  ├── prisma
+  ├── routes
+  ├── services
+  └── utils
 ```
 
 This project follows a layered architecture to separate responsibilities and make maintenance easier.
