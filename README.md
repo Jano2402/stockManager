@@ -158,7 +158,8 @@ To be added ...
 
 **Future Improvements**
 
-- Add tests
+- Add tests (Vitest)
+- Migrate routing to next.js
 - Create a custom hook for Clients.tsx
 - Add pagination to Clients.tsx
 - Add profile page
